@@ -1,0 +1,32 @@
+PROBLEMS: 
+    - more.tsx renders twice
+    
+
+Server Actions:
+    - create label
+    - update label
+    - delete label
+    - add label to Note
+    - remove label from Note
+    - CHECK ALL SERVER ACTIONS AND INTRODUCE LABELS IF NEEDED
+
+
+aside menu with LABELS
+modal with labels editing
+//-------------------------------------------------------
+
+Add Search through all NoteItem and Tittles
+
+Add button "List or Text" for content when creating new Note
+
+Auto submitting forms with debounce function for:
+    - Updating title
+    - Updating content
+    - Creating notes (title and content separately)
+
+??? When a caret is in the end of the row end user press "Enter" key then "Create Item" will run (only when note type is TODO)
+??? Auto delete when title and content is empty.
+??? Add color for each Note
+
+
+
