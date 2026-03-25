@@ -12,7 +12,8 @@ export const createNoteItem = async (noteId: string) => {
     },
   });
 
-  revalidatePath(`/${noteId}`);
+  revalidatePath(`/notes`);
+  revalidatePath(`/notes/${noteId}`);
 };
 
 export const updateNoteItem = async (
@@ -29,8 +30,8 @@ export const updateNoteItem = async (
       content: text,
     },
   });
-
-  revalidatePath(`/${res.noteId}`);
+  revalidatePath(`/notes`);
+  revalidatePath(`/notes/${res.noteId}`);
 };
 
 export const toggleNoteItemStatus = async (
@@ -46,7 +47,8 @@ export const toggleNoteItemStatus = async (
     },
   });
 
-  revalidatePath(`/${res.noteId}`);
+  revalidatePath(`/notes`);
+  revalidatePath(`/notes/${res.noteId}`);
 };
 
 export const deleteNoteItem = async (noteItemId: string) => {
@@ -56,7 +58,8 @@ export const deleteNoteItem = async (noteItemId: string) => {
     },
   });
 
-  revalidatePath(`/${res.noteId}`);
+  revalidatePath(`/notes`);
+  revalidatePath(`/notes/${res.noteId}`);
 };
 
 export const deleteAllMarkedItems = async (noteId: string) => {
@@ -67,8 +70,8 @@ export const deleteAllMarkedItems = async (noteId: string) => {
     },
   });
 
-  revalidatePath(`/`);
-  revalidatePath(`/${noteId}`);
+  revalidatePath(`/notes`);
+  revalidatePath(`/notes/${noteId}`);
 };
 
 export const removeAllMarks = async (noteId: string) => {
@@ -81,6 +84,6 @@ export const removeAllMarks = async (noteId: string) => {
     },
   });
 
-  revalidatePath(`/`);
-  revalidatePath(`/${noteId}`);
+  revalidatePath(`/notes`);
+  revalidatePath(`/notes/${noteId}`);
 };

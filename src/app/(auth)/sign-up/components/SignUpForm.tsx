@@ -5,14 +5,13 @@ import z from "zod";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { SignUpScheme, TSignUp } from "@/lib/zod-schemes";
-
 import Image from "next/image";
 import Link from "next/link";
 import FormButton from "@/components/UI/formElements/form-button";
 import FormInput from "@/components/UI/formElements/form-input";
 import ControlledCustomInput from "@/components/UI/formElements/controlled-custom-input";
 import { SignUpAction } from "@/lib/actions/auth";
+import { SignUpScheme, TSignUp } from "@/lib/zod-schemes/sign-in-up-schemes";
 
 export default function SignUpForm() {
   const {
@@ -36,8 +35,11 @@ export default function SignUpForm() {
 
   return (
     <>
-      <div className="bg-secondary px-16 py-8 rounded-secondary w-120">
-        <h1 className="text-center text-txt-secondary text-3xl ">Sign Up</h1>
+      <div className="bg-primary shadow-outside px-16 py-8 rounded-4xl w-120">
+        {/* <div className="bg-secondary px-16 py-8 rounded-secondary w-120"> */}
+        <h1 className="text-center text-txt-primary text-2xl font-bold">
+          Sign Up
+        </h1>
 
         <div className="mt-6">
           <form onSubmit={handleSubmit(onSubmit)}>

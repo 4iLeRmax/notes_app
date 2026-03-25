@@ -1,12 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getCookieCache } from "better-auth/cookies";
-import { getSession } from "./lib/actions/auth";
+import { isAuthorized } from "./lib/actions/auth";
 
 export async function proxy(request: NextRequest) {
-  const session = await getSession();
-  // const session = await getCookieCache(request)
+  // Redirect root path to /notes
+  if (request.nextUrl.pathname === "/") {
+    return NextResponse.redirect(new URL("/notes", request.url));
+  }
 
-  if (!session) {
+  if (request.headers.get("next-action")) {
+    return NextResponse.next();
+  }
+  if (!(await isAuthorized("proxy"))) {
     return NextResponse.redirect(new URL("/sign-in", request.url));
   }
 
@@ -14,5 +18,11 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/notes/:path*"],
+  matcher: [
+    "/",
+    "/notes/:path*",
+    // "/labels",
+    // "/labels/:path*",
+    // "/((?!api|_next/static|_next/image|.*\\.png$).*)"
+  ],
 };

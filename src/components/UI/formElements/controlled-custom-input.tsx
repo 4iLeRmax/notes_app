@@ -2,10 +2,9 @@ import React from "react";
 import FormInput from "./form-input";
 import { Controller, FieldError } from "react-hook-form";
 import z from "zod";
-import { SignUpScheme } from "@/lib/zod-schemes";
+import { SignUpScheme } from "@/lib/zod-schemes/sign-in-up-schemes";
 
-interface ControlledCustomInputProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {
+interface ControlledCustomInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   control: any;
   error: FieldError | undefined;
   name: keyof z.infer<typeof SignUpScheme>;
@@ -26,12 +25,7 @@ export default function ControlledCustomInput({
           name={name}
           control={control}
           render={({ field }) => (
-            <FormInput
-              {...field}
-              name={name}
-              {...props}
-              isPassword={isPassword}
-            />
+            <FormInput {...field} {...props} isPassword={isPassword} />
           )}
         />
         {error ? (

@@ -22,8 +22,6 @@ export default function More({
   handleClose,
   fixed,
 }: MoreProps) {
-  console.log("render: MORE");
-
   const [position, setPosition] = useState({ top: 0, bottom: 0, right: 0 });
 
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -100,7 +98,10 @@ export default function More({
     <>
       <button
         ref={buttonRef}
-        className="p-1 outline-none rounded-full hover:bg-gray-300"
+        className={clsx("p-1 outline-none rounded-full text-txt-secondary ", {
+          "shadow-outside_small": !isOpen,
+          "shadow-inside": isOpen,
+        })}
         onClick={handleOpen}
         onBlur={handleBlur}
       >
@@ -108,14 +109,15 @@ export default function More({
       </button>
       {isOpen && modalsContainer.current ? (
         <DialogPortal>
+          {/* <div className="fixed inset-0 z-30" onClick={handleClose} /> */}
           <div
             ref={modalRef}
             onBlur={handleBlur}
             tabIndex={0}
-            className={clsx(
-              "z-40 bg-primary shadow-2xl rounded-md border-2 border-gray-300",
-              fixed ? "fixed" : "absolute",
-            )}
+            className={clsx("bg-primary shadow-outside_small rounded-3xl", {
+              "absolute z-20 ": !fixed,
+              "fixed z-50": fixed,
+            })}
             style={{
               ...(position.top === 0
                 ? { bottom: `${position.bottom}px` }

@@ -1,33 +1,44 @@
 "use server";
 
-import { revalidatePath, unstable_cache } from "next/cache";
 import prisma from "../prisma";
-import { cache } from "react";
-import { getSession } from "./auth";
+import { getSession, isAuthorized } from "./auth";
+import { NoteTitleScheme } from "../zod-schemes/basic-schemes";
+import { CreateNoteScheme } from "../zod-schemes/create-note.scheme";
+import { revalidatePath } from "next/cache";
 
-export const getAllNotes = cache(async () => {
-  const session = await getSession();
+export const getNoteIds = async () => {
+  const noteIds = await prisma.note.findMany({
+    select: {
+      id: true,
+    },
+  });
 
-  if (session) {
-    const notes = await prisma.note.findMany({
-      where: {
-        userId: session.user.id,
-      },
-      include: {
-        content: true,
-        labels: true,
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
+  return noteIds;
+};
 
-    return notes;
-  }
-});
+export const getAllNotes = async () => {
+  const session = await isAuthorized();
+
+  if (!session) return;
+  const notes = await prisma.note.findMany({
+    where: {
+      userId: session.userId,
+    },
+    include: {
+      content: true,
+      labels: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  return notes;
+};
 
 export const getNoteById = async (noteId: string) => {
-  console.log("getNoteById");
+  // console.log("getNoteById");
+
   const note = await prisma.note.findUnique({
     where: {
       id: noteId,
@@ -45,32 +56,68 @@ export const getNoteById = async (noteId: string) => {
   return note;
 };
 
-export const createNote = async (formData: FormData) => {
+export const getAllNotesByLabelId = async (labelId: string) => {
+  const session = await isAuthorized();
+
+  if (!session) return null;
+
+  const notes = await prisma.note.findMany({
+    where: {
+      labels: {
+        some: {
+          id: labelId,
+        },
+      },
+      userId: session.userId,
+    },
+    include: {
+      content: true,
+      labels: true,
+    },
+  });
+
+  return notes;
+};
+
+export const createNote = async (
+  noteType: NoteType,
+  isPinned: boolean,
+  formData: FormData,
+) => {
   const title = formData.get("title") as string;
-  const contentText = formData.get("content") as string;
-  const contentLines = contentText.split("\n");
+  const content = formData.get("content") as string;
 
-  if (title || contentText) {
+  const safeData = CreateNoteScheme.safeParse({
+    title,
+    content,
+    noteType,
+  });
+
+  console.log(safeData);
+
+  if (safeData.success) {
     const session = await getSession();
+    const contentLines = safeData.data.content.split("\n");
 
-    if (session) {
-      await prisma.note.create({
-        data: {
-          title,
-          type: "TEXT",
-          userId: session.user.id,
-          content: {
-            createMany: {
-              data: contentLines.map((line) => ({
-                content: line,
-              })),
-            },
+    if (!session) return;
+    const newNote = await prisma.note.create({
+      data: {
+        title: safeData.data.title,
+        type: safeData.data.noteType,
+        isPinned: isPinned,
+        userId: session.user.id,
+        content: {
+          createMany: {
+            data: contentLines.map((line) => ({
+              content: line,
+            })),
           },
         },
-      });
-    }
+      },
+    });
 
-    revalidatePath("/");
+    revalidatePath(`/notes`);
+    revalidatePath(`/notes/${newNote.id}`);
   }
 };
 
@@ -81,8 +128,8 @@ export const deleteNote = async (noteId: string) => {
     },
   });
 
-  revalidatePath("/");
-  revalidatePath(`/${noteId}`);
+  revalidatePath(`/notes`);
+  revalidatePath(`/notes/${noteId}`);
 };
 
 export const toggleNoteType = async (noteId: string) => {
@@ -104,7 +151,7 @@ export const toggleNoteType = async (noteId: string) => {
   }
 
   revalidatePath(`/notes`);
-  // revalidatePath(`/notes/${noteId}`);
+  revalidatePath(`/notes/${noteId}`);
 };
 
 export const togglePinnedStatus = async (noteId: string) => {
@@ -125,23 +172,27 @@ export const togglePinnedStatus = async (noteId: string) => {
     });
   }
 
-  revalidatePath(`/`);
-  revalidatePath(`/${noteId}`);
+  revalidatePath(`/notes`);
+  revalidatePath(`/notes/${noteId}`);
 };
 
 export const updateNoteTitle = async (noteId: string, formData: FormData) => {
   const title = formData.get("title") as string;
 
-  await prisma.note.update({
-    where: {
-      id: noteId,
-    },
-    data: {
-      title: title,
-    },
-  });
+  const safeData = NoteTitleScheme.safeParse(title);
+  if (safeData.success) {
+    await prisma.note.update({
+      where: {
+        id: noteId,
+      },
+      data: {
+        title: title,
+      },
+    });
 
-  revalidatePath(`/${noteId}`);
+    revalidatePath(`/notes`);
+    revalidatePath(`/notes/${noteId}`);
+  }
 };
 
 export const updateNoteText = async (noteId: string, formData: FormData) => {
@@ -164,7 +215,8 @@ export const updateNoteText = async (noteId: string, formData: FormData) => {
     ],
   });
 
-  revalidatePath(`/${noteId}`);
+  revalidatePath(`/notes`);
+  revalidatePath(`/notes/${noteId}`);
 };
 
 export const createCopy = async (noteId: string) => {
@@ -174,6 +226,7 @@ export const createCopy = async (noteId: string) => {
     },
     include: {
       content: true,
+      labels: true,
     },
   });
 
@@ -192,10 +245,13 @@ export const createCopy = async (noteId: string) => {
             })),
           },
         },
+        labels: {
+          connect: note.labels.map((label) => ({ id: label.id })),
+        },
       },
     });
   }
 
-  revalidatePath("/");
-  revalidatePath(`/${noteId}`);
+  revalidatePath(`/notes`);
+  revalidatePath(`/notes/${noteId}`);
 };

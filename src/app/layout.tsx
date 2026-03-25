@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Link from "next/link";
-import ViewModeSwitcher from "@/components/notes-view-mode/view-mode-switcher";
+import RootWrappers from "@/components/wrappers/wrappers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -21,28 +20,21 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-  modal,
 }: Readonly<{
   children: React.ReactNode;
-  modal: React.ReactNode;
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        suppressHydrationWarning
-      >
-        <div className="flex justify-center items-center gap-5">
-          <Link href={"/"}>Home</Link>
-          <Link href={"/notes"}>Notes</Link>
-          <Link href={"/sign-up"}>Sign Up</Link>
-          <Link href={"/sign-in"}>Sign In</Link>
-          <ViewModeSwitcher />
-        </div>
-        {children}
-        {modal}
-        <div id="modals"></div>
-      </body>
+      <RootWrappers>
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+          suppressHydrationWarning
+        >
+          <div className="mt-5">{children}</div>
+
+          <div id="modals"></div>
+        </body>
+      </RootWrappers>
     </html>
   );
 }

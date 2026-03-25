@@ -5,4 +5,16 @@ const nextConfig: NextConfig = {
   reactCompiler: true,
 };
 
+module.exports = {
+  async redirects() {
+    return [
+      {
+        source: "/labels",
+        destination: "/",
+        permanent: true,
+      },
+    ];
+  },
+};
+
 export default nextConfig;

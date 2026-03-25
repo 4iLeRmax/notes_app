@@ -3,7 +3,7 @@
 import ControlledCustomInput from "@/components/UI/formElements/controlled-custom-input";
 import FormButton from "@/components/UI/formElements/form-button";
 import { SigninAction } from "@/lib/actions/auth";
-import { SignInScheme, TSignIn } from "@/lib/zod-schemes";
+import { SignInScheme, TSignIn } from "@/lib/zod-schemes/sign-in-up-schemes";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import Link from "next/link";
@@ -29,8 +29,10 @@ export default function SignInFrom() {
 
   return (
     <>
-      <div className="bg-secondary px-16 py-8 rounded-secondary w-120">
-        <h1 className="text-center text-txt-secondary text-3xl">Sign In</h1>
+      <div className="bg-primary shadow-outside px-16 py-8 rounded-4xl w-120">
+        <h1 className="text-center text-txt-primary text-2xl font-bold">
+          Sign In
+        </h1>
 
         <div className="mt-6">
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -55,8 +57,7 @@ export default function SignInFrom() {
               <FormInput isPassword name="password" placeholder="Password..." />
             </div> */}
             <div className="mt-10">
-              <FormButton>Sign In</FormButton>
-              <div className="mt-2 flex items-center justify-between">
+              <div className="mb-2 flex items-center justify-between">
                 <Link href="/sign-up" className="text-txt-primary text-sm">
                   Create an account
                 </Link>
@@ -64,6 +65,7 @@ export default function SignInFrom() {
                   Forgot password
                 </Link>
               </div>
+              <FormButton>Sign In</FormButton>
             </div>
             <div>
               <div className="flex items-center justify-center gap-3 mt-8">
@@ -76,6 +78,13 @@ export default function SignInFrom() {
               <div className="flex items-center justify-center mt-2 gap-3">
                 <Image src={"google.svg"} width={40} height={40} alt="" />
                 <Image src={"apple.svg"} width={40} height={40} alt="" />
+
+                {/* <div className="shadow-outside_small p-2 rounded-full">
+                  <Image src={"google.svg"} width={40} height={40} alt="" />
+                </div>
+                <div className="shadow-outside_small p-2 rounded-full">
+                  <Image src={"apple.svg"} width={40} height={40} alt="" />
+                </div> */}
               </div>
             </div>
           </form>

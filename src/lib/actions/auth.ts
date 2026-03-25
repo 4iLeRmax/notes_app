@@ -1,16 +1,32 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 import prisma from "../prisma";
-import { SignInScheme, SignUpScheme, TSignIn, TSignUp } from "../zod-schemes";
 import { auth } from "../auth";
 import sha256 from "../SHA256";
+import {
+  SignInScheme,
+  SignUpScheme,
+  TSignIn,
+  TSignUp,
+} from "../zod-schemes/sign-in-up-schemes";
 
 export const getSession = async () => {
-  console.log("session");
-  const session = await auth.api.getSession({ headers: await headers() });
-  return session;
+  return await auth.api.getSession({ headers: await headers() });
+};
+
+export const isAuthorized = async (whoCallIt?: string) => {
+  console.log(whoCallIt);
+  console.log("isAuthorized");
+  const sessionCookie = (await cookies()).get("better-auth.session_token");
+  if (sessionCookie && sessionCookie.value) {
+    return await prisma.session.findUnique({
+      where: {
+        token: sessionCookie.value.split(".")[0],
+      },
+    });
+  }
 };
 
 const emailAlreadyTaken = async (emailToCheck: string) => {

@@ -1,20 +1,13 @@
 @import "tailwindcss";
 
-/* @media (prefers-color-scheme: dark) {
-  :root {
-    --bg-primary: #232323;
-    --bg-secondary: #151515;
-    --txt-primary: #f8f9fd;
-    --txt-secondary: #e8e8e8;
-  }
-} */
-
 :root {
   --bg-primary: #e8e8e8;
-  --bg-secondary: #f8f9fd;
+  /* --bg-secondary: #f8f9fd; */
+  --bg-secondary: #c9c9c9;
 
   --txt-primary: #959593;
-  --txt-secondary: #001123;
+  --txt-secondary: #363636;
+
   --txt-contrast: #052659;
 
   --custom-blue: #3a66ed;
@@ -23,6 +16,20 @@
 
   --br-primary: 15px;
   --br-secondary: 20px;
+}
+
+html.dark {
+  --bg-primary: #1f1f1f;
+  --bg-secondary: #151515;
+
+  --txt-primary: #d1cfc0;
+  --txt-secondary: #9e9c91;
+
+  --txt-contrast: #a8d5ff;
+
+  --custom-blue: #5a7fff;
+  --custom-red: #ff4544;
+  --custom-green: #4fd566;
 }
 
 @theme inline {
@@ -34,6 +41,7 @@
 
   --color-txt-primary: var(--txt-primary);
   --color-txt-secondary: var(--txt-secondary);
+
   --color-txt-contrast: var(--txt-contrast);
 
   --radius-primary: var(--br-primary);
@@ -41,6 +49,8 @@
 
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  --breakpoint-xs: 480px;
 }
 
 body {
@@ -50,4 +60,78 @@ body {
 
 button {
   cursor: pointer;
+}
+
+.shadow-inside {
+  box-shadow:
+    inset rgba(0, 0, 0, 0.2) 2px 3px 6px,
+    inset rgba(255, 255, 255, 1) -2px -3px 6px;
+}
+
+html.dark .shadow-inside {
+  /* box-shadow:
+    inset rgba(0, 0, 0, 0.5) 2px 3px 6px,
+    inset rgba(255, 255, 255, 0.1) -2px -3px 6px; */
+  box-shadow: rgba(255, 255, 255, 0.1) 0px 0px 5px;
+}
+
+.shadow-outside {
+  box-shadow:
+    rgba(255, 255, 255, 1) -8px -8px 8px,
+    rgba(0, 0, 0, 0.2) 8px 8px 8px;
+  /* inset rgba(0, 0, 0, 0.2) 2px 3px 6px,
+    inset rgba(255, 255, 255, 1) -2px -3px 6px; */
+}
+
+html.dark .shadow-outside {
+  /* box-shadow:
+    rgba(255, 255, 255, 0.1) -8px -8px 8px,
+    rgba(0, 0, 0, 0.5) 8px 8px 8px; */
+  box-shadow: rgba(255, 255, 255, 0.1) 0px 0px 5px;
+}
+
+.shadow-outside_small {
+  box-shadow:
+    rgba(255, 255, 255, 1) -3px -3px 6px,
+    rgba(0, 0, 0, 0.2) 3px 3px 6px;
+}
+
+html.dark .shadow-outside_small {
+  /* box-shadow:
+    rgba(255, 255, 255, 0.1) -3px -3px 6px,
+    rgba(0, 0, 0, 0.5) 3px 3px 6px; */
+  box-shadow: rgba(255, 255, 255, 0.1) 0px 0px 5px;
+}
+
+.shadow-button {
+  box-shadow: rgba(0, 0, 0, 0.2) 6px 6px 8px;
+}
+
+html.dark .shadow-button {
+  box-shadow: rgba(0, 0, 0, 0.6) 6px 6px 8px;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+  /* box-shadow: rgba(0, 0, 0, 0.2) -6px 0px 8px; */
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--txt-primary);
+  border-radius: 10px;
+  transition: background 0.2s ease;
+}
+
+::selection {
+  background: var(--color-custom-blue);
+  color: var(--color-primary);
+}
+
+.overflow {
+  max-height: calc(4 / 6 * 100vh);
 }

@@ -60,7 +60,7 @@ const DialogOverLay = ({ handleClose }: { handleClose: () => void }) => {
   return (
     <>
       <div
-        className="absolute w-full h-screen bg-black/30"
+        className="fixed inset-0 bg-black/30 backdrop-blur-xs"
         onClick={handleClose}
       ></div>
     </>
@@ -80,7 +80,7 @@ const DialogCloseButton = ({ handleClose }: { handleClose: () => void }) => {
     <>
       <button
         onClick={handleClose}
-        className="absolute top-3 right-3 p-1 hover:bg-gray-300 rounded-full"
+        className="absolute top-4 right-8 bg-primary rounded-full text-txt-primary p-1"
       >
         <X size={20} />
       </button>

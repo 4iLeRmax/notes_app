@@ -1,23 +1,17 @@
-PROBLEMS: 
-    - more.tsx renders twice
-    
+delete label ISSUES !!!
 
-Server Actions:
-    - create label
-    - update label
-    - delete label
-    - add label to Note
-    - remove label from Note
-    - CHECK ALL SERVER ACTIONS AND INTRODUCE LABELS IF NEEDED
+labels from note-card (sbmit button, add search before create)
 
+Error for Sign In Page 'Account not exist'
+Error for Sign Up Page 'Account exist'
 
-aside menu with LABELS
-modal with labels editing
-//-------------------------------------------------------
+(UI) Custom AnimatePresence hoc 
 
-Add Search through all NoteItem and Tittles
+Find Account -> reset Password
 
-Add button "List or Text" for content when creating new Note
+two columns on mobile version
+
+Seletct more notes
 
 Auto submitting forms with debounce function for:
     - Updating title
@@ -27,6 +21,8 @@ Auto submitting forms with debounce function for:
 ??? When a caret is in the end of the row end user press "Enter" key then "Create Item" will run (only when note type is TODO)
 ??? Auto delete when title and content is empty.
 ??? Add color for each Note
+??? If isAuthorized can't find any sessions in db with this session cookie token then auto log out
+??? Note item on Enter must be submitted instead of break line
 
 
 
