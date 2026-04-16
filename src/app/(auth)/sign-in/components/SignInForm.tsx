@@ -79,10 +79,10 @@ export default function SignInFrom() {
                 <Image src={"google.svg"} width={40} height={40} alt="" />
                 <Image src={"apple.svg"} width={40} height={40} alt="" />
 
-                {/* <div className="shadow-outside_small p-2 rounded-full">
+                {/* <div className="shadow-outside-small p-2 rounded-full">
                   <Image src={"google.svg"} width={40} height={40} alt="" />
                 </div>
-                <div className="shadow-outside_small p-2 rounded-full">
+                <div className="shadow-outside-small p-2 rounded-full">
                   <Image src={"apple.svg"} width={40} height={40} alt="" />
                 </div> */}
               </div>

@@ -42,7 +42,7 @@ export default function TitleForm({
           placeholder="Title..."
         />
         {title !== value ? (
-          <button className="p-2 shadow-outside_small text-txt-secondary rounded-full">
+          <button className="p-2 shadow-outside-small text-txt-secondary rounded-full">
             <Upload size={20} />
           </button>
         ) : null}

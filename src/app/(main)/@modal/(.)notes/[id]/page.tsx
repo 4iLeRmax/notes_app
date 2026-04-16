@@ -41,9 +41,3 @@ export default async function InterceptRoute({
     </>
   );
 }
-
-export const generateStaticParams = async () => {
-  const noteIds = await getNoteIds();
-
-  return noteIds;
-};

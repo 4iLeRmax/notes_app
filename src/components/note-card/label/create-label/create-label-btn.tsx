@@ -7,7 +7,7 @@ export default function CreateLabelBtn() {
 
   return (
     <>
-      <button className="w-full py-2 shadow-button bg-custom-blue text-primary flex items-center justify-center rounded-3xl mt-5">
+      <button className="w-full h-10 py-2 shadow-button bg-custom-blue text-primary flex items-center justify-center rounded-3xl mt-5">
         {pending ? <Loader size={20} className="animate-spin" /> : "Create"}
       </button>
     </>

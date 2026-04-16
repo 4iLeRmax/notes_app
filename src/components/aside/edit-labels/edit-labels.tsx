@@ -20,7 +20,7 @@
 //       ) : null}
 //       <button
 //         className={cn("w-full flex items-center gap-2 p-2 rounded-2xl ", {
-//           "shadow-outside_small": !modalIsOpen,
+//           "shadow-outside-small": !modalIsOpen,
 //           "shadow-inside": modalIsOpen,
 //         })}
 //         onClick={() => setModalIsOpen((p) => !p)}

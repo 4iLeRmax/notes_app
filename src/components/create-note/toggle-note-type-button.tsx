@@ -18,7 +18,7 @@ export default function ToggleNoteTypeButton({
       <button
         type="button"
         className={cn(
-          "text-txt-secondary shadow-outside_small p-2 rounded-full",
+          "text-txt-secondary shadow-outside-small p-2 rounded-full",
           {
             "absolute right-8 top-1/2 -translate-y-1/2": !formIsOpen,
             "absolute top-8 right-21": formIsOpen,

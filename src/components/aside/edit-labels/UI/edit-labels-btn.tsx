@@ -19,7 +19,7 @@ export default function EditLabelsBtn({
         className={cn("h-[41px] flex items-center gap-2 rounded-3xl", {
           "w-[41px] justify-center": !menuIsOpen,
           "w-52 justify-start p-2": menuIsOpen,
-          "shadow-outside_small": !modalIsOpen,
+          "shadow-outside-small": !modalIsOpen,
           "shadow-inside": modalIsOpen,
         })}
         onClick={toggleModalOpen}

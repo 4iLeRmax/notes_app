@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import prisma from "../prisma";
 
 export const createNoteItem = async (noteId: string) => {
+  console.log("createNoteItem");
   await prisma.noteItem.create({
     data: {
       content: "",
@@ -20,6 +21,7 @@ export const updateNoteItem = async (
   noteItemId: string,
   formData: FormData,
 ) => {
+  console.log("updateNoteItem");
   const text = formData.get("text") as string;
 
   const res = await prisma.noteItem.update({
@@ -38,6 +40,8 @@ export const toggleNoteItemStatus = async (
   noteItemId: string,
   currentStatus: boolean,
 ) => {
+  console.log("toggleNoteItemStatus");
+
   const res = await prisma.noteItem.update({
     where: {
       id: noteItemId,
@@ -52,6 +56,8 @@ export const toggleNoteItemStatus = async (
 };
 
 export const deleteNoteItem = async (noteItemId: string) => {
+  console.log("deleteNoteItem");
+
   const res = await prisma.noteItem.delete({
     where: {
       id: noteItemId,
@@ -63,6 +69,8 @@ export const deleteNoteItem = async (noteItemId: string) => {
 };
 
 export const deleteAllMarkedItems = async (noteId: string) => {
+  console.log("deleteAllMarkedItems");
+
   await prisma.noteItem.deleteMany({
     where: {
       noteId,
@@ -75,6 +83,8 @@ export const deleteAllMarkedItems = async (noteId: string) => {
 };
 
 export const removeAllMarks = async (noteId: string) => {
+  console.log("removeAllMarks");
+
   await prisma.noteItem.updateMany({
     where: {
       noteId,

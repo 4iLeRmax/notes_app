@@ -14,12 +14,12 @@ export default function NoteCardHeader({
 }: NoteCardHeaderProps) {
   return (
     <>
-      <div className="float-right">
+      <div className="flex items-start gap-1">
+        <h1 className="xs:text-xl text-txt-secondary font-bold w-full break-all">
+          {title}
+        </h1>
         <PinButton noteId={noteId} isPinned={isPinned} />
       </div>
-      <h1 className="text-xl text-txt-secondary font-bold break-words">
-        {title}
-      </h1>
     </>
   );
 }

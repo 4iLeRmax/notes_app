@@ -19,9 +19,9 @@ export default function LabelItem({ label, menuIsOpen }: LabelItemProps) {
       <Link
         href={`/labels/${label.id}`}
         className={cn(
-          "w-full flex items-center gap-2 p-2 rounded-3xl snap-center",
+          "w-full flex items-center gap-2 p-2 bg-primary rounded-3xl snap-center",
           {
-            "shadow-outside_small": path !== `/labels/${label.id}`,
+            "shadow-outside-small": path !== `/labels/${label.id}`,
             "shadow-inside": path === `/labels/${label.id}`,
           },
         )}

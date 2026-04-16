@@ -59,7 +59,7 @@ export default function CreateNoteList({
             ? value.split("\n").map((item, id) => (
                 <div
                   key={id}
-                  className="flex items-center gap-2 px-4 py-2 rounded-3xl shadow-outside_small"
+                  className="flex items-center gap-2 px-4 py-2 rounded-3xl shadow-outside-small"
                 >
                   <Square />
                   <textarea

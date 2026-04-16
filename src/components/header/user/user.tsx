@@ -1,14 +1,19 @@
-import { getSession } from "@/lib/actions/auth";
-import React from "react";
-import UserInfo from "./user-info";
+"use client";
 
-export default async function User() {
-  const session = await getSession();
-  if (!session) return null;
+import { useEffect, useState } from "react";
+import UserInfo from "./user-info";
+import { auth } from "@/lib/auth";
+import { authClient } from "@/lib/auth-client";
+
+export default function User() {
+  const session = authClient.useSession();
+  console.log(session);
+
+  if (!session.data) return null;
 
   return (
     <>
-      <UserInfo user={session.user} />
+      <UserInfo user={session.data.user} />
     </>
   );
 }

@@ -9,7 +9,7 @@ export default function LastUpdate({ note }: LastUpdateProps) {
   return (
     <>
       <span className="text-sm text-txt-primary">
-        Last update: {lastNoteUpdate(note)}
+        Updated: {lastNoteUpdate(note)}
       </span>
     </>
   );

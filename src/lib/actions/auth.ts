@@ -11,14 +11,15 @@ import {
   TSignIn,
   TSignUp,
 } from "../zod-schemes/sign-in-up-schemes";
+import { cache } from "react";
 
-export const getSession = async () => {
+export const getSession = cache(async () => {
+  console.log("getSession");
   return await auth.api.getSession({ headers: await headers() });
-};
+});
 
-export const isAuthorized = async (whoCallIt?: string) => {
-  console.log(whoCallIt);
-  console.log("isAuthorized");
+export const isAuthorized = cache(async (whoCallIt?: string) => {
+  console.log(`isAuthorized - ${whoCallIt}`);
   const sessionCookie = (await cookies()).get("better-auth.session_token");
   if (sessionCookie && sessionCookie.value) {
     return await prisma.session.findUnique({
@@ -27,7 +28,7 @@ export const isAuthorized = async (whoCallIt?: string) => {
       },
     });
   }
-};
+});
 
 const emailAlreadyTaken = async (emailToCheck: string) => {
   return await prisma.user.findUnique({

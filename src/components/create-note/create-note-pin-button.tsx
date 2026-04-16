@@ -16,7 +16,7 @@ export default function CreateNotePinButton({
       <button
         onClick={togglePin}
         className={cn("text-txt-secondary p-2 rounded-full", {
-          "shadow-outside_small": !isPinned,
+          "shadow-outside-small": !isPinned,
           "shadow-inside": isPinned,
         })}
       >

@@ -7,8 +7,8 @@ import React, {
   useState,
   useTransition,
 } from "react";
-import { createCopy, deleteNote, toggleNoteType } from "@/lib/actions/note";
-import { ChevronRight, EllipsisVertical } from "lucide-react";
+import { createCopies, deleteNotes, toggleNoteType } from "@/lib/actions/note";
+import { ChevronRight, EllipsisVertical, X } from "lucide-react";
 import { deleteAllMarkedItems, removeAllMarks } from "@/lib/actions/note-item";
 import More from "../UI/more";
 import LabelList from "./label/label-list/label-list";
@@ -24,11 +24,13 @@ export default function NoteMoreMenu({ noteId, fixed }: NoteMoreMenu) {
   const [showLabel, setShowLabel] = useState(false);
   const [isPending, startTransition] = useTransition();
 
-  const createLabelRef = useRef<HTMLButtonElement>(null);
+  const [searchValue, setSearchValue] = useState("");
+
+  const inputLabelRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (showLabel) {
-      createLabelRef.current?.focus();
+      inputLabelRef.current?.focus();
     }
   }, [showLabel]);
 
@@ -42,37 +44,52 @@ export default function NoteMoreMenu({ noteId, fixed }: NoteMoreMenu) {
       setShowLabel(false);
     } else setIsOpen(true);
   };
+
   const handleClose = () => {
     setIsOpen(false);
     setShowLabel(false);
   };
 
+  const handleChangeValue = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchValue(e.target.value.slice(0, 50));
+  };
+
   return (
     <>
       <More
-        btnChildren={<EllipsisVertical size={20} />}
-        // isOpen={noteId === "1010e472-07d0-4f83-b4de-892e07f2b00d" || isOpen}
+        btnChildren={
+          isOpen ? (
+            <X size={20} className="text-txt-primary" />
+          ) : (
+            <EllipsisVertical size={20} />
+          )
+        }
+        // isOpen={noteId === "89cc668b-4188-4896-a5f1-74e24ca1d293" || isOpen}
         isOpen={isOpen}
         handleOpen={toggleOpen}
         handleClose={handleClose}
         fixed={fixed}
       >
-        <div className="w-[225px]">
-          {/* {showLabel || noteId === "1010e472-07d0-4f83-b4de-892e07f2b00d" ? ( */}
+        <div className="w-full xs:w-[225px]">
+          {/* {showLabel || noteId === "89cc668b-4188-4896-a5f1-74e24ca1d293" ? ( */}
           {showLabel ? (
             <div className="pt-2">
               <div className="px-4 ">
                 <h1 className="text-txt-secondary font-bold">Add label</h1>
               </div>
-              <LabelList noteId={noteId} />
-              <CreateLabel customRef={createLabelRef} />
+              <LabelList noteId={noteId} searchValue={searchValue} />
+              <CreateLabel
+                customRef={inputLabelRef}
+                searchValue={searchValue}
+                handleChangeValue={handleChangeValue}
+              />
             </div>
           ) : (
             <div className="flex flex-col">
               <form
                 action={() => startTransition(() => toggleNoteType(noteId))}
               >
-                <button className="rounded-ss-xl rounded-se-xl w-full hover:bg-custom-blue text-txt-primary hover:text-primary px-4 py-2 flex justify-start">
+                <button className="w-full hover:bg-custom-blue text-txt-primary hover:text-primary px-4 py-2 flex justify-start">
                   TODO/TEXT
                 </button>
               </form>
@@ -83,7 +100,9 @@ export default function NoteMoreMenu({ noteId, fixed }: NoteMoreMenu) {
                 <span>Add Label</span>
                 <ChevronRight size={20} />
               </button>
-              <form action={() => startTransition(() => createCopy(noteId))}>
+              <form
+                action={() => startTransition(() => createCopies([noteId]))}
+              >
                 <button className="w-full hover:bg-custom-blue text-txt-primary hover:text-primary px-4 py-2 flex justify-start">
                   Create copy
                 </button>
@@ -104,8 +123,8 @@ export default function NoteMoreMenu({ noteId, fixed }: NoteMoreMenu) {
                   Delete all marked items
                 </button>
               </form>
-              <form action={() => startTransition(() => deleteNote(noteId))}>
-                <button className="rounded-es-xl rounded-ee-xl w-full hover:bg-custom-blue text-txt-primary hover:text-primary px-4 py-2 flex justify-start">
+              <form action={() => startTransition(() => deleteNotes([noteId]))}>
+                <button className="w-full hover:bg-custom-blue text-txt-primary hover:text-primary px-4 py-2 flex justify-start">
                   Delete
                 </button>
               </form>

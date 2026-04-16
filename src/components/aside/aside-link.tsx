@@ -25,9 +25,9 @@
 //       <Link
 //         href={link}
 //         className={cn(
-//           "w-full flex items-center gap-2 p-2 rounded-2xl shadow-outside_small mt-4",
+//           "w-full flex items-center gap-2 p-2 rounded-2xl shadow-outside-small mt-4",
 //           {
-//             "shadow-outside_small": path !== link,
+//             "shadow-outside-small": path !== link,
 //             "shadow-inside": path === link,
 //           },
 //         )}
@@ -65,9 +65,9 @@ export default function AsideLink({
       <Link
         href={link}
         className={cn(
-          "w-full flex items-center gap-2 p-2  shadow-outside_small rounded-3xl",
+          "w-full flex items-center gap-2 p-2  shadow-outside-small rounded-3xl",
           {
-            "shadow-outside_small": path !== link,
+            "shadow-outside-small": path !== link,
             "shadow-inside": path === link,
             "w-[41px] ": !menuIsOpen,
             "w-full ": menuIsOpen,

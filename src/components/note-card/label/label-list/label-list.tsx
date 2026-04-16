@@ -9,16 +9,17 @@ import LabelListItem from "./label-list-item";
 
 interface LabelListProps {
   noteId: string;
+  searchValue: string;
 }
 
-export default function LabelList({ noteId }: LabelListProps) {
+export default function LabelList({ noteId, searchValue }: LabelListProps) {
   const {
     data: note,
     isLoading: noteIsLoading,
     refetch: refetchNote,
   } = useQuery({
     queryKey: [`note-${noteId}`],
-    queryFn: () => getNoteById(noteId),
+    queryFn: async () => await getNoteById(noteId),
   });
 
   const {
@@ -45,9 +46,13 @@ export default function LabelList({ noteId }: LabelListProps) {
         <Loader size={20} className="animate-spin" />
       </div>
     );
-  if (!note || !labels) return null;
 
+  if (!note || !labels) return null;
   if (labels.length === 0) return null;
+
+  const sortedLabels = labels.filter((label) =>
+    label.name.toLowerCase().includes(searchValue.toLowerCase()),
+  );
 
   return (
     <>
@@ -56,7 +61,7 @@ export default function LabelList({ noteId }: LabelListProps) {
           "h-40 overflow-y-scroll": labels.length > 5,
         })}
       >
-        {labels.map((label) => (
+        {sortedLabels.map((label) => (
           <LabelListItem
             key={label.id}
             label={label}

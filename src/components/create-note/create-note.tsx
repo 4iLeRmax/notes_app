@@ -111,7 +111,7 @@ export default function CreateNote() {
         onFocus={handleFocus}
         onBlur={handleBlur}
         className={cn(
-          "bg-primary relative w-full sm:w-2/3 max-w-120 rounded-4xl shadow-outside_small outline-none",
+          "bg-primary relative w-full sm:w-2/3 max-w-120 rounded-4xl shadow-outside-small outline-none",
           {
             "py-4": !formIsOpen,
             "py-8": formIsOpen,

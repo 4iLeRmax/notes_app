@@ -10,6 +10,7 @@ import { Path, UseFormRegister } from "react-hook-form";
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   isPassword?: boolean;
   customClassNames?: string;
+  customRef?: any;
 }
 
 export default function FormInput({
@@ -18,12 +19,10 @@ export default function FormInput({
   onChange,
   // customClassNames,
   className,
+  customRef,
   ...props
 }: InputProps) {
   const [showPassword, setShowPassword] = useState(false);
-  // const [value, setValue] = useState("");
-
-  // const clearInput = () => setValue("");
 
   const clearInput = () => {
     onChange?.({
@@ -34,6 +33,7 @@ export default function FormInput({
   return (
     <div className="relative w-full">
       <input
+        ref={customRef}
         {...(showPassword ? { type: "text" } : { type: "password" })}
         className={cn(
           "w-full shadow-inside bg-primary pl-4 py-3 rounded-3xl outline-none text-txt-secondary placeholder:text-txt-primary",

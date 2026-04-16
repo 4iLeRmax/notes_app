@@ -2,11 +2,14 @@ export default function lastNoteUpdate(note: Note) {
   let lastUpdate: Date;
 
   if (note.content.length === 0) {
-    lastUpdate = note.updatedAt;
+    lastUpdate = new Date(note.updatedAt);
   } else {
-    lastUpdate = note.content.sort(
-      (a, b) => b.updatedAt.getTime() - a.updatedAt.getTime(),
-    )[0].updatedAt;
+    lastUpdate = new Date(
+      note.content.sort(
+        (a, b) =>
+          new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
+      )[0].updatedAt,
+    );
   }
   const months = [
     "Jan",
@@ -22,7 +25,6 @@ export default function lastNoteUpdate(note: Note) {
     "Nov",
     "Dec",
   ];
-
   const timeNow = new Date();
   if (timeNow.getTime() - lastUpdate.getTime() < 24 * 60 * 60 * 1000) {
     return `${lastUpdate.getHours()}:${lastUpdate.getMinutes()}`;

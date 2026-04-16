@@ -15,9 +15,10 @@ export default function ViewModeLayout({
     <>
       <div
         className={clsx("", {
-          "columns-1 sm:columns-2 lg:columns-3 xl:columns-4 2xl:columns-5 gap-5":
+          // "columns-1 sm:columns-2 lg:columns-3 xl:columns-4 2xl:columns-5 gap-5":
+          "columns-2 sm:columns-2 lg:columns-3 xl:columns-4 2xl:columns-5 gap-2 xs:gap-5":
             viewMode === ViewMode.GRID,
-          "grid grid-cols-1 w-full gap-5 justify-items-center px-5 sm:px-0":
+          "grid grid-cols-1 w-full gap-5 justify-items-center":
             viewMode === ViewMode.LIST,
         })}
       >

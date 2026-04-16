@@ -14,8 +14,8 @@ export default function DeleteLabelBtn({ labelId }: DeleteLabelBtnProps) {
   const { mutate: handleDeleteLabel, isPending } = useMutation({
     mutationFn: async () => await deleteLabel(labelId),
     mutationKey: ["labels"],
-    onSuccess: async () => {
-      await queryClient.refetchQueries({ queryKey: ["labels"] });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["labels"] });
     },
   });
 

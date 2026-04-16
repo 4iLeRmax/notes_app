@@ -56,7 +56,7 @@ const DialogPortal = ({ children }: { children: React.ReactNode }) => {
   return createPortal(children, modalsContainer);
 };
 
-const DialogOverLay = ({ handleClose }: { handleClose: () => void }) => {
+const DialogOverlay = ({ handleClose }: { handleClose: () => void }) => {
   return (
     <>
       <div
@@ -93,7 +93,7 @@ export {
   CloseModalOnNotFound,
   DialogWrapper,
   DialogPortal,
-  DialogOverLay,
+  DialogOverlay,
   DialogContent,
   DialogCloseButton,
 };

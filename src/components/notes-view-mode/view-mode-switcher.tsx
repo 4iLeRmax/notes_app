@@ -18,7 +18,7 @@ export default function ViewModeSwitcher({
         className={cn(
           "w-[41px] h-[41px] flex items-center justify-center bg-primary rounded-full shrink-0",
           {
-            "shadow-outside_small": viewMode === ViewMode.GRID,
+            "shadow-outside-small": viewMode === ViewMode.GRID,
             "shadow-inside": viewMode === ViewMode.LIST,
           },
         )}

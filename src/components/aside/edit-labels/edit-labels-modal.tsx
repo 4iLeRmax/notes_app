@@ -1,14 +1,11 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import BaseModal from "../../UI/base-modal";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createLabel, deleteLabel, getLabels } from "@/lib/actions/label";
-import FormInput from "../../UI/formElements/form-input";
-import { Loader, X } from "lucide-react";
-import CreateLabelBtn from "./UI/create-label-btn";
 import CreateLabelForm from "./create-label-form";
 import EditListLabels from "./edit-list-labels";
+import { createLabel, getLabels } from "@/lib/actions/label";
 
 interface EditLabelsModalProps {
   handleClose: () => void;
@@ -21,7 +18,7 @@ export default function EditLabelsModal({ handleClose }: EditLabelsModalProps) {
 
   const { data: labels, refetch } = useQuery({
     queryKey: ["labels"],
-    queryFn: async () => await getLabels(),
+    queryFn: getLabels,
   });
 
   const { mutate: handleSubmit, isPending } = useMutation({
@@ -30,7 +27,9 @@ export default function EditLabelsModal({ handleClose }: EditLabelsModalProps) {
     },
     onSuccess: async () => {
       setSearchValue("");
-      await refetch();
+      await queryClient.invalidateQueries({
+        queryKey: ["labels"],
+      });
     },
   });
 
@@ -49,8 +48,9 @@ export default function EditLabelsModal({ handleClose }: EditLabelsModalProps) {
       <BaseModal customClose={handleClose}>
         <div className="bg-primary pt-[60px] pb-4 rounded-4xl shadow-outside w-screen xs:w-100 sm:w-150">
           <div>
-            <h2 className="text-lg font-bold mb-4 px-8 text-txt-secondary">
-              Edit Labels
+            <h2 className="flex items-center gap-1 text-lg font-bold mb-4 px-8 text-txt-secondary">
+              <span>Edit Labels</span>
+              {labels.length > 0 ? <span>({labels.length})</span> : null}
             </h2>
             <div className="px-8">
               <CreateLabelForm
@@ -61,17 +61,6 @@ export default function EditLabelsModal({ handleClose }: EditLabelsModalProps) {
               />
             </div>
             <EditListLabels labels={labels} searchValue={searchValue} />
-
-            {/* {isPending ? (
-              <div className="w-full h-full flex items-center justify-center">
-                <Loader
-                  size={25}
-                  className="animate-spin text-txt-primary mt-4"
-                />
-              </div>
-            ) : (
-              <EditListLabels labels={labels} searchValue={searchValue} />
-            )} */}
           </div>
         </div>
       </BaseModal>

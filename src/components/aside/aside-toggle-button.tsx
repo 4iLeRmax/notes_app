@@ -21,7 +21,7 @@ export default function AsideToggleButton({
         className={cn(
           "w-[41px] h-[41px] flex items-center justify-center bg-primary rounded-full shrink-0",
           {
-            "shadow-outside_small": !isOpen,
+            "shadow-outside-small": !isOpen,
             "shadow-inside": isOpen,
           },
         )}

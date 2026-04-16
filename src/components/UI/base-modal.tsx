@@ -4,7 +4,7 @@ import React from "react";
 import {
   DialogCloseButton,
   DialogContent,
-  DialogOverLay,
+  DialogOverlay,
   DialogPortal,
   DialogWrapper,
   RootDialog,
@@ -33,7 +33,7 @@ export default function BaseModal({
       <RootDialog handleClose={handleClose}>
         <DialogPortal>
           <DialogWrapper>
-            <DialogOverLay handleClose={handleClose} />
+            <DialogOverlay handleClose={handleClose} />
             <DialogContent>
               <DialogCloseButton handleClose={handleClose} />
               {children}

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { isAuthorized } from "./lib/actions/auth";
+import { getSession } from "./lib/actions/auth";
 
 export async function proxy(request: NextRequest) {
   // Redirect root path to /notes
@@ -10,7 +10,7 @@ export async function proxy(request: NextRequest) {
   if (request.headers.get("next-action")) {
     return NextResponse.next();
   }
-  if (!(await isAuthorized("proxy"))) {
+  if (!(await getSession())) {
     return NextResponse.redirect(new URL("/sign-in", request.url));
   }
 

@@ -1,18 +1,21 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { getSession, isAuthorized } from "./auth";
+import { getSession } from "./auth";
 import prisma from "../prisma";
+import { cache } from "react";
+import { connection } from "next/server";
 
-export const getLabels = async () => {
-  const session = await isAuthorized();
-
+export const getLabels = cache(async () => {
+  // await connection();
+  console.log("getLabels");
+  const session = await getSession();
   if (!session) throw new Error("session error");
 
   try {
     const labels = await prisma.label.findMany({
       where: {
-        userId: session.userId,
+        userId: session.session.userId,
       },
       orderBy: {
         createdAt: "desc",
@@ -21,13 +24,13 @@ export const getLabels = async () => {
 
     return labels;
   } catch {
-    throw new Error(`Can't get labels for user ${session.userId}`);
+    throw new Error(`Can't get labels for user ${session.session.userId}`);
   }
-};
+});
 
-export const getLabelById = async (labelId: string) => {
-  const session = await isAuthorized();
-
+export const getLabelById = cache(async (labelId: string) => {
+  console.log("getLabelById");
+  const session = await getSession();
   if (!session) throw new Error("session error");
 
   try {
@@ -41,13 +44,12 @@ export const getLabelById = async (labelId: string) => {
   } catch (e) {
     throw new Error(`Can't get label ${labelId}`);
   }
-};
+});
 
-export const createLabel = async (
-  // prevState: { success?: boolean; error?: string } | null,
-  formData: FormData,
-) => {
-  const session = await isAuthorized();
+export const createLabel = async (formData: FormData) => {
+  console.log("createLabel");
+
+  const session = await getSession();
   if (!session) return { error: "Session error" };
 
   const label = formData.get("label") as string;
@@ -58,9 +60,10 @@ export const createLabel = async (
   await prisma.label.create({
     data: {
       name: label,
-      userId: session.userId,
+      userId: session.session.userId,
     },
   });
+
   revalidatePath("/notes");
 };
 
@@ -81,6 +84,8 @@ export const updateLabel = async (labelId: string, formData: FormData) => {
 };
 
 export const deleteLabel = async (labelId: string) => {
+  console.log("deleteLabel");
+
   await prisma.label.delete({
     where: {
       id: labelId,
@@ -95,6 +100,8 @@ export const toggleLabelToNote = async (
   labelId: string,
   labelIsAdded: boolean,
 ) => {
+  console.log("toggleLabelToNote");
+
   const currentNote = await prisma.note.findUnique({
     where: {
       id: noteId,
@@ -141,6 +148,8 @@ export const toggleLabelToNote = async (
 };
 
 export const removeLabelFromNote = async (noteId: string, labelId: string) => {
+  console.log("removeLabelFromNote");
+
   await prisma.note.update({
     where: {
       id: noteId,

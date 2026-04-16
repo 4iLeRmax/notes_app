@@ -14,8 +14,13 @@
   --custom-red: #e51e1b;
   --custom-green: #2bab4a;
 
-  --br-primary: 15px;
-  --br-secondary: 20px;
+  --s-shadow-outside:
+    rgba(255, 255, 255, 1) -8px -8px 8px, rgba(0, 0, 0, 0.2) 8px 8px 8px;
+  --s-shadow-outside-small:
+    rgba(255, 255, 255, 1) -3px -3px 6px, rgba(0, 0, 0, 0.2) 3px 3px 6px;
+  --s-shadow-inside:
+    inset rgba(0, 0, 0, 0.2) 2px 3px 6px,
+    inset rgba(255, 255, 255, 1) -2px -3px 6px;
 }
 
 html.dark {
@@ -30,6 +35,10 @@ html.dark {
   --custom-blue: #5a7fff;
   --custom-red: #ff4544;
   --custom-green: #4fd566;
+
+  --s-shadow-outside: rgba(255, 255, 255, 0.1) 0px 0px 5px;
+  --s-shadow-outside-small: rgba(255, 255, 255, 0.1) 0px 0px 5px;
+  --s-shadow-inside: rgba(255, 255, 255, 0.1) 0px 0px 5px;
 }
 
 @theme inline {
@@ -50,6 +59,10 @@ html.dark {
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 
+  --shadow-outside: var(--s-shadow-outside);
+  --shadow-outside-small: var(--s-shadow-outside-small);
+  --shadow-inside: var(--s-shadow-inside);
+
   --breakpoint-xs: 480px;
 }
 
@@ -60,47 +73,6 @@ body {
 
 button {
   cursor: pointer;
-}
-
-.shadow-inside {
-  box-shadow:
-    inset rgba(0, 0, 0, 0.2) 2px 3px 6px,
-    inset rgba(255, 255, 255, 1) -2px -3px 6px;
-}
-
-html.dark .shadow-inside {
-  /* box-shadow:
-    inset rgba(0, 0, 0, 0.5) 2px 3px 6px,
-    inset rgba(255, 255, 255, 0.1) -2px -3px 6px; */
-  box-shadow: rgba(255, 255, 255, 0.1) 0px 0px 5px;
-}
-
-.shadow-outside {
-  box-shadow:
-    rgba(255, 255, 255, 1) -8px -8px 8px,
-    rgba(0, 0, 0, 0.2) 8px 8px 8px;
-  /* inset rgba(0, 0, 0, 0.2) 2px 3px 6px,
-    inset rgba(255, 255, 255, 1) -2px -3px 6px; */
-}
-
-html.dark .shadow-outside {
-  /* box-shadow:
-    rgba(255, 255, 255, 0.1) -8px -8px 8px,
-    rgba(0, 0, 0, 0.5) 8px 8px 8px; */
-  box-shadow: rgba(255, 255, 255, 0.1) 0px 0px 5px;
-}
-
-.shadow-outside_small {
-  box-shadow:
-    rgba(255, 255, 255, 1) -3px -3px 6px,
-    rgba(0, 0, 0, 0.2) 3px 3px 6px;
-}
-
-html.dark .shadow-outside_small {
-  /* box-shadow:
-    rgba(255, 255, 255, 0.1) -3px -3px 6px,
-    rgba(0, 0, 0, 0.5) 3px 3px 6px; */
-  box-shadow: rgba(255, 255, 255, 0.1) 0px 0px 5px;
 }
 
 .shadow-button {
@@ -116,6 +88,10 @@ html.dark .shadow-button {
   height: 8px;
 }
 
+.scrollbar-thin::-webkit-scrollbar {
+  width: 4px;
+  height: 8px;
+}
 ::-webkit-scrollbar-track {
   background: var(--bg-primary);
   /* box-shadow: rgba(0, 0, 0, 0.2) -6px 0px 8px; */

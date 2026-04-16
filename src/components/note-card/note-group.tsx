@@ -12,14 +12,14 @@ export default function NoteGroup({ notes, label }: NoteGroupProps) {
 
   return (
     <>
-      <div className="flex flex-col items-center gap-3">
+      <div className="flex flex-col xs:items-center gap-3 w-full">
         {label ? (
           <h1 className="text-txt-primary select-none">{label}</h1>
         ) : null}
         <ViewModeLayout>
           {notes.map((note) => (
             <ViewModeNoteCard key={note.id}>
-              <div className="break-inside-avoid">
+              <div className="break-inside-avoid w-full">
                 <NoteCard note={note} />
               </div>
             </ViewModeNoteCard>

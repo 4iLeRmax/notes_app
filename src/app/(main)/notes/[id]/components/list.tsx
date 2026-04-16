@@ -14,7 +14,10 @@ export default function List({ noteId, list }: ListProps) {
       ...item,
       content: item.content.replace(/[\n\r]/g, ""),
     }))
-    .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+    .sort(
+      (a, b) =>
+        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+    );
 
   const marked = cleanList.filter((item) => item.isDone);
   const unmarked = cleanList.filter((item) => !item.isDone);

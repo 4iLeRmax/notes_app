@@ -28,7 +28,7 @@ export default function ListItem({ listItem }: { listItem: NoteItem }) {
           "flex items-center gap-2 w-full py-2 px-4 rounded-3xl",
           {
             "line-through text-txt-primary": listItem.isDone,
-            "shadow-outside_small": !focused,
+            "shadow-outside-small": !focused,
             "text-txt-secondary": focused,
           },
         )}

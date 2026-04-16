@@ -32,7 +32,7 @@ export default function EditLabelForm({
         const formData = new FormData();
         formData.append("label", value);
         await updateLabel(labelId, formData);
-        await queryClient.refetchQueries({ queryKey: ["labels"] });
+        await queryClient.invalidateQueries({ queryKey: ["labels"] });
       } catch (error) {
         console.error("Failed to update label:", error);
       } finally {

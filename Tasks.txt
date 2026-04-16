@@ -1,17 +1,22 @@
-delete label ISSUES !!!
+User Info not working as well (mb session cache)
 
-labels from note-card (sbmit button, add search before create)
+(MOBILE) Hover effect
 
-Error for Sign In Page 'Account not exist'
-Error for Sign Up Page 'Account exist'
+smaller acroll bar for aside menu
 
-(UI) Custom AnimatePresence hoc 
+(MOBILE) Search Bar
+
+NoteDisplay repair grid for responsive design
+Skeletons for everything
+
+(DARK THEME) active styles for dark theme
+
+(DARK THEME) for cards and modals use bg-secondary 
+
+(SIGN IN) Error for Sign In Page 'Account not exist'
+(SIGN UP) Error for Sign Up Page 'Account exist'
 
 Find Account -> reset Password
-
-two columns on mobile version
-
-Seletct more notes
 
 Auto submitting forms with debounce function for:
     - Updating title

@@ -16,10 +16,10 @@ export default function SearchBar({
 }: SearchBarProps) {
   return (
     <>
-      <div className="fixed z-20 top-[calc(20px+41px+10px)] right-5 xs:right-[134px] w-100 ">
+      <div className="fixed z-20 top-[calc(20px+41px+10px)] right-2 xs:right-[134px] w-[calc(100%-16px)] xs:w-100 ">
         <div className="bg-primary shadow-outside rounded-4xl p-4">
           <div className="flex items-center gap-2 text-txt-primary">
-            <div className="p-2 rounded-full shadow-outside_small">
+            <div className="p-2 rounded-full shadow-outside-small">
               <Search size={25} />
             </div>
 
