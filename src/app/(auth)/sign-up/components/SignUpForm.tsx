@@ -1,23 +1,23 @@
 "use client";
 
 import React from "react";
-import z from "zod";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import Image from "next/image";
 import Link from "next/link";
 import FormButton from "@/components/UI/formElements/form-button";
-import FormInput from "@/components/UI/formElements/form-input";
 import ControlledCustomInput from "@/components/UI/formElements/controlled-custom-input";
-import { SignUpAction } from "@/lib/actions/auth";
+import { SignUpAction, signinActionWithGoogle } from "@/lib/actions/auth";
 import { SignUpScheme, TSignUp } from "@/lib/zod-schemes/sign-in-up-schemes";
+import { authClient } from "@/lib/auth-client";
 
 export default function SignUpForm() {
   const {
     control,
     handleSubmit,
-    formState: { errors },
+    setError,
+    formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(SignUpScheme),
     defaultValues: {
@@ -30,7 +30,17 @@ export default function SignUpForm() {
   });
 
   const onSubmit: SubmitHandler<TSignUp> = async (data) => {
-    await SignUpAction(data);
+    const res = await SignUpAction(data);
+    if (res?.error) {
+      setError("root", { message: res.error });
+    }
+  };
+
+  const handleSignInWithGoogle = async () => {
+    await authClient.signIn.social({
+      provider: "google",
+      callbackURL: "/notes",
+    });
   };
 
   return (
@@ -80,105 +90,13 @@ export default function SignUpForm() {
                 isPassword
               />
             </div>
-            {/* <div className="flex flex-col items-center gap-4">
-              <div className="w-full flex flex-col">
-                <Controller
-                  name="email"
-                  control={control}
-                  render={({ field }) => (
-                    <FormInput
-                      {...field}
-                      type="email"
-                      name="email"
-                      placeholder="Email..."
-                    />
-                  )}
-                />
-                {errors.email ? (
-                  <span className="text-custom-red text-xs">
-                    {errors.email.message}
-                  </span>
-                ) : null}
-              </div>
-              <div className="w-full flex flex-col">
-                <Controller
-                  name="firstName"
-                  control={control}
-                  render={({ field }) => (
-                    <FormInput
-                      {...field}
-                      type="text"
-                      name="firstName"
-                      placeholder="First name..."
-                    />
-                  )}
-                />
-                {errors.firstName ? (
-                  <span className="text-custom-red text-xs">
-                    {errors.firstName.message}
-                  </span>
-                ) : null}
-              </div>
-              <div className="w-full flex flex-col">
-                <Controller
-                  name="lastName"
-                  control={control}
-                  render={({ field }) => (
-                    <FormInput
-                      {...field}
-                      type="text"
-                      name="lastName"
-                      placeholder="Last name..."
-                    />
-                  )}
-                />
-                {errors.lastName ? (
-                  <span className="text-custom-red text-xs">
-                    {errors.lastName.message}
-                  </span>
-                ) : null}
-              </div>
-              <div className="w-full flex flex-col">
-                <Controller
-                  name="password"
-                  control={control}
-                  render={({ field }) => (
-                    <FormInput
-                      {...field}
-                      isPassword
-                      name="password"
-                      placeholder="Password..."
-                    />
-                  )}
-                />
-                {errors.password ? (
-                  <span className="text-custom-red text-xs">
-                    {errors.password.message}
-                  </span>
-                ) : null}
-              </div>
-              <div className="w-full flex flex-col">
-                <Controller
-                  name="confirmPassword"
-                  control={control}
-                  render={({ field }) => (
-                    <FormInput
-                      {...field}
-                      isPassword
-                      name="confirmPassword"
-                      placeholder="Confirm password..."
-                    />
-                  )}
-                />
-                {errors.confirmPassword ? (
-                  <span className="text-custom-red text-xs">
-                    {errors.confirmPassword.message}
-                  </span>
-                ) : null}
-              </div>
-            </div> */}
             <div className="mt-10">
-              <FormButton>Sign Up</FormButton>
+              <FormButton isLoading={isSubmitting}>Sign Up</FormButton>
+              {errors.root ? (
+                <span className="text-custom-red text-xs flex justify-center mt-2">
+                  {errors.root.message}
+                </span>
+              ) : null}
               <Link
                 href="/sign-in"
                 className="text-txt-primary text-sm flex items-center justify-center mt-2"
@@ -196,7 +114,18 @@ export default function SignUpForm() {
               <div className="bg-txt-primary w-full flex h-px"></div>
             </div>
             <div className="flex items-center justify-center mt-2 gap-3">
-              <Image src={"google.svg"} width={40} height={40} alt="" />
+              <button
+                type="button"
+                onClick={handleSignInWithGoogle}
+                className="hover:opacity-80 transition-opacity"
+              >
+                <Image
+                  src={"google.svg"}
+                  width={40}
+                  height={40}
+                  alt="Sign in with Google"
+                />
+              </button>
               <Image src={"apple.svg"} width={40} height={40} alt="" />
             </div>
           </div>

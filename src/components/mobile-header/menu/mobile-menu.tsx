@@ -26,17 +26,16 @@ export default function MobileMenu({
             menuIsOpen={menuIsOpen}
             toggleMenuIsOpen={toggleMenuIsOpen}
           />
-          <Activity mode={menuIsOpen ? "visible" : "hidden"}>
+          {menuIsOpen ? (
             <div className="fixed top-3 right-3 flex items-center gap-4 text-txt-primary">
               <ThemeSwitcher iconSize={25} />
               <ViewModeSwitcher iconSize={25} />
             </div>
-          </Activity>
+          ) : null}
         </div>
-
-        <Activity mode={menuIsOpen ? "visible" : "hidden"}>
+        {menuIsOpen ? (
           <MobileMenuModal menuIsOpen={menuIsOpen} handleClose={handleClose} />
-        </Activity>
+        ) : null}
       </div>
     </>
   );

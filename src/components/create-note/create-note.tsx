@@ -111,7 +111,7 @@ export default function CreateNote() {
         onFocus={handleFocus}
         onBlur={handleBlur}
         className={cn(
-          "bg-primary relative w-full sm:w-2/3 max-w-120 rounded-4xl shadow-outside-small outline-none",
+          "bg-secondary relative w-full sm:max-w-120 rounded-4xl shadow-outside-small outline-none",
           {
             "py-4": !formIsOpen,
             "py-8": formIsOpen,
@@ -145,7 +145,7 @@ export default function CreateNote() {
                     value={titleValue}
                     onChange={(e) => setTitleValue(e.target.value)}
                     placeholder="Title..."
-                    className="rounded-2xl text-txt-primary"
+                    className="rounded-2xl text-txt-primary bg-secondary"
                   />
                 </div>
               ) : null}

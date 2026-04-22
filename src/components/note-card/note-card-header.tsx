@@ -15,7 +15,7 @@ export default function NoteCardHeader({
   return (
     <>
       <div className="flex items-start gap-1">
-        <h1 className="xs:text-xl text-txt-secondary font-bold w-full break-all">
+        <h1 className="sm:text-xl text-txt-secondary font-bold w-full break-all">
           {title}
         </h1>
         <PinButton noteId={noteId} isPinned={isPinned} />

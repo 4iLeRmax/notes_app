@@ -21,7 +21,7 @@ export default function LogoutButton() {
         className={cn(
           "flex items-center justify-center px-4 py-2 rounded-2xl gap-2 y shadow-outside-small",
           "w-full bg-custom-blue text-primary",
-          "xs:max-w-60 xs:py-1 xs:bg-primary xs:text-txt-primary",
+          "sm:max-w-60 sm:py-1 sm:bg-primary sm:text-txt-primary",
         )}
       >
         <LogOut size={20} />

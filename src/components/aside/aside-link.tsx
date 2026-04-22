@@ -65,7 +65,7 @@ export default function AsideLink({
       <Link
         href={link}
         className={cn(
-          "w-full flex items-center gap-2 p-2  shadow-outside-small rounded-3xl",
+          "w-full flex items-center gap-2 p-2 bg-primary shadow-outside-small rounded-3xl",
           {
             "shadow-outside-small": path !== link,
             "shadow-inside": path === link,

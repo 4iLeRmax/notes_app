@@ -11,12 +11,12 @@ export default function MainLayout({
   modal: React.ReactNode;
 }) {
   return (
-    <div className="flex items-start mx-3 xs:mx-0 xs:gap-5">
-      <div className="hidden xs:flex">
+    <div className="relative flex items-start mx-3 sm:mx-5 sm:gap-5">
+      <div className="hidden sm:flex">
         <AsideSection />
         <Header />
       </div>
-      <div className="flex xs:hidden">
+      <div className="flex sm:hidden">
         <MobileHeader />
       </div>
 

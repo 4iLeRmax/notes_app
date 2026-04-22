@@ -67,7 +67,6 @@ export default function SelectNote({
   };
 
   const handleTouchMove = () => {
-    // Cancel long-press if user is moving (scrolling)
     handlePressEnd();
   };
 
@@ -109,15 +108,16 @@ export default function SelectNote({
         onTouchCancel={touchCancel}
         onTouchMove={touchMove}
         className={cn(
-          "relative rounded-xl xs:rounded-3xl bg-primary w-full note-card",
+          "relative rounded-xl sm:rounded-3xl bg-secondary w-full note-card",
           {
             "shadow-outside-small": !isSelected && !isHovered,
-            "shadow-inside ": isSelected || isHovered,
+            "shadow-outside-small sm:shadow-inside ": isHovered,
+            "shadow-inside ": isSelected,
           },
         )}
       >
         {isSelected || isHovered ? (
-          <div className="hidden xs:flex absolute z-20 top-3 -left-3.5">
+          <div className="hidden sm:flex absolute z-20 top-3 -left-3.5">
             <button
               data-note-card-button
               onClick={() => toggleSelectedNote(note)}
@@ -131,7 +131,7 @@ export default function SelectNote({
           <div
             style={{ position: "absolute", inset: 0, zIndex: 1 }}
             className={cn("absolute inset-0 z-10 cursor-pointer", {
-              "bg-txt-primary/20 rounded-xl xs:rounded-3xl": isSelected,
+              "bg-txt-primary/20 rounded-xl sm:rounded-3xl": isSelected,
             })}
             onClick={() => toggleSelectedNote(note)}
           />

@@ -16,7 +16,7 @@ export default function ViewModeSwitcher({
       <button
         onClick={toggleViewMode}
         className={cn(
-          "w-[41px] h-[41px] flex items-center justify-center bg-primary rounded-full shrink-0",
+          "w-[41px] h-[41px] flex items-center justify-center bg-secondary sm:bg-primary rounded-full shrink-0",
           {
             "shadow-outside-small": viewMode === ViewMode.GRID,
             "shadow-inside": viewMode === ViewMode.LIST,

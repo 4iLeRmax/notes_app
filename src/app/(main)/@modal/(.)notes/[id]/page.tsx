@@ -20,7 +20,7 @@ export default async function InterceptRoute({
       <CloseModalOnNotFound noteExists={!!note} />
       {note ? (
         <BaseModal>
-          <div className="w-screen xs:w-100 sm:w-150 bg-primary shadow-outside rounded-4xl pt-13 sm:pt-15 pb-4">
+          <div className="w-screen sm:w-150 bg-primary shadow-outside rounded-4xl pt-13 sm:pt-15 pb-4">
             <div className="px-4 sm:px-8">
               <TitleForm title={note.title} noteId={note.id} />
             </div>

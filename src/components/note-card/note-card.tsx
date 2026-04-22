@@ -15,9 +15,9 @@ export default function NoteCard({ note }: NoteCardProps) {
   return (
     <>
       <SelectNote note={note}>
-        <div className="relative rounded-xl xs:rounded-3xl w-full select-none ">
+        <div className="relative rounded-xl sm:rounded-3xl w-full select-none ">
           <Link href={`/notes/${note.id}`}>
-            <div className="px-2 xs:px-4 pt-3">
+            <div className="px-2 sm:px-4 pt-3">
               <NoteCardHeader
                 noteId={note.id}
                 title={note.title}
@@ -25,10 +25,10 @@ export default function NoteCard({ note }: NoteCardProps) {
               />
             </div>
 
-            <div className="mt-3 px-2 xs:px-4 text-sm xs:text-base">
+            <div className="mt-3 px-2 sm:px-4 text-sm sm:text-base">
               <NoteCardMain noteType={note.type} noteContent={note.content} />
             </div>
-            <div className="mt-4 px-2 xs:px-4 pb-5">
+            <div className="mt-4 px-2 sm:px-4 pb-5">
               <NoteCardLabels note={note} maxLength={3} />
             </div>
             <div className="px-4 pb-3">
@@ -36,7 +36,7 @@ export default function NoteCard({ note }: NoteCardProps) {
             </div>
           </Link>
 
-          <div className="absolute bottom-0 right-0 pb-3 px-2 xs:px-4 sss">
+          <div className="absolute bottom-0 right-0 pb-3 px-2 sm:px-4 sss">
             <NoteMoreMenu noteId={note.id} />
           </div>
         </div>

@@ -12,9 +12,9 @@ export default function NoteGroup({ notes, label }: NoteGroupProps) {
 
   return (
     <>
-      <div className="flex flex-col xs:items-center gap-3 w-full">
+      <div className="flex flex-col lg:items-center gap-3 w-full">
         {label ? (
-          <h1 className="text-txt-primary select-none">{label}</h1>
+          <h1 className="text-txt-primary select-none text-center">{label}</h1>
         ) : null}
         <ViewModeLayout>
           {notes.map((note) => (

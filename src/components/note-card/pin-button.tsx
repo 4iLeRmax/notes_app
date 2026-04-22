@@ -18,10 +18,13 @@ export default function PinButton({ noteId, isPinned }: PinButtonProps) {
         className="flex items-center justify-center"
       >
         <button
-          className={clsx("text-txt-secondary  p-1 rounded-full outline-none", {
-            "shadow-outside-small": !isPinned,
-            "shadow-inside": isPinned,
-          })}
+          className={clsx(
+            "text-txt-secondary bg-primary  p-1 rounded-full outline-none",
+            {
+              "shadow-outside-small": !isPinned,
+              "shadow-inside": isPinned,
+            },
+          )}
           onClick={(e: React.MouseEvent) => e.stopPropagation()}
         >
           {isPinned ? <PinOff size={20} /> : <Pin size={20} />}

@@ -64,14 +64,12 @@ export default function NoteMoreMenu({ noteId, fixed }: NoteMoreMenu) {
             <EllipsisVertical size={20} />
           )
         }
-        // isOpen={noteId === "89cc668b-4188-4896-a5f1-74e24ca1d293" || isOpen}
         isOpen={isOpen}
         handleOpen={toggleOpen}
         handleClose={handleClose}
         fixed={fixed}
       >
-        <div className="w-full xs:w-[225px]">
-          {/* {showLabel || noteId === "89cc668b-4188-4896-a5f1-74e24ca1d293" ? ( */}
+        <div className="w-full sm:w-[225px]">
           {showLabel ? (
             <div className="pt-2">
               <div className="px-4 ">

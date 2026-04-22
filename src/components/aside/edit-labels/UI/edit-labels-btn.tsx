@@ -16,12 +16,15 @@ export default function EditLabelsBtn({
   return (
     <>
       <button
-        className={cn("h-[41px] flex items-center gap-2 rounded-3xl", {
-          "w-[41px] justify-center": !menuIsOpen,
-          "w-52 justify-start p-2": menuIsOpen,
-          "shadow-outside-small": !modalIsOpen,
-          "shadow-inside": modalIsOpen,
-        })}
+        className={cn(
+          "h-[41px] flex items-center bg-primary gap-2 rounded-3xl",
+          {
+            "w-[41px] justify-center": !menuIsOpen,
+            "w-52 justify-start p-2": menuIsOpen,
+            "shadow-outside-small": !modalIsOpen,
+            "shadow-inside": modalIsOpen,
+          },
+        )}
         onClick={toggleModalOpen}
       >
         <Pencil size={25} className="shrink-0" />

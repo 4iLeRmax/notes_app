@@ -89,6 +89,7 @@ import Link from "next/link";
 import React, { Activity, useEffect, useState } from "react";
 import LabelItem from "./label-item";
 import cn from "@/lib/cn";
+import { LabelsIconSkeleton } from "../UI/skeletons";
 
 interface LabelGroupProps {
   menuIsOpen: boolean;
@@ -96,11 +97,12 @@ interface LabelGroupProps {
 
 export default function LabelGroup({ menuIsOpen }: LabelGroupProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const { data: labels } = useQuery({
+  const { data: labels, isLoading } = useQuery({
     queryKey: ["labels"],
     queryFn: async () => await getLabels(),
   });
 
+  if (isLoading) return <LabelsIconSkeleton />;
   if (!labels || labels.length < 1) return null;
 
   // useEffect(() => {
@@ -118,7 +120,7 @@ export default function LabelGroup({ menuIsOpen }: LabelGroupProps) {
               setIsOpen((p) => !p);
             }}
             className={cn(
-              "h-[41px] flex items-center gap-2 p-2 rounded-3xl justify-between",
+              "h-[41px] flex items-center gap-2 bg-primary p-2 rounded-3xl justify-between",
               {
                 "shadow-outside-small": !isOpen,
                 "shadow-inside": isOpen,

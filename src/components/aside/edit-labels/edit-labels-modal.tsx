@@ -46,7 +46,7 @@ export default function EditLabelsModal({ handleClose }: EditLabelsModalProps) {
   return (
     <>
       <BaseModal customClose={handleClose}>
-        <div className="bg-primary pt-[60px] pb-4 rounded-4xl shadow-outside w-screen xs:w-100 sm:w-150">
+        <div className="bg-primary pt-[60px] pb-4 rounded-4xl shadow-outside w-screen sm:w-100 sm:w-150">
           <div>
             <h2 className="flex items-center gap-1 text-lg font-bold mb-4 px-8 text-txt-secondary">
               <span>Edit Labels</span>

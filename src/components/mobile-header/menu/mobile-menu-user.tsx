@@ -24,11 +24,11 @@ function MobileMenuUser() {
             {userFirstLetter}
           </div>
           <div className="flex flex-col items-start w-[calc(100%-60px-16px)] shrink-0">
-            <h1 className="text-txt-secondary text-2xl xs:text-xl font-bold shrink-0 w-full truncate">
+            <h1 className="text-txt-secondary text-2xl sm:text-xl font-bold shrink-0 w-full truncate">
               {user.name}
             </h1>
 
-            <p className="text-sm text-txt-primary text-center xs:text-start">
+            <p className="text-sm text-txt-primary text-center sm:text-start">
               {user.email}
             </p>
           </div>

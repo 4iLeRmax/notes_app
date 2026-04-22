@@ -2,19 +2,20 @@
 
 import ControlledCustomInput from "@/components/UI/formElements/controlled-custom-input";
 import FormButton from "@/components/UI/formElements/form-button";
-import { SigninAction } from "@/lib/actions/auth";
+import { SigninAction, signinActionWithGoogle } from "@/lib/actions/auth";
+import { authClient } from "@/lib/auth-client";
 import { SignInScheme, TSignIn } from "@/lib/zod-schemes/sign-in-up-schemes";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 export default function SignInFrom() {
   const {
     control,
     handleSubmit,
-    formState: { errors },
+    setError,
+    formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(SignInScheme),
     defaultValues: {
@@ -24,7 +25,17 @@ export default function SignInFrom() {
   });
 
   const onSubmit: SubmitHandler<TSignIn> = async (data) => {
-    await SigninAction(data);
+    const res = await SigninAction(data);
+    if (res?.error) {
+      setError("root", { message: res.error });
+    }
+  };
+
+  const handleSignInWithGoogle = async () => {
+    await authClient.signIn.social({
+      provider: "google",
+      callbackURL: "/notes",
+    });
   };
 
   return (
@@ -65,7 +76,12 @@ export default function SignInFrom() {
                   Forgot password
                 </Link>
               </div>
-              <FormButton>Sign In</FormButton>
+              <FormButton isLoading={isSubmitting}>Sign In</FormButton>
+              {errors.root ? (
+                <span className="text-custom-red text-xs flex justify-center mt-2">
+                  {errors.root.message}
+                </span>
+              ) : null}
             </div>
             <div>
               <div className="flex items-center justify-center gap-3 mt-8">
@@ -76,7 +92,19 @@ export default function SignInFrom() {
                 <div className="bg-txt-primary w-full flex h-px"></div>
               </div>
               <div className="flex items-center justify-center mt-2 gap-3">
-                <Image src={"google.svg"} width={40} height={40} alt="" />
+                <button
+                  type="button"
+                  // onClick={signinActionWithGoogle}
+                  onClick={handleSignInWithGoogle}
+                  className="hover:opacity-80 transition-opacity"
+                >
+                  <Image
+                    src={"google.svg"}
+                    width={40}
+                    height={40}
+                    alt="Sign in with Google"
+                  />
+                </button>
                 <Image src={"apple.svg"} width={40} height={40} alt="" />
 
                 {/* <div className="shadow-outside-small p-2 rounded-full">

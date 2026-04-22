@@ -19,7 +19,7 @@ export default async function NotePage({
   return (
     <>
       <div className="w-full flex items-center justify-center mt-10">
-        <div className="w-screen xs:w-100 sm:w-150 bg-primary shadow-outside-small rounded-4xl pt-15 pb-4">
+        <div className="w-screen sm:w-100 sm:w-150 bg-primary shadow-outside-small rounded-4xl pt-15 pb-4">
           <div className="flex items-center gap-4 px-4 sm:px-8">
             <BackButton className="p-2 shadow-outside-small rounded-3xl">
               <ArrowLeft size={20} />

@@ -12,6 +12,7 @@ import {
   TSignUp,
 } from "../zod-schemes/sign-in-up-schemes";
 import { cache } from "react";
+import { authClient } from "../auth-client";
 
 export const getSession = cache(async () => {
   console.log("getSession");
@@ -31,11 +32,11 @@ export const isAuthorized = cache(async (whoCallIt?: string) => {
 });
 
 const emailAlreadyTaken = async (emailToCheck: string) => {
-  return await prisma.user.findUnique({
+  return !!(await prisma.user.count({
     where: {
       email: emailToCheck,
     },
-  });
+  }));
 };
 
 export const SignUpAction = async (formData: TSignUp) => {
@@ -58,6 +59,8 @@ export const SignUpAction = async (formData: TSignUp) => {
       });
 
       redirect("/");
+    } else if (userExist) {
+      return { error: "An account with this email already exists" };
     }
   }
 };
@@ -80,8 +83,21 @@ export const SigninAction = async (formData: TSignIn) => {
       });
 
       redirect("/notes");
+    } else if (!userExist) {
+      return { error: "An account with this email doesn't exist" };
     }
   }
+};
+
+export const signinActionWithGoogle = async () => {
+  const data = await auth.api.signInSocial({
+    body: {
+      provider: "google",
+      callbackURL: "/notes",
+    },
+  });
+
+  console.log(data);
 };
 
 export const SignOutAction = async () => {

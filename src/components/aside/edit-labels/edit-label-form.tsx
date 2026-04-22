@@ -5,8 +5,7 @@ import { useDebounce } from "use-debounce";
 import { updateLabel } from "@/lib/actions/label";
 import { Loader } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
-
-const DEBOUNCE_VALUE = 300;
+import { DEBOUNCE_VALUE } from "@/lib/constants";
 
 interface EditLabelFormProps {
   labelName: string;

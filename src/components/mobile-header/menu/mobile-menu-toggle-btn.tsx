@@ -16,7 +16,7 @@ export default function MobileMenuToggleBtn({
   return (
     <>
       <button
-        className={cn("p-2 rounded-3xl bg-primary text-txt-primary", {
+        className={cn("p-2 rounded-3xl bg-secondary text-txt-primary", {
           "shadow-outside": !menuIsOpen,
           "shadow-inside": menuIsOpen,
         })}

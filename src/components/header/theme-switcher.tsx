@@ -18,10 +18,13 @@ export default function ThemeSwitcher({
     <button
       onClick={value.toggleTheme}
       aria-label={`Switch to ${value.theme === "light" ? "dark" : "light"} theme`}
-      className={cn("p-2 rounded-3xl bg-primary text-txt-primary", {
-        "shadow-outside-small": value.theme === "light",
-        "shadow-inside": value.theme === "dark",
-      })}
+      className={cn(
+        "p-2 rounded-3xl bg-secondary sm:bg-primary text-txt-primary",
+        {
+          "shadow-outside-small": value.theme === "light",
+          "shadow-inside": value.theme === "dark",
+        },
+      )}
     >
       {value.theme === "light" ? (
         <Moon size={iconSize} />

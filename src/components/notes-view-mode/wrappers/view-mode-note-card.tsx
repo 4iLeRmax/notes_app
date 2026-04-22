@@ -16,7 +16,7 @@ export default function ViewModeNoteCard({
       <div
         className={clsx("", {
           // "w-[250px] mb-5": viewMode === ViewMode.GRID,
-          "w-full xs:w-[250px] mb-3": viewMode === ViewMode.GRID,
+          "w-full lg:w-[250px] mb-2 xs:mb-5": viewMode === ViewMode.GRID,
           "w-full max-w-150": viewMode === ViewMode.LIST,
         })}
       >
