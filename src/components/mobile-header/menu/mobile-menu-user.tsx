@@ -13,11 +13,11 @@ function MobileMenuUser() {
 
   return (
     <>
-      <div className="bg-primary rounded-4xl shadow-outside-small p-4">
+      <div className="bg-secondary rounded-4xl shadow-outside-small p-4">
         <div className="flex items-start gap-4">
           <div
             className={cn(
-              "flex items-center justify-center rounded-full text-txt-primary shadow-outside-small font-bold shrink-0 select-none",
+              "flex items-center justify-center rounded-full text-txt-primary bg-primary shadow-outside-small font-bold shrink-0 select-none",
               "w-[60px] h-[60px] text-3xl",
             )}
           >

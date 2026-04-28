@@ -39,7 +39,7 @@ function MobileMenuLabelList(
           setListIsOpen((p) => !p);
         }}
         className={cn(
-          "flex items-center justify-between text-txt-primary p-4 rounded-3xl bg-primary",
+          "flex items-center justify-between text-txt-primary p-4 rounded-3xl bg-secondary",
           {
             "shadow-outside-small": !listIsOpen,
             "shadow-inside": listIsOpen,
@@ -66,7 +66,7 @@ function MobileMenuLabelList(
               <Link
                 href={`/labels/${label.id}`}
                 key={label.id}
-                className="flex items-center justify-between bg-primary rounded-3xl shadow-outside-small w-full p-2 text-txt-primary"
+                className="flex items-center justify-between bg-secondary rounded-3xl shadow-outside-small w-full p-2 text-txt-primary"
               >
                 <div className="flex items-center gap-2 w-full">
                   <Tag size={20} />

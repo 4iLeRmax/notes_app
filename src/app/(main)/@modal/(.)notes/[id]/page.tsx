@@ -17,26 +17,28 @@ export default async function InterceptRoute({
 
   return (
     <>
-      <CloseModalOnNotFound noteExists={!!note} />
       {note ? (
-        <BaseModal>
-          <div className="w-screen sm:w-150 bg-primary shadow-outside rounded-4xl pt-13 sm:pt-15 pb-4">
-            <div className="px-4 sm:px-8">
-              <TitleForm title={note.title} noteId={note.id} />
-            </div>
-
-            <div className="px-4 sm:px-8 py-1 max-h-[calc(3/5*100vh)] overflow-y-scroll mt-5">
-              <NoteContent note={note} />
-            </div>
-
-            <div className="flex items-center justify-end gap-5 mt-2 px-8">
-              <div className="w-full flex justify-end">
-                <LastUpdate note={note} />
+        <>
+          <CloseModalOnNotFound noteExists={!!note} />
+          <BaseModal>
+            <div className="w-full sm:w-150 bg-primary shadow-outside rounded-4xl pt-13 sm:pt-15 pb-4">
+              <div className="px-4 sm:px-8">
+                <TitleForm title={note.title} noteId={note.id} />
               </div>
-              <NoteMoreMenu noteId={note.id} fixed />
+
+              <div className="px-4 sm:px-8 py-1 max-h-[calc(3/5*100vh)] overflow-y-scroll mt-5">
+                <NoteContent note={note} />
+              </div>
+
+              <div className="flex items-center justify-end gap-5 mt-2 px-4 sm:px-8">
+                <div className="w-full flex justify-start">
+                  <LastUpdate note={note} />
+                </div>
+                <NoteMoreMenu noteId={note.id} fixed />
+              </div>
             </div>
-          </div>
-        </BaseModal>
+          </BaseModal>
+        </>
       ) : null}
     </>
   );

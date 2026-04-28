@@ -1,6 +1,6 @@
 "use client";
 
-import { Loader } from "lucide-react";
+import { Loader, Loader2 } from "lucide-react";
 import React from "react";
 import { useFormStatus } from "react-dom";
 
@@ -16,7 +16,7 @@ export default function FormButton({ children, isLoading }: ButtonProps) {
         className="h-12 bg-custom-blue shadow-button text-primary w-full rounded-3xl flex justify-center items-center"
         disabled={isLoading}
       >
-        {isLoading ? <Loader size={20} className="animate-spin" /> : children}
+        {isLoading ? <Loader2 size={20} className="animate-spin" /> : children}
       </button>
     </>
   );

@@ -6,7 +6,6 @@ import NoteCardHeader from "./note-card-header";
 import NoteCardMain from "./note-card-main";
 import LastUpdate from "@/app/(main)/notes/[id]/components/last-update";
 import SelectNote from "./select-note";
-
 interface NoteCardProps {
   note: Note;
 }
@@ -36,7 +35,7 @@ export default function NoteCard({ note }: NoteCardProps) {
             </div>
           </Link>
 
-          <div className="absolute bottom-0 right-0 pb-3 px-2 sm:px-4 sss">
+          <div className="absolute bottom-0 right-0 pb-3 px-2 sm:px-4">
             <NoteMoreMenu noteId={note.id} />
           </div>
         </div>

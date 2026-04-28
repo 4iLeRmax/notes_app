@@ -98,13 +98,12 @@ export default function More({
     <>
       <button
         ref={buttonRef}
-        className={clsx(
-          "p-1 outline-none rounded-full text-txt-secondary bg-primary",
-          {
-            "shadow-outside-small": !isOpen,
-            "shadow-inside": isOpen,
-          },
-        )}
+        className={clsx("p-1 outline-none rounded-full text-txt-secondary", {
+          "shadow-outside-small": !isOpen,
+          "shadow-inside": isOpen,
+          "bg-primary": !fixed,
+          "bg-secondary": fixed,
+        })}
         onClick={handleOpen}
         onBlur={handleBlur}
       >
@@ -118,7 +117,7 @@ export default function More({
             onBlur={handleBlur}
             tabIndex={0}
             className={clsx(
-              "bg-primary shadow-outside-small overflow-hidden rounded-3xl",
+              "bg-primary shadow-outside-small overflow-hidden rounded-xl sm:rounded-3xl",
               {
                 "absolute z-20 ": !fixed,
                 "fixed z-50": fixed,

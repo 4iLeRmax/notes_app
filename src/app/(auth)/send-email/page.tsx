@@ -1,11 +1,11 @@
 import React from "react";
-import FindAccountForm from "./components/find-account-form";
+import SendEmailForm from "./components/send-email-form";
 
-export default function FindAccountPage() {
+export default function SendEmailPage() {
   return (
     <>
       <div className="h-screen flex items-center justify-center">
-        <FindAccountForm />
+        <SendEmailForm />
       </div>
     </>
   );

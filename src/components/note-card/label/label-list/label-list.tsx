@@ -4,7 +4,7 @@ import { getLabels, toggleLabelToNote } from "@/lib/actions/label";
 import { getNoteById } from "@/lib/actions/note";
 import { useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
-import { Loader, Square, SquareCheck } from "lucide-react";
+import { Loader, Loader2, Square, SquareCheck } from "lucide-react";
 import LabelListItem from "./label-list-item";
 
 interface LabelListProps {
@@ -43,7 +43,7 @@ export default function LabelList({ noteId, searchValue }: LabelListProps) {
   if (noteIsLoading || labelsIsLoading)
     return (
       <div className="px-4 flex items-center justify-center h-20 text-txt-primary">
-        <Loader size={20} className="animate-spin" />
+        <Loader2 size={20} className="animate-spin" />
       </div>
     );
 
@@ -61,14 +61,20 @@ export default function LabelList({ noteId, searchValue }: LabelListProps) {
           "h-40 overflow-y-scroll": labels.length > 5,
         })}
       >
-        {sortedLabels.map((label) => (
-          <LabelListItem
-            key={label.id}
-            label={label}
-            handleToggleLabelToNote={handleToggleLabelToNote}
-            labelIsAdded={labelIsAdded(label.id)}
-          />
-        ))}
+        {sortedLabels.length === 0 ? (
+          <div className="px-4 flex items-center justify-center h-20 text-txt-primary">
+            No labels found
+          </div>
+        ) : (
+          sortedLabels.map((label) => (
+            <LabelListItem
+              key={label.id}
+              label={label}
+              handleToggleLabelToNote={handleToggleLabelToNote}
+              labelIsAdded={labelIsAdded(label.id)}
+            />
+          ))
+        )}
       </div>
     </>
   );

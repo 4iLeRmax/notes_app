@@ -121,7 +121,7 @@ export default function SelectNote({
             <button
               data-note-card-button
               onClick={() => toggleSelectedNote(note)}
-              className="bg-primary rounded-3xl shadow-outside-small p-1 text-txt-primary"
+              className="bg-txt-primary rounded-3xl shadow-outside-small p-1 text-primary"
             >
               <Check size={20} />
             </button>
@@ -131,7 +131,8 @@ export default function SelectNote({
           <div
             style={{ position: "absolute", inset: 0, zIndex: 1 }}
             className={cn("absolute inset-0 z-10 cursor-pointer", {
-              "bg-txt-primary/20 rounded-xl sm:rounded-3xl": isSelected,
+              "bg-txt-primary/20 rounded-xl sm:rounded-3xl border-2 border-txt-primary":
+                isSelected,
             })}
             onClick={() => toggleSelectedNote(note)}
           />

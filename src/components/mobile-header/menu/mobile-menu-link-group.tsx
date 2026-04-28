@@ -17,7 +17,7 @@ function MobileMenuLinkGroup() {
           <Link
             href={"/notes"}
             className={cn(
-              "bg-primary  p-4 rounded-3xl text-txt-primary flex items-center justify-between",
+              "bg-secondary p-4 rounded-3xl text-txt-primary flex items-center justify-between",
               {
                 "shadow-outside": path !== "/notes",
                 "shadow-inside": path === "/notes",

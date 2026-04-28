@@ -7,6 +7,7 @@ import MobileMenu from "./menu/mobile-menu";
 import useSelectedNotesStore from "@/lib/store/useSelectedNotesStore";
 import SelectNotesSection from "../header/select-notes/select-notes-section";
 import { UserIconSkeleton } from "../UI/skeletons";
+import cn from "@/lib/cn";
 
 export default function MobileHeader() {
   const [menuIsOpen, setMenuIsOpen] = useState(false);
@@ -24,7 +25,12 @@ export default function MobileHeader() {
           handleClose={handleClose}
         />
       </div>
-      {!menuIsOpen ? (
+      <div
+        className={cn("", {
+          hidden: menuIsOpen,
+          flex: !menuIsOpen,
+        })}
+      >
         <div className="fixed top-3 right-3 z-30">
           <div className="flex items-center gap-4">
             {selectedNotes.length === 0 ? (
@@ -39,7 +45,7 @@ export default function MobileHeader() {
             )}
           </div>
         </div>
-      ) : null}
+      </div>
     </>
   );
 }

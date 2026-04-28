@@ -150,7 +150,7 @@ export default function LabelGroup({ menuIsOpen }: LabelGroupProps) {
                 "mt-4 overflow-y-scroll snap-y snap-mandatory scrollbar-thin",
                 {
                   "pl-4 pr-3": !menuIsOpen,
-                  "pl-8 pr-5": menuIsOpen,
+                  "pl-8 pr-3": menuIsOpen,
                 },
               )}
             >

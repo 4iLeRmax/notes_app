@@ -19,7 +19,7 @@ export default function CreateNoteTextarea({
     <div
       className={cn("w-full", {
         "max-h-12 px-4": !formIsOpen,
-        "max-h-[552px] px-8": formIsOpen,
+        "max-h-[552px] px-4 md:px-8": formIsOpen,
       })}
     >
       <textarea
@@ -28,10 +28,10 @@ export default function CreateNoteTextarea({
         onChange={handleChange}
         placeholder="New Note..."
         className={cn(
-          "outline-none resize-none overflow-hidden field-sizing-content",
+          "outline-none resize-none overflow-hidden field-sizing-content bg-primary",
           "placeholder:text-txt-primary shadow-inside px-4 py-3 rounded-3xl text-txt-primary",
           {
-            "w-[calc(100%-36px-10px-16px)] max-h-12": !formIsOpen,
+            "w-[calc(100%-36px-16px)] max-h-12": !formIsOpen,
             "w-full min-h-36 max-h-[552px]": formIsOpen,
           },
         )}

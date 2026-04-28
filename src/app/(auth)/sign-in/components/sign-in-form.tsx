@@ -4,7 +4,7 @@ import ControlledCustomInput from "@/components/UI/formElements/controlled-custo
 import FormButton from "@/components/UI/formElements/form-button";
 import { SigninAction, signinActionWithGoogle } from "@/lib/actions/auth";
 import { authClient } from "@/lib/auth-client";
-import { SignInScheme, TSignIn } from "@/lib/zod-schemes/sign-in-up-schemes";
+import { SignInScheme, TSignIn } from "@/lib/zod-schemes/auth-schemes";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import Link from "next/link";
@@ -38,9 +38,16 @@ export default function SignInFrom() {
     });
   };
 
+  const handleSignInWithFacebook = async () => {
+    await authClient.signIn.social({
+      provider: "facebook",
+      callbackURL: "/notes",
+    });
+  };
+
   return (
     <>
-      <div className="bg-primary shadow-outside px-16 py-8 rounded-4xl w-120">
+      <div className="bg-primary shadow-outside px-8 xs:px-16 py-4 xs:py-8 rounded-4xl w-120">
         <h1 className="text-center text-txt-primary text-2xl font-bold">
           Sign In
         </h1>
@@ -105,8 +112,19 @@ export default function SignInFrom() {
                     alt="Sign in with Google"
                   />
                 </button>
-                <Image src={"apple.svg"} width={40} height={40} alt="" />
-
+                <button
+                  type="button"
+                  // onClick={signinActionWithGoogle}
+                  onClick={handleSignInWithFacebook}
+                  className="hover:opacity-80 transition-opacity"
+                >
+                  <Image
+                    src={"facebook.svg"}
+                    width={40}
+                    height={40}
+                    alt="Sign in with Facebook"
+                  />
+                </button>
                 {/* <div className="shadow-outside-small p-2 rounded-full">
                   <Image src={"google.svg"} width={40} height={40} alt="" />
                 </div>

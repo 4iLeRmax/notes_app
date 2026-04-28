@@ -1,6 +1,6 @@
 "use client";
 
-import { Loader, Square, SquareCheck } from "lucide-react";
+import { Loader, Loader2, Square, SquareCheck } from "lucide-react";
 import React from "react";
 import { useFormStatus } from "react-dom";
 
@@ -17,7 +17,7 @@ export default function ToggleLabelItemBtn({
     <>
       <button className="p-1">
         {pending ? (
-          <Loader size={15} className="animate-spin" />
+          <Loader2 size={15} className="animate-spin" />
         ) : labelIsAdded ? (
           <SquareCheck size={15} />
         ) : (

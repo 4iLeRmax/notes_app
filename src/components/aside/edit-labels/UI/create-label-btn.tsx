@@ -1,6 +1,6 @@
 "use client";
 
-import { Loader } from "lucide-react";
+import { Loader, Loader2 } from "lucide-react";
 import { useFormStatus } from "react-dom";
 
 interface CreateLabelBtnProps {
@@ -17,7 +17,7 @@ export default function CreateLabelBtn({ searchValue }: CreateLabelBtnProps) {
         disabled={pending}
       >
         {pending ? (
-          <Loader size={20} className="animate-spin shrink-0" />
+          <Loader2 size={20} className="animate-spin shrink-0" />
         ) : (
           <>
             <span>Create Label</span>

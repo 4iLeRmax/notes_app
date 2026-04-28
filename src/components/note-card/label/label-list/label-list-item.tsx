@@ -18,7 +18,7 @@ export default function LabelListItem({
   return (
     <>
       <div
-        className={clsx("flex items-center gap-3 px-4 py-2", {
+        className={clsx("flex items-center gap-2 px-4 py-2", {
           "text-txt-primary hover:bg-custom-blue hover:text-primary":
             !labelIsAdded,
           "bg-custom-blue text-primary": labelIsAdded,

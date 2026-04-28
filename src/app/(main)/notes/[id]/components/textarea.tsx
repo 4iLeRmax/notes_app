@@ -35,7 +35,7 @@ export default function TextArea({
             className={cn(
               "w-full outline-none resize-none field-sizing-content rounded-3xl p-4",
               {
-                "shadow-inside": focused,
+                "shadow-inside bg-secondary": focused,
               },
             )}
             name="text"

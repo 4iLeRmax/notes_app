@@ -19,7 +19,7 @@ export default function SearchBar({
       <div className="fixed z-20 top-16 sm:top-[calc(20px+41px+10px)] right-2 sm:right-[77px] w-[calc(100%-16px)] sm:w-100 ">
         <div className="bg-secondary shadow-outside rounded-4xl p-4">
           <div className="flex items-center gap-2 text-txt-primary">
-            <div className="p-2 rounded-full shadow-outside-small">
+            <div className="p-2 rounded-full shadow-outside-small bg-primary">
               <Search size={25} />
             </div>
 

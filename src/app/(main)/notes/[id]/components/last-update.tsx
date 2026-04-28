@@ -8,9 +8,11 @@ interface LastUpdateProps {
 export default function LastUpdate({ note }: LastUpdateProps) {
   return (
     <>
-      <span className="text-sm text-txt-primary">
-        Updated: {lastNoteUpdate(note)}
-      </span>
+      <div className="text-sm text-txt-primary flex items-center gap-1">
+        <span className="hidden sm:inline">Updated: </span>
+        <span className="inline sm:hidden">Upd: </span>
+        {lastNoteUpdate(note)}
+      </div>
     </>
   );
 }

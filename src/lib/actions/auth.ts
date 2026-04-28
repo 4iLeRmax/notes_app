@@ -6,13 +6,15 @@ import prisma from "../prisma";
 import { auth } from "../auth";
 import sha256 from "../SHA256";
 import {
+  FindAccountScheme,
   SignInScheme,
   SignUpScheme,
+  TFindAccount,
   TSignIn,
   TSignUp,
-} from "../zod-schemes/sign-in-up-schemes";
+} from "../zod-schemes/auth-schemes";
 import { cache } from "react";
-import { authClient } from "../auth-client";
+import { success } from "zod";
 
 export const getSession = cache(async () => {
   console.log("getSession");
@@ -89,21 +91,71 @@ export const SigninAction = async (formData: TSignIn) => {
   }
 };
 
-export const signinActionWithGoogle = async () => {
-  const data = await auth.api.signInSocial({
-    body: {
-      provider: "google",
-      callbackURL: "/notes",
-    },
-  });
-
-  console.log(data);
-};
-
 export const SignOutAction = async () => {
   await auth.api.signOut({
     headers: await headers(),
   });
 
   redirect("/");
+};
+
+export const signinActionWithGoogle = async () => {
+  const data = await auth.api.signInSocial({
+    body: {
+      provider: "google",
+      callbackURL: "/notes",
+    },
+    headers: await headers(),
+  });
+};
+
+export const signinActionWithFacebook = async () => {
+  const data = await auth.api.signInSocial({
+    body: {
+      provider: "facebook",
+      callbackURL: "/notes",
+    },
+  });
+};
+
+export const FindAccountAction = async (formData: TFindAccount) => {
+  console.log("FindAccountAction");
+  const safeData = FindAccountScheme.safeParse(formData);
+
+  if (safeData.success) {
+    const user = await prisma.user.findUnique({
+      where: {
+        email: safeData.data.email,
+      },
+    });
+
+    if (!user) return { error: "An account with this email doesn't exist" };
+    return { success: true };
+  }
+};
+
+export const SendResetPasswordEmail = async (
+  redirectURL: string,
+  formData: TFindAccount,
+  // formData: FormData,
+) => {
+  console.log("SendResetPasswordEmail");
+  const safeData = FindAccountScheme.safeParse(formData);
+
+  if (safeData.success) {
+    const user = await prisma.user.findUnique({
+      where: {
+        email: safeData.data.email,
+      },
+    });
+
+    if (!user) return { error: "An account with this email doesn't exist" };
+
+    const data = await auth.api.requestPasswordReset({
+      body: {
+        email: safeData.data.email,
+        redirectTo: redirectURL,
+      },
+    });
+  }
 };

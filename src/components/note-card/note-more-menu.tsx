@@ -69,7 +69,7 @@ export default function NoteMoreMenu({ noteId, fixed }: NoteMoreMenu) {
         handleClose={handleClose}
         fixed={fixed}
       >
-        <div className="w-full sm:w-[225px]">
+        <div className="w-[calc(100vw/2-24px-8px)] sm:w-[225px]">
           {showLabel ? (
             <div className="pt-2">
               <div className="px-4 ">
@@ -83,9 +83,10 @@ export default function NoteMoreMenu({ noteId, fixed }: NoteMoreMenu) {
               />
             </div>
           ) : (
-            <div className="flex flex-col">
+            <div className="flex flex-col items-start">
               <form
                 action={() => startTransition(() => toggleNoteType(noteId))}
+                className="w-full"
               >
                 <button className="w-full hover:bg-custom-blue text-txt-primary hover:text-primary px-4 py-2 flex justify-start">
                   TODO/TEXT
@@ -100,6 +101,7 @@ export default function NoteMoreMenu({ noteId, fixed }: NoteMoreMenu) {
               </button>
               <form
                 action={() => startTransition(() => createCopies([noteId]))}
+                className="w-full"
               >
                 <button className="w-full hover:bg-custom-blue text-txt-primary hover:text-primary px-4 py-2 flex justify-start">
                   Create copy
@@ -107,6 +109,7 @@ export default function NoteMoreMenu({ noteId, fixed }: NoteMoreMenu) {
               </form>
               <form
                 action={() => startTransition(() => removeAllMarks(noteId))}
+                className="w-full"
               >
                 <button className="w-full hover:bg-custom-blue text-txt-primary hover:text-primary px-4 py-2 flex justify-start">
                   Remove all marks
@@ -118,10 +121,13 @@ export default function NoteMoreMenu({ noteId, fixed }: NoteMoreMenu) {
                 }
               >
                 <button className="w-full hover:bg-custom-blue text-txt-primary hover:text-primary px-4 py-2 flex justify-start">
-                  Delete all marked items
+                  Delete marked items
                 </button>
               </form>
-              <form action={() => startTransition(() => deleteNotes([noteId]))}>
+              <form
+                action={() => startTransition(() => deleteNotes([noteId]))}
+                className="w-full"
+              >
                 <button className="w-full hover:bg-custom-blue text-txt-primary hover:text-primary px-4 py-2 flex justify-start">
                   Delete
                 </button>

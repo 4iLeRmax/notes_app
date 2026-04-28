@@ -18,14 +18,14 @@ export default function EditListLabels({
 
   if (labels.length < 1)
     return (
-      <div className="text-txt-primary mt-4 px-8 flex items-center justify-center">
+      <div className="text-txt-primary mt-4 px-4 sm:px-8 flex items-center justify-center">
         Create your first label
       </div>
     );
 
   return (
     <>
-      <div className="flex flex-col gap-4 overflow-y-scroll max-h-[calc(3/5*100vh)] mt-4 py-4 px-8">
+      <div className="flex flex-col gap-4 overflow-y-scroll max-h-[calc(3/5*100vh)] mt-4 py-4 px-4 sm:px-8">
         {sortedLabels.map((label) => (
           <EditLabelItem label={label} key={label.id} />
         ))}

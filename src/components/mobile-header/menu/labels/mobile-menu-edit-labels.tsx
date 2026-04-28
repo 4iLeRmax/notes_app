@@ -17,7 +17,7 @@ export default function MobileMenuEditLabels() {
       <div>
         <button
           onClick={toggleModalOpen}
-          className="bg-primary shadow-outside-small p-4 rounded-3xl w-full flex items-center justify-between text-txt-primary"
+          className="bg-secondary shadow-outside-small p-4 rounded-3xl w-full flex items-center justify-between text-txt-primary"
         >
           <div className="flex items-center gap-2">
             <Edit size={20} />

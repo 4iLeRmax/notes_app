@@ -80,7 +80,7 @@ const DialogCloseButton = ({ handleClose }: { handleClose: () => void }) => {
     <>
       <button
         onClick={handleClose}
-        className="absolute top-4 right-8 bg-primary rounded-full text-txt-primary p-1"
+        className="absolute top-4 right-8 bg-secondary shadow-outside-small rounded-full text-txt-secondary p-1"
       >
         <X size={20} />
       </button>

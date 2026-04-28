@@ -21,7 +21,7 @@ export default function MainLayout({
       </div>
 
       <main className="w-full">
-        {children}
+        <div className="mt-16 sm:mt-5">{children}</div>
         {modal}
       </main>
     </div>

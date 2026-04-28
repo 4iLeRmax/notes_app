@@ -1,4 +1,4 @@
-import z from "zod";
+import z, { email } from "zod";
 import {
   EmailScheme,
   FirstNameScheme,
@@ -27,3 +27,9 @@ export const SignInScheme = z.object({
 });
 
 export type TSignIn = z.infer<typeof SignInScheme>;
+
+export const FindAccountScheme = z.object({
+  email: EmailScheme,
+});
+
+export type TFindAccount = z.infer<typeof FindAccountScheme>;

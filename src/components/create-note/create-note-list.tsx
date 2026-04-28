@@ -53,13 +53,13 @@ export default function CreateNoteList({
         value={value}
         onChange={(e) => setContentValue(e.target.value)}
       ></textarea>
-      <div className="flex flex-col overflow-y-scroll max-h-[552px] px-8 py-4">
+      <div className="flex flex-col overflow-y-scroll max-h-[552px] px-4 md:px-8 py-4">
         <div className="flex flex-col gap-3 text-txt-primary" ref={listRef}>
           {value.length > 0
             ? value.split("\n").map((item, id) => (
                 <div
                   key={id}
-                  className="flex items-center gap-2 px-4 py-2 rounded-3xl shadow-outside-small"
+                  className="flex items-center gap-2 px-4 py-2 rounded-3xl shadow-outside-small bg-primary"
                 >
                   <Square />
                   <textarea

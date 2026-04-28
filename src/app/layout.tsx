@@ -30,7 +30,7 @@ export default function RootLayout({
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
           suppressHydrationWarning
         >
-          <div className="mt-16 sm:mt-5">{children}</div>
+          {children}
 
           <div id="modals"></div>
         </body>

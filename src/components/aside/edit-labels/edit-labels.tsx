@@ -34,9 +34,8 @@
 "use client";
 
 import { Pencil } from "lucide-react";
-import React, { useState } from "react";
-import cn from "@/lib/cn";
-import BaseModal from "../../UI/base-modal";
+import React, { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import EditLabelsModal from "./edit-labels-modal";
 import EditLabelsBtn from "./UI/edit-labels-btn";
 
@@ -46,6 +45,11 @@ interface EditLabelsProps {
 
 export default function EditLabels({ menuIsOpen }: EditLabelsProps) {
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const pathname = usePathname();
+
+  useEffect(() => {
+    setModalIsOpen(false);
+  }, [pathname]);
 
   const toggleModalOpen = () => setModalIsOpen((p) => !p);
 

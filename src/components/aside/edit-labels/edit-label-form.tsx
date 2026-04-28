@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useDebounce } from "use-debounce";
 import { updateLabel } from "@/lib/actions/label";
-import { Loader } from "lucide-react";
+import { Loader, Loader2 } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { DEBOUNCE_VALUE } from "@/lib/constants";
 
@@ -53,7 +53,7 @@ export default function EditLabelForm({
           className="w-full overflow-hidden outline-none resize-none field-sizing-content"
         ></textarea>
         {isSubmitting ? (
-          <Loader size={20} className="animate-spin shrink-0" />
+          <Loader2 size={20} className="animate-spin shrink-0" />
         ) : null}
       </div>
     </>

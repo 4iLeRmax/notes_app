@@ -119,7 +119,7 @@ export default function CreateNote() {
         )}
       >
         {formIsOpen ? (
-          <div className="flex items-center justify-between px-8 mb-5">
+          <div className="flex items-center justify-between px-4 md:px-8 mb-5">
             <h1 className="text-txt-secondary font-bold text-xl">
               Create New Note
             </h1>
@@ -138,14 +138,14 @@ export default function CreateNote() {
               })}
             >
               {formIsOpen ? (
-                <div className="px-8">
+                <div className="px-4 md:px-8">
                   <FormInput
                     type="text"
                     name="title"
                     value={titleValue}
                     onChange={(e) => setTitleValue(e.target.value)}
                     placeholder="Title..."
-                    className="rounded-2xl text-txt-primary bg-secondary"
+                    className="rounded-2xl text-txt-primary bg-primary"
                   />
                 </div>
               ) : null}
@@ -172,7 +172,7 @@ export default function CreateNote() {
               />
             </div>
             {formIsOpen ? (
-              <div className="px-8">
+              <div className="px-4 md:px-8">
                 <button className="w-full flex items-center justify-center gap-1 bg-custom-blue text-primary py-2 rounded-2xl mt-5">
                   {formIsOpen ? <Plus size={20} className="" /> : null}
                   <span>Create</span>

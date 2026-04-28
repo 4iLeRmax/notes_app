@@ -2,7 +2,7 @@ import React from "react";
 import FormInput from "./form-input";
 import { Controller, FieldError } from "react-hook-form";
 import z from "zod";
-import { SignUpScheme } from "@/lib/zod-schemes/sign-in-up-schemes";
+import { SignUpScheme } from "@/lib/zod-schemes/auth-schemes";
 
 interface ControlledCustomInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   control: any;

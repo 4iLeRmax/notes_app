@@ -1,13 +1,15 @@
-Auto submitting forms with debounce function for:
-    - Updating title (DONE)
-    - Updating content
-    - Creating notes (title and content separately)
-
-(DARK THEME) active styles for dark theme
-
-(DARK THEME) for cards and modals use bg-secondary 
+add Apple OAUth
 
 Find Account -> reset Password
+
+Auto submitting forms with debounce function for:
+    - Updating title (DONE)
+    - Updating content (List item and Textarea)
+    - Creating notes (title and content separately)
+
+optimistic updates for:
+    - Pinning notes
+    - etc
 
 ??? When a caret is in the end of the row end user press "Enter" key then "Create Item" will run (only when note type is TODO)
 ??? Auto delete when title and content is empty.

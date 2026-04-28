@@ -46,13 +46,13 @@ export default function EditLabelsModal({ handleClose }: EditLabelsModalProps) {
   return (
     <>
       <BaseModal customClose={handleClose}>
-        <div className="bg-primary pt-[60px] pb-4 rounded-4xl shadow-outside w-screen sm:w-100 sm:w-150">
+        <div className="bg-primary pt-[60px] pb-4 rounded-4xl shadow-outside w-screen sm:w-150">
           <div>
-            <h2 className="flex items-center gap-1 text-lg font-bold mb-4 px-8 text-txt-secondary">
+            <h2 className="flex items-center gap-1 text-lg font-bold mb-4 px-4 sm:px-8 text-txt-secondary">
               <span>Edit Labels</span>
               {labels.length > 0 ? <span>({labels.length})</span> : null}
             </h2>
-            <div className="px-8">
+            <div className="px-4 sm:px-8">
               <CreateLabelForm
                 searchValue={searchValue}
                 handleChangeValue={handleChangeValue}

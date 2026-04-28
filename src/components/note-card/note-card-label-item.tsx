@@ -22,8 +22,8 @@ export default function NoteCardLabelItem({
 
   const handleLink = (e: React.MouseEvent) => {
     e.preventDefault();
-
-    router.push(`/labels/${label.id}`);
+    // router.push(`/labels/${label.id}`);
+    window.location.href = `/labels/${label.id}`;
   };
 
   return (

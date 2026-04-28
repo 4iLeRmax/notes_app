@@ -61,7 +61,7 @@ export default function FormInput({
         {String(value).length > 0 ? (
           <button
             type="button"
-            className="outline-0  cursor-pointer px-3 h-12 flex items-center justify-center"
+            className="outline-0 cursor-pointer px-3 h-12 flex items-center justify-center"
             onClick={clearInput}
           >
             <X size={20} />

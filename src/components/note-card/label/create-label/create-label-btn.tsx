@@ -1,4 +1,4 @@
-import { Loader } from "lucide-react";
+import { Loader, Loader2 } from "lucide-react";
 import React from "react";
 import { useFormStatus } from "react-dom";
 
@@ -8,7 +8,7 @@ export default function CreateLabelBtn() {
   return (
     <>
       <button className="w-full h-10 py-2 shadow-button bg-custom-blue text-primary flex items-center justify-center rounded-3xl mt-5">
-        {pending ? <Loader size={20} className="animate-spin" /> : "Create"}
+        {pending ? <Loader2 size={20} className="animate-spin" /> : "Create"}
       </button>
     </>
   );
