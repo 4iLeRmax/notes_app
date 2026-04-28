@@ -5,7 +5,7 @@ import { nextCookies } from "better-auth/next-js";
 import { Resend } from "resend";
 import ResetPasswordEmail from "@/components/emails/reset-password";
 
-const resend = new Resend(process.env.RESEND_API_KEY as string);
+// const resend = new Resend(process.env.RESEND_API_KEY as string);
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
@@ -13,19 +13,19 @@ export const auth = betterAuth({
   }),
   emailAndPassword: {
     enabled: true,
-    sendResetPassword: async ({ user, url, token }, request) => {
-      resend.emails.send({
-        from: "ailer.com",
-        to: user.email,
-        subject: "Reset your password",
-        react: ResetPasswordEmail({
-          userName: user.name,
-          userEmail: user.email,
-          resetUrl: url,
-          expiryMinutes: 30,
-        }),
-      });
-    },
+    // sendResetPassword: async ({ user, url, token }, request) => {
+    //   resend.emails.send({
+    //     from: "ailer.com",
+    //     to: user.email,
+    //     subject: "Reset your password",
+    //     react: ResetPasswordEmail({
+    //       userName: user.name,
+    //       userEmail: user.email,
+    //       resetUrl: url,
+    //       expiryMinutes: 30,
+    //     }),
+    //   });
+    // },
   },
   socialProviders: {
     google: {
