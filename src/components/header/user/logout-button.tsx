@@ -8,12 +8,12 @@ import React from "react";
 export default function LogoutButton() {
   const router = useRouter();
 
-  // const logout = () =>
-  //   authClient.signOut({
-  //     fetchOptions: {
-  //       onSuccess: () => router.push("/sign-in"),
-  //     },
-  //   });
+  const logout = () =>
+    authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => router.push("/sign-in"),
+      },
+    });
 
   return (
     <>
