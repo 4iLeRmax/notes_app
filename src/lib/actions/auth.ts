@@ -99,7 +99,6 @@ export const SignOutAction = async () => {
   } catch (err) {
     console.log("Error during sign out:", err);
   }
-
   redirect("/sign-in");
 };
 
