@@ -37,7 +37,7 @@ export default function FindAccountForm() {
 
   return (
     <>
-      <div className="bg-primary shadow-outside px-8 xs:px-16 py-4 xs:py-8 rounded-4xl w-120">
+      <div className="bg-secondary shadow-outside px-8 xs:px-16 py-4 xs:py-8 rounded-4xl w-120">
         <h1 className="text-center text-txt-primary text-2xl font-bold">
           Find your account
         </h1>
