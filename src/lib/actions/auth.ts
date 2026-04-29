@@ -92,11 +92,15 @@ export const SigninAction = async (formData: TSignIn) => {
 };
 
 export const SignOutAction = async () => {
-  await auth.api.signOut({
-    headers: await headers(),
-  });
+  try {
+    await auth.api.signOut({
+      headers: await headers(),
+    });
+  } catch (err) {
+    console.log("Error during sign out:", err);
+  }
 
-  redirect("/");
+  redirect("/sign-in");
 };
 
 export const signinActionWithGoogle = async () => {

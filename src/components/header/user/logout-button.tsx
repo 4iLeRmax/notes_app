@@ -1,3 +1,4 @@
+import { SignOutAction } from "@/lib/actions/auth";
 import { authClient } from "@/lib/auth-client";
 import cn from "@/lib/cn";
 import { LogOut } from "lucide-react";
@@ -17,7 +18,7 @@ export default function LogoutButton() {
   return (
     <>
       <button
-        onClick={logout}
+        onClick={SignOutAction}
         className={cn(
           "flex items-center justify-center px-4 py-2 rounded-2xl gap-2 y shadow-outside-small",
           "w-full bg-custom-blue text-primary",
