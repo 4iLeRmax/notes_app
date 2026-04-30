@@ -9,6 +9,7 @@ import {
 } from "@/lib/zod-schemes/auth-schemes";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
@@ -26,6 +27,9 @@ export default function SendEmailForm() {
     },
   });
 
+  const searchParams = useSearchParams();
+  const emailFromQuery = searchParams.get("email");
+
   const onSubmit: SubmitHandler<TFindAccount> = async (data) => {
     const res = await SendResetPasswordEmail("/reset-password", data);
     if (res?.error) {
@@ -35,7 +39,7 @@ export default function SendEmailForm() {
 
   return (
     <>
-      <div className="bg-primary shadow-outside px-8 xs:px-16 py-4 xs:py-8 rounded-4xl w-120">
+      <div className="bg-secondary shadow-outside px-8 xs:px-16 py-4 xs:py-8 rounded-4xl w-120">
         <h1 className="text-center text-txt-primary text-2xl font-bold">
           Send Email
         </h1>
@@ -46,6 +50,7 @@ export default function SendEmailForm() {
               <ControlledCustomInput
                 type="email"
                 name="email"
+                value={emailFromQuery || ""}
                 control={control}
                 error={errors.email}
                 placeholder="Email..."

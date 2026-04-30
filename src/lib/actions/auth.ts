@@ -134,14 +134,13 @@ export const FindAccountAction = async (formData: TFindAccount) => {
     });
 
     if (!user) return { error: "An account with this email doesn't exist" };
-    return { success: true };
+    redirect("/send-email?email=" + safeData.data.email);
   }
 };
 
 export const SendResetPasswordEmail = async (
   redirectURL: string,
   formData: TFindAccount,
-  // formData: FormData,
 ) => {
   console.log("SendResetPasswordEmail");
   const safeData = FindAccountScheme.safeParse(formData);

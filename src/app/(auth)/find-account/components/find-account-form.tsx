@@ -25,11 +25,9 @@ export default function FindAccountForm() {
       email: "",
     },
   });
-  const [accountExist, setAccountExist] = useState(false);
 
   const onSubmit: SubmitHandler<TFindAccount> = async (data) => {
     const res = await FindAccountAction(data);
-    if (res?.success) setAccountExist(true);
     if (res?.error) {
       setError("root", { message: res.error });
     }
