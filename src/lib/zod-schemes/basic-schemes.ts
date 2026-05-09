@@ -27,7 +27,7 @@ const NoteTitleScheme = z.string().trim().max(128, "Note title is too long");
 const NoteContentScheme = z
   .string()
   .trim()
-  .max(2000, "Note content is too long");
+  .max(1000, "Note content is too long");
 
 export {
   EmailScheme,

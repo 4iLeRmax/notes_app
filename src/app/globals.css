@@ -14,6 +14,7 @@
   --custom-blue: #3a66ed;
   --custom-red: #e51e1b;
   --custom-green: #2bab4a;
+  --custom-yellow: #ffce1b;
 
   --s-shadow-outside:
     rgba(255, 255, 255, 1) -8px -8px 8px, rgba(0, 0, 0, 0.2) 8px 8px 8px;
@@ -36,7 +37,7 @@ html.dark {
   --custom-blue: #5a7fff;
   --custom-red: #ff4544;
   --custom-green: #4fd566;
-
+  --custom-yellow: #ffce1b;
   --s-shadow-outside: rgba(255, 255, 255, 0.1) 0px 0px 5px;
   --s-shadow-outside-small: rgba(255, 255, 255, 0.1) 0px 0px 5px;
   --s-shadow-inside: rgba(255, 255, 255, 0.1) 0px 0px 5px;
@@ -48,6 +49,7 @@ html.dark {
   --color-custom-blue: var(--custom-blue);
   --color-custom-red: var(--custom-red);
   --color-custom-green: var(--custom-green);
+  --color-custom-yellow: var(--custom-yellow);
 
   --color-txt-primary: var(--txt-primary);
   --color-txt-secondary: var(--txt-secondary);

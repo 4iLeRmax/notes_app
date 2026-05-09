@@ -94,6 +94,7 @@ export const createNote = async (
     title,
     content,
     noteType,
+    isPinned,
   });
 
   if (safeData.success) {
@@ -231,10 +232,11 @@ export const togglePinnedStatus = async (noteId: string) => {
   revalidatePath("/notes");
 };
 
-export const updateNoteTitle = async (noteId: string, formData: FormData) => {
+// export const updateNoteTitle = async (noteId: string, formData: FormData) => {
+export const updateNoteTitle = async (noteId: string, title: string) => {
   console.log("updateNoteTitle");
 
-  const title = formData.get("title") as string;
+  // const title = formData.get("title") as string;
   const session = await getSession();
   if (!session) return;
 
@@ -254,11 +256,41 @@ export const updateNoteTitle = async (noteId: string, formData: FormData) => {
   revalidatePath(`/notes/${noteId}`);
 };
 
-export const updateNoteText = async (noteId: string, formData: FormData) => {
+// export const updateNoteText = async (noteId: string, formData: FormData) => {
+// export const updateNoteText = async (noteId: string, textContent: string) => {
+//   console.log("updateNoteText");
+
+//   // const content = formData.get("text") as string;
+//   const contentLines = textContent.split("\n");
+
+//   const session = await getSession();
+//   if (!session) return;
+
+//   await prisma.$transaction([
+//     prisma.noteItem.deleteMany({
+//       where: {
+//         noteId,
+//       },
+//     }),
+//     prisma.noteItem.createMany({
+//       data: [
+//         ...contentLines.map((line) => ({
+//           content: line,
+//           isDone: false,
+//           noteId,
+//         })),
+//       ],
+//     }),
+//   ]);
+
+//   revalidatePath("/notes");
+//   revalidatePath(`/notes/${noteId}`);
+// };
+export const updateNoteText = async (noteId: string, textContent: string) => {
   console.log("updateNoteText");
 
-  const content = formData.get("text") as string;
-  const contentLines = content.split("\n");
+  // const content = formData.get("text") as string;
+  const contentLines = textContent.split("\n");
 
   const session = await getSession();
   if (!session) return;

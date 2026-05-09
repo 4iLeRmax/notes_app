@@ -32,7 +32,7 @@ export default function NoteCardLabelItem({
         onClick={handleLink}
         onMouseEnter={() => setShowButton(true)}
         onMouseLeave={() => setShowButton(false)}
-        className="relative flex items-center min-w-12 max-w-full shadow-inside text-sm py-1 rounded-3xl cursor-pointer text-txt-primary"
+        className="bg-primary relative flex items-center min-w-12 max-w-full shadow-inside text-sm py-1 rounded-3xl cursor-pointer text-txt-primary"
       >
         <span
           className={clsx("truncate pl-2 w-full", {

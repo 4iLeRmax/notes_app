@@ -2,11 +2,11 @@
 
 import ControlledCustomInput from "@/components/UI/formElements/controlled-custom-input";
 import FormButton from "@/components/UI/formElements/form-button";
-import { FindAccountAction, SendResetPasswordEmail } from "@/lib/actions/auth";
+import { findAccountAction } from "@/lib/actions/auth";
 import {
   FindAccountScheme,
   TFindAccount,
-} from "@/lib/zod-schemes/auth-schemes";
+} from "@/lib/zod-schemes/auth-schemes/find-account-scheme";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useState } from "react";
@@ -27,7 +27,7 @@ export default function FindAccountForm() {
   });
 
   const onSubmit: SubmitHandler<TFindAccount> = async (data) => {
-    const res = await FindAccountAction(data);
+    const res = await findAccountAction(data);
     if (res?.error) {
       setError("root", { message: res.error });
     }

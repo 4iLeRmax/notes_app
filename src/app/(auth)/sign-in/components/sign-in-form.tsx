@@ -2,9 +2,13 @@
 
 import ControlledCustomInput from "@/components/UI/formElements/controlled-custom-input";
 import FormButton from "@/components/UI/formElements/form-button";
-import { SigninAction, signinActionWithGoogle } from "@/lib/actions/auth";
+import EmailNotVerified from "@/components/UI/status-bar/email-not-verified";
+import { SigninAction } from "@/lib/actions/auth";
 import { authClient } from "@/lib/auth-client";
-import { SignInScheme, TSignIn } from "@/lib/zod-schemes/auth-schemes";
+import {
+  SignInScheme,
+  TSignIn,
+} from "@/lib/zod-schemes/auth-schemes/sign-in-scheme";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import Link from "next/link";
@@ -15,19 +19,23 @@ export default function SignInFrom() {
     control,
     handleSubmit,
     setError,
+    getValues,
     formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(SignInScheme),
     defaultValues: {
-      email: "",
-      password: "",
+      email: "test@gmail.com",
+      password: "Qwerty123456",
     },
   });
 
   const onSubmit: SubmitHandler<TSignIn> = async (data) => {
     const res = await SigninAction(data);
     if (res?.error) {
-      setError("root", { message: res.error });
+      setError("root", { message: res.error.message });
+    }
+    if (res?.error.code === "EMAIL_NOT_VERIFIED") {
+      setError("root", { message: res.error.message, type: res.error.code });
     }
   };
 
@@ -44,6 +52,8 @@ export default function SignInFrom() {
       callbackURL: "/notes",
     });
   };
+  if (errors.root?.type === "EMAIL_NOT_VERIFIED")
+    return <EmailNotVerified email={getValues("email")} />;
 
   return (
     <>
@@ -114,7 +124,6 @@ export default function SignInFrom() {
                 </button>
                 <button
                   type="button"
-                  // onClick={signinActionWithGoogle}
                   onClick={handleSignInWithFacebook}
                   className="hover:opacity-80 transition-opacity"
                 >
@@ -125,12 +134,6 @@ export default function SignInFrom() {
                     alt="Sign in with Facebook"
                   />
                 </button>
-                {/* <div className="shadow-outside-small p-2 rounded-full">
-                  <Image src={"google.svg"} width={40} height={40} alt="" />
-                </div>
-                <div className="shadow-outside-small p-2 rounded-full">
-                  <Image src={"apple.svg"} width={40} height={40} alt="" />
-                </div> */}
               </div>
             </div>
           </form>

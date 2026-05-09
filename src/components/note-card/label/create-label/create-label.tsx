@@ -41,7 +41,6 @@ export default function CreateLabel({
 
         <CreateLabelBtn />
       </form>
-      {/* {state?.error ? <div className="text-red-500">{state.error}</div> : null} */}
     </div>
   );
 }

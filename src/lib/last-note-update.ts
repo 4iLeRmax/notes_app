@@ -10,7 +10,11 @@ export default function lastNoteUpdate(note: Note) {
           new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
       )[0].updatedAt,
     );
+    if (lastUpdate.getTime() < new Date(note.updatedAt).getTime()) {
+      lastUpdate = new Date(note.updatedAt);
+    }
   }
+
   const months = [
     "Jan",
     "Feb",
@@ -25,9 +29,12 @@ export default function lastNoteUpdate(note: Note) {
     "Nov",
     "Dec",
   ];
+
+  const formatNumber = (num: number) => (num < 10 ? `0${num}` : num);
+
   const timeNow = new Date();
   if (timeNow.getTime() - lastUpdate.getTime() < 24 * 60 * 60 * 1000) {
-    return `${lastUpdate.getHours()}:${lastUpdate.getMinutes()}`;
+    return `${formatNumber(lastUpdate.getHours())}:${formatNumber(lastUpdate.getMinutes())}`;
   } else {
     return `${months[lastUpdate.getMonth()]} ${lastUpdate.getDate()} ${lastUpdate.getFullYear()}`;
   }

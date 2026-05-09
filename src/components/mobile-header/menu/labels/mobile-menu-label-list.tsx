@@ -52,7 +52,6 @@ function MobileMenuLabelList(
         </div>
         {listIsOpen ? <ChevronDown size={20} /> : <ChevronRight size={20} />}
       </button>
-      {/* <div className=" w-full h-[calc(100vh*0.9-553px)] bg-red-500/30"></div> */}
       {labels ? (
         <Activity mode={listIsOpen ? "visible" : "hidden"}>
           <div

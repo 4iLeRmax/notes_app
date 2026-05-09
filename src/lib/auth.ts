@@ -3,30 +3,53 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import prisma from "./prisma";
 import { nextCookies } from "better-auth/next-js";
 import { Resend } from "resend";
-import ResetPasswordEmail from "@/components/emails/reset-password";
+import { ResetPasswordEmail } from "@/components/emails/reset-password-email";
+import sha256 from "./SHA256";
+import VerifyEmailEmail from "@/components/emails/verify-email-email";
 
-// const resend = new Resend(process.env.RESEND_API_KEY as string);
+const resend = new Resend(process.env.RESEND_API_KEY as string);
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),
+  user: {
+    deleteUser: {
+      enabled: true,
+    },
+  },
   emailAndPassword: {
     enabled: true,
-    // sendResetPassword: async ({ user, url, token }, request) => {
-    //   resend.emails.send({
-    //     from: "ailer.com",
-    //     to: user.email,
-    //     subject: "Reset your password",
-    //     react: ResetPasswordEmail({
-    //       userName: user.name,
-    //       userEmail: user.email,
-    //       resetUrl: url,
-    //       expiryMinutes: 30,
-    //     }),
-    //   });
-    // },
+    password: {
+      hash: async (password: string) => await sha256(password),
+      verify: async (data: { hash: string; password: string }) => {
+        const { hash, password } = data;
+        const hashedPassword = await sha256(password);
+        return hashedPassword === hash;
+      },
+    },
+    sendResetPassword: async ({ user, url, token }, request) => {
+      await resend.emails.send({
+        from: "onboarding@resend.dev",
+        to: user.email,
+        subject: "Reset your password",
+        html: ResetPasswordEmail({ user, url }),
+      });
+    },
+    requireEmailVerification: true, ////////////////////////////////////
   },
+  emailVerification: {
+    sendVerificationEmail: async ({ user, url, token }, request) => {
+      await resend.emails.send({
+        from: "onboarding@resend.dev",
+        to: user.email,
+        subject: "Verify your email address",
+        html: VerifyEmailEmail({ user, url }),
+      });
+    },
+    sendOnSignUp: true,
+  },
+
   socialProviders: {
     google: {
       prompt: "select_account",

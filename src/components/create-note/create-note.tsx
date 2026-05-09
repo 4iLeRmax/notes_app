@@ -2,7 +2,7 @@
 
 import { createNote } from "@/lib/actions/note";
 import clsx from "clsx";
-import React, { useState } from "react";
+import React, { useState, useTransition } from "react";
 import FormInput from "../UI/formElements/form-input";
 import cn from "@/lib/cn";
 import CreateNoteTextarea from "./create-note-textarea";
@@ -10,6 +10,7 @@ import ToggleNoteTypeButton from "./toggle-note-type-button";
 import CreateNoteList from "./create-note-list";
 import { Plus } from "lucide-react";
 import CreateNotePinButton from "./create-note-pin-button";
+import FormButton from "../UI/formElements/form-button";
 
 export default function CreateNote() {
   const [titleValue, setTitleValue] = useState("");
@@ -17,15 +18,24 @@ export default function CreateNote() {
   const [noteType, setNoteType] = useState<NoteType>("TEXT");
   const [isPinned, setIsPinned] = useState(false);
   const [formIsOpen, setFormIsOpen] = useState(false);
+
+  const [isPending, startTransition] = useTransition();
   const containerRef = React.useRef<HTMLDivElement>(null);
 
-  const handleSubmit = async (formData: FormData) => {
-    await createNote(noteType, isPinned, formData);
+  const closeForm = () => {
+    setFormIsOpen(false);
+    setNoteType("TEXT");
+    setIsPinned(false);
+  };
+  const clearForm = () => {
     setTitleValue("");
     setContentValue("");
-    setIsPinned(false);
-    setNoteType("TEXT");
-    setFormIsOpen(false);
+  };
+
+  const handleSubmit = async (formData: FormData) => {
+    startTransition(() => createNote(noteType, isPinned, formData));
+    clearForm();
+    closeForm();
   };
 
   const handleFocus = () => {
@@ -37,9 +47,13 @@ export default function CreateNote() {
       containerRef.current &&
       !containerRef.current.contains(e.relatedTarget as Node)
     ) {
-      setFormIsOpen(false);
-      setNoteType("TEXT");
-      setIsPinned(false);
+      if (titleValue || contentValue) {
+        const formData = new FormData();
+        formData.append("title", titleValue);
+        formData.append("content", contentValue);
+        handleSubmit(formData);
+      }
+      closeForm();
     }
   };
 
@@ -173,10 +187,14 @@ export default function CreateNote() {
             </div>
             {formIsOpen ? (
               <div className="px-4 md:px-8">
-                <button className="w-full flex items-center justify-center gap-1 bg-custom-blue text-primary py-2 rounded-2xl mt-5">
+                {/* <button className="w-full flex items-center justify-center gap-1 bg-custom-blue text-primary py-2 rounded-2xl mt-5">
                   {formIsOpen ? <Plus size={20} className="" /> : null}
                   <span>Create</span>
-                </button>
+                </button> */}
+                <FormButton isLoading={isPending}>
+                  {formIsOpen ? <Plus size={20} className="" /> : null}
+                  <span>Create</span>
+                </FormButton>
               </div>
             ) : null}
           </form>

@@ -1,10 +1,10 @@
-import z, { email } from "zod";
+import z from "zod";
 import {
   EmailScheme,
   FirstNameScheme,
   LastNameScheme,
   PasswordScheme,
-} from "./basic-schemes";
+} from "../basic-schemes";
 
 export const SignUpScheme = z
   .object({
@@ -20,16 +20,3 @@ export const SignUpScheme = z
   });
 
 export type TSignUp = z.infer<typeof SignUpScheme>;
-
-export const SignInScheme = z.object({
-  email: EmailScheme,
-  password: PasswordScheme,
-});
-
-export type TSignIn = z.infer<typeof SignInScheme>;
-
-export const FindAccountScheme = z.object({
-  email: EmailScheme,
-});
-
-export type TFindAccount = z.infer<typeof FindAccountScheme>;

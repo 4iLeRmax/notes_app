@@ -119,6 +119,7 @@ export default function NoteMoreMenu({ noteId, fixed }: NoteMoreMenu) {
                 action={() =>
                   startTransition(() => deleteAllMarkedItems(noteId))
                 }
+                className="w-full"
               >
                 <button className="w-full hover:bg-custom-blue text-txt-primary hover:text-primary px-4 py-2 flex justify-start">
                   Delete marked items

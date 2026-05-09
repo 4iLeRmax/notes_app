@@ -13,7 +13,7 @@ import {
   toggleManyNoteTypes,
   toggleNoteType,
 } from "@/lib/actions/note";
-import { ChevronRight, EllipsisVertical } from "lucide-react";
+import { ChevronRight, EllipsisVertical, X } from "lucide-react";
 import { deleteAllMarkedItems, removeAllMarks } from "@/lib/actions/note-item";
 import More from "@/components/UI/more";
 import CreateLabel from "@/components/note-card/label/create-label/create-label";
@@ -100,7 +100,10 @@ export default function SelectNotesMoreMenu({ noteIds, fixed }: NoteMoreMenu) {
                 <ChevronRight size={20} />
               </button>*/}
               <form action={() => startTransition(() => createCopies(noteIds))}>
-                <button onClick={(e: any) => e.stopPropagation()} className="w-full hover:bg-custom-blue text-txt-primary hover:text-primary px-4 py-2 flex justify-start">
+                <button
+                  onClick={(e: any) => e.stopPropagation()}
+                  className="w-full hover:bg-custom-blue text-txt-primary hover:text-primary px-4 py-2 flex justify-start"
+                >
                   Create copy
                 </button>
               </form>
@@ -128,7 +131,10 @@ export default function SelectNotesMoreMenu({ noteIds, fixed }: NoteMoreMenu) {
                   })
                 }
               >
-                <button onClick={(e: any) => e.stopPropagation()} className="rounded-es-xl rounded-ee-xl w-full hover:bg-custom-blue text-txt-primary hover:text-primary px-4 py-2 flex justify-start">
+                <button
+                  onClick={(e: any) => e.stopPropagation()}
+                  className="rounded-es-xl rounded-ee-xl w-full hover:bg-custom-blue text-txt-primary hover:text-primary px-4 py-2 flex justify-start"
+                >
                   Delete
                 </button>
               </form>

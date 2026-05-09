@@ -4,7 +4,7 @@ import NoteMoreMenu from "./note-more-menu";
 import NoteCardLabels from "./note-card-labels";
 import NoteCardHeader from "./note-card-header";
 import NoteCardMain from "./note-card-main";
-import LastUpdate from "@/app/(main)/notes/[id]/components/last-update";
+import LastUpdate from "@/components/note-view/note-view-last-update";
 import SelectNote from "./select-note";
 interface NoteCardProps {
   note: Note;

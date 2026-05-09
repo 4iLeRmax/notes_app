@@ -2,40 +2,51 @@
 
 import ControlledCustomInput from "@/components/UI/formElements/controlled-custom-input";
 import FormButton from "@/components/UI/formElements/form-button";
-import { FindAccountAction, SendResetPasswordEmail } from "@/lib/actions/auth";
+import StatusBar from "@/components/UI/status-bar/status-bar";
+import { sendResetPasswordEmail } from "@/lib/actions/auth";
 import {
   FindAccountScheme,
   TFindAccount,
-} from "@/lib/zod-schemes/auth-schemes";
+} from "@/lib/zod-schemes/auth-schemes/find-account-scheme";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Link from "next/link";
+import { CircleCheck } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 export default function SendEmailForm() {
+  const searchParams = useSearchParams();
+  const emailFromQuery = searchParams.get("email");
+
+  const [successfulSendEmail, setSuccessfulSendEmail] = useState(false);
+
   const {
     control,
     handleSubmit,
     setError,
-    getValues,
     formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(FindAccountScheme),
     defaultValues: {
-      email: "",
+      email: emailFromQuery || "",
     },
   });
 
-  const searchParams = useSearchParams();
-  const emailFromQuery = searchParams.get("email");
-
   const onSubmit: SubmitHandler<TFindAccount> = async (data) => {
-    const res = await SendResetPasswordEmail("/reset-password", data);
-    if (res?.error) {
-      setError("root", { message: res.error });
-    }
+    setSuccessfulSendEmail(false);
+    const res = await sendResetPasswordEmail("/reset-password", data);
+    if (res?.error) setError("root", { message: res.error });
+    if (res?.success) setSuccessfulSendEmail(true);
   };
+
+  if (successfulSendEmail)
+    return (
+      <StatusBar
+        status="success"
+        title="We've successfully sent a password reset link to your email"
+        description="Check your spam folder too"
+      />
+    );
 
   return (
     <>
@@ -43,14 +54,12 @@ export default function SendEmailForm() {
         <h1 className="text-center text-txt-primary text-2xl font-bold">
           Send Email
         </h1>
-
         <div className="mt-6">
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col items-center gap-4">
               <ControlledCustomInput
                 type="email"
                 name="email"
-                value={emailFromQuery || ""}
                 control={control}
                 error={errors.email}
                 placeholder="Email..."
@@ -58,14 +67,7 @@ export default function SendEmailForm() {
             </div>
 
             <div className="mt-10">
-              {errors.root ? (
-                <div className="mb-2 flex items-center justify-center">
-                  <Link href="/sign-up" className="text-txt-primary text-sm">
-                    Create an account
-                  </Link>
-                </div>
-              ) : null}
-              <FormButton isLoading={isSubmitting}>Find Account</FormButton>
+              <FormButton isLoading={isSubmitting}>Send Email</FormButton>
               {errors.root ? (
                 <span className="text-custom-red text-xs flex justify-center mt-2">
                   {errors.root.message}

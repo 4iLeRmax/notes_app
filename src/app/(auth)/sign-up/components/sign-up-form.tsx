@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -9,10 +9,16 @@ import Link from "next/link";
 import FormButton from "@/components/UI/formElements/form-button";
 import ControlledCustomInput from "@/components/UI/formElements/controlled-custom-input";
 import { SignUpAction, signinActionWithGoogle } from "@/lib/actions/auth";
-import { SignUpScheme, TSignUp } from "@/lib/zod-schemes/auth-schemes";
 import { authClient } from "@/lib/auth-client";
+import {
+  SignUpScheme,
+  TSignUp,
+} from "@/lib/zod-schemes/auth-schemes/sign-up-scheme";
+import StatusBar from "@/components/UI/status-bar/status-bar";
 
 export default function SignUpForm() {
+  const [successfullySignedUp, setSuccessfullySignedUp] = useState(false);
+
   const {
     control,
     handleSubmit,
@@ -30,10 +36,12 @@ export default function SignUpForm() {
   });
 
   const onSubmit: SubmitHandler<TSignUp> = async (data) => {
+    setSuccessfullySignedUp(false);
     const res = await SignUpAction(data);
     if (res?.error) {
       setError("root", { message: res.error });
     }
+    if (res?.success) setSuccessfullySignedUp(true);
   };
 
   const handleSignInWithGoogle = async () => {
@@ -42,6 +50,22 @@ export default function SignUpForm() {
       callbackURL: "/notes",
     });
   };
+
+  const handleSignInWithFacebook = async () => {
+    await authClient.signIn.social({
+      provider: "facebook",
+      callbackURL: "/notes",
+    });
+  };
+
+  if (successfullySignedUp)
+    return (
+      <StatusBar
+        status="pending"
+        title="We sent a verification link to your inbox"
+        description="Click the link in that email to activate your account"
+      />
+    );
 
   return (
     <>
@@ -126,7 +150,18 @@ export default function SignUpForm() {
                   alt="Sign in with Google"
                 />
               </button>
-              <Image src={"apple.svg"} width={40} height={40} alt="" />
+              <button
+                type="button"
+                onClick={handleSignInWithFacebook}
+                className="hover:opacity-80 transition-opacity"
+              >
+                <Image
+                  src={"facebook.svg"}
+                  width={40}
+                  height={40}
+                  alt="Sign in with Facebook"
+                />
+              </button>
             </div>
           </div>
         </div>

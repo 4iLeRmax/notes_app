@@ -1,11 +1,11 @@
 import lastNoteUpdate from "@/lib/last-note-update";
 import React from "react";
 
-interface LastUpdateProps {
+interface NoteViewLastUpdateProps {
   note: Note;
 }
 
-export default function LastUpdate({ note }: LastUpdateProps) {
+export default function NoteViewLastUpdate({ note }: NoteViewLastUpdateProps) {
   return (
     <>
       <div className="text-sm text-txt-primary flex items-center gap-1">

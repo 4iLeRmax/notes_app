@@ -1,11 +1,14 @@
-add Apple OAUth
+order of list items
 
-Find Account -> reset Password
+status bar mobile version
 
-Auto submitting forms with debounce function for:
-    - Updating title (DONE)
-    - Updating content (List item and Textarea)
-    - Creating notes (title and content separately)
+Animation where needed
+
+add react-hook-form to create-note
+
+when user convert note content from text to todo empty rows must be deleted
+
+encrypt and decrypt titles and content of note
 
 optimistic updates for:
     - Pinning notes
@@ -14,7 +17,3 @@ optimistic updates for:
 ??? When a caret is in the end of the row end user press "Enter" key then "Create Item" will run (only when note type is TODO)
 ??? Auto delete when title and content is empty.
 ??? Add color for each Note
-??? Note item on Enter must be submitted instead of break line
-
-
-

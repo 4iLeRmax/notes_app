@@ -1,11 +1,11 @@
-import { getNoteById, getNoteIds } from "@/lib/actions/note";
+import { getNoteById } from "@/lib/actions/note";
 
-import TitleForm from "@/app/(main)/notes/[id]/components/title-form";
 import { CloseModalOnNotFound } from "@/components/UI/dialog";
 import NoteMoreMenu from "@/components/note-card/note-more-menu";
-import NoteContent from "@/components/note-content";
-import LastUpdate from "@/app/(main)/notes/[id]/components/last-update";
 import BaseModal from "@/components/UI/base-modal";
+import NoteViewLastUpdate from "@/components/note-view/note-view-last-update";
+import NoteViewContent from "@/components/note-view/note-view-content";
+import NoteViewTitleForm from "@/components/note-view/note-view-title-form";
 
 export default async function InterceptRoute({
   params,
@@ -23,16 +23,16 @@ export default async function InterceptRoute({
           <BaseModal>
             <div className="w-full sm:w-150 bg-primary shadow-outside rounded-4xl pt-13 sm:pt-15 pb-4">
               <div className="px-4 sm:px-8">
-                <TitleForm title={note.title} noteId={note.id} />
+                <NoteViewTitleForm title={note.title} noteId={note.id} />
               </div>
 
               <div className="px-4 sm:px-8 py-1 max-h-[calc(3/5*100vh)] overflow-y-scroll mt-5">
-                <NoteContent note={note} />
+                <NoteViewContent note={note} />
               </div>
 
               <div className="flex items-center justify-end gap-5 mt-2 px-4 sm:px-8">
                 <div className="w-full flex justify-start">
-                  <LastUpdate note={note} />
+                  <NoteViewLastUpdate note={note} />
                 </div>
                 <NoteMoreMenu noteId={note.id} fixed />
               </div>

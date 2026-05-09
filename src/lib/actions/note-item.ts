@@ -17,13 +17,15 @@ export const createNoteItem = async (noteId: string) => {
   revalidatePath(`/notes/${noteId}`);
 };
 
-export const updateNoteItem = async (
-  noteItemId: string,
-  formData: FormData,
-) => {
+// export const updateNoteItem = async (
+//   noteItemId: string,
+//   formData: FormData,
+// ) => {
+export const updateNoteItem = async (noteItemId: string, text: string) => {
   console.log("updateNoteItem");
-  const text = formData.get("text") as string;
-
+  // const text = formData.get("text") as string;
+  // let res: NoteItem;
+  // try {
   const res = await prisma.noteItem.update({
     where: {
       id: noteItemId,
@@ -32,6 +34,10 @@ export const updateNoteItem = async (
       content: text,
     },
   });
+  // } catch (error) {
+  //   console.error("Error updating note item:", error);
+  // }
+
   revalidatePath(`/notes`);
   revalidatePath(`/notes/${res.noteId}`);
 };
