@@ -34,7 +34,7 @@ export default async function LabelPage({ params }: LabelPageProps) {
       <div>
         <NoteGroup
           notes={notes}
-          label={`Notes with "${label?.name}" label (${notes.length})`}
+          label={`Notes with label "${label?.name}" (${notes.length})`}
         />
       </div>
     </>

@@ -24,10 +24,15 @@ const PasswordScheme = z
   .regex(/[0-9]/, "Password must contain at least one number");
 
 const NoteTitleScheme = z.string().trim().max(128, "Note title is too long");
+
 const NoteContentScheme = z
-  .string()
-  .trim()
-  .max(1000, "Note content is too long");
+  .array(
+    z.object({
+      content: z.string().trim().max(128, "Note content is too long"),
+      isDone: z.boolean().default(false),
+    }),
+  )
+  .max(100, "Note content is too long");
 
 export {
   EmailScheme,

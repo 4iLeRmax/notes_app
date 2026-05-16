@@ -3,39 +3,57 @@
 import cn from "@/lib/cn";
 import clsx from "clsx";
 import React from "react";
+import { motion } from "motion/react";
+import { TCreateNote } from "@/lib/zod-schemes/create-note.scheme";
 
 interface CreateNoteTextareaProps {
-  value: string;
-  handleChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  content: TCreateNote["content"];
+  setNote: React.Dispatch<React.SetStateAction<TCreateNote>>;
   formIsOpen: boolean;
 }
 
 export default function CreateNoteTextarea({
-  value,
-  handleChange,
+  content,
+  setNote,
   formIsOpen,
 }: CreateNoteTextareaProps) {
+  const contentToText = content.map((el) => el.content).join("\n");
+  const textToObj = (text: string) => {
+    const content = text
+      .split("\n")
+      .map((el) => ({ content: el, isDone: false }));
+
+    setNote((n) => ({ ...n, content }));
+  };
+
   return (
-    <div
-      className={cn("w-full", {
-        "max-h-12 px-4": !formIsOpen,
-        "max-h-[552px] px-4 md:px-8": formIsOpen,
+    <motion.div
+      className={cn("w-full flex", {
+        "px-4": !formIsOpen,
+        "px-4 md:px-8": formIsOpen,
       })}
+      animate={{
+        width: "100%",
+        maxHeight: formIsOpen ? "552px" : "48px",
+      }}
+      // transition={{ delay: 0.3 }}
     >
-      <textarea
-        name="content"
-        value={value}
-        onChange={handleChange}
-        placeholder="New Note..."
+      <motion.textarea
+        value={contentToText}
+        onChange={(e) => textToObj(e.target.value)}
+        placeholder="Type something..."
         className={cn(
           "outline-none resize-none overflow-hidden field-sizing-content bg-primary",
-          "placeholder:text-txt-primary shadow-inside px-4 py-3 rounded-3xl text-txt-primary",
-          {
-            "w-[calc(100%-36px-16px)] max-h-12": !formIsOpen,
-            "w-full min-h-36 max-h-[552px]": formIsOpen,
-          },
+          "placeholder:text-txt-primary shadow-inside px-4 py-3 rounded-3xl text-txt-primary w-full",
         )}
+        animate={{
+          width: "100%",
+          minHeight: formIsOpen ? "144px" : "48px",
+          maxHeight: formIsOpen ? "552px" : "48px",
+        }}
+        // transition={{ duration: 2 }}
       />
-    </div>
+      {!formIsOpen ? <div className="w-[52px]"></div> : null}
+    </motion.div>
   );
 }

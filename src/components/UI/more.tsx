@@ -4,6 +4,7 @@ import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import clsx from "clsx";
 import { DialogPortal } from "./dialog";
+import { motion, AnimatePresence } from "motion/react";
 
 interface MoreProps {
   children: React.ReactNode;
@@ -109,31 +110,47 @@ export default function More({
       >
         {btnChildren}
       </button>
-      {isOpen && modalsContainer.current ? (
-        <DialogPortal>
-          {/* <div className="fixed inset-0 z-30" onClick={handleClose} /> */}
-          <div
-            ref={modalRef}
-            onBlur={handleBlur}
-            tabIndex={0}
-            className={clsx(
-              "bg-primary shadow-outside-small overflow-hidden rounded-xl sm:rounded-3xl",
-              {
-                "absolute z-20 ": !fixed,
-                "fixed z-50": fixed,
-              },
-            )}
-            style={{
-              ...(position.top === 0
-                ? { bottom: `${position.bottom}px` }
-                : { top: `${position.top}px` }),
-              right: `${position.right}px`,
-            }}
-          >
-            {children}
-          </div>
-        </DialogPortal>
-      ) : null}
+      <AnimatePresence mode="wait">
+        {isOpen && modalsContainer.current ? (
+          <DialogPortal>
+            <motion.div
+              initial={{
+                opacity: 0,
+                scaleY: 0,
+                ...(position.top === 0 ? { y: 100 } : { y: -100 }),
+              }}
+              animate={{
+                opacity: 1,
+                scaleY: 1,
+                ...(position.top === 0 ? { y: 0 } : { y: 0 }),
+              }}
+              exit={{
+                opacity: 0,
+                scaleY: 0,
+                ...(position.top === 0 ? { y: 100 } : { y: -100 }),
+              }}
+              ref={modalRef}
+              onBlur={handleBlur}
+              tabIndex={0}
+              className={clsx(
+                "bg-primary shadow-outside-small overflow-hidden rounded-xl sm:rounded-3xl",
+                {
+                  "absolute z-20 ": !fixed,
+                  "fixed z-50": fixed,
+                },
+              )}
+              style={{
+                ...(position.top === 0
+                  ? { bottom: `${position.bottom}px` }
+                  : { top: `${position.top}px` }),
+                right: `${position.right}px`,
+              }}
+            >
+              {children}
+            </motion.div>
+          </DialogPortal>
+        ) : null}
+      </AnimatePresence>
     </>
   );
 }

@@ -3,6 +3,7 @@
 import React, { useRef, useState } from "react";
 import UserButton from "./user-button";
 import UserBar from "./user-bar";
+import { AnimatePresence } from "motion/react";
 
 interface UserInfoProps {
   user: SessionUser;
@@ -33,7 +34,9 @@ export default function UserInfo({ user }: UserInfoProps) {
           isActive={isOpen}
           toggleOpen={toggleOpen}
         />
-        {isOpen ? <UserBar user={user} /> : null}
+        <AnimatePresence mode="wait">
+          {isOpen ? <UserBar user={user} /> : null}
+        </AnimatePresence>
       </div>
     </>
   );

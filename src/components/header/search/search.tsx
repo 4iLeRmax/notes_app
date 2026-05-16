@@ -5,6 +5,7 @@ import SearchButton from "./search-button";
 import SearchBar from "./search-bar";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useDebounce } from "use-debounce";
+import { motion, AnimatePresence } from "motion/react";
 
 const SEARCH_QUERY_LIMIT = 100;
 const DEBOUNCE_VALUE = 500;
@@ -56,9 +57,11 @@ export default function Search() {
     <>
       <div ref={containerRef} tabIndex={1} onBlur={handleBlur}>
         <SearchButton isActive={isOpen} toggleOpen={toggleOpen} />
-        {isOpen || searchValue.length > 0 ? (
-          <SearchBar searchValue={searchValue} handleSearch={handleSearch} />
-        ) : null}
+        <AnimatePresence mode="wait">
+          {isOpen || searchValue.length > 0 ? (
+            <SearchBar searchValue={searchValue} handleSearch={handleSearch} />
+          ) : null}
+        </AnimatePresence>
       </div>
     </>
   );

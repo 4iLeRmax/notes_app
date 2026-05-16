@@ -79,6 +79,7 @@ body {
 
 button {
   cursor: pointer;
+  outline-style: none;
 }
 
 .shadow-button {

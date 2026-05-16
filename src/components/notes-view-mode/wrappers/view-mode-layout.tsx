@@ -2,6 +2,7 @@
 
 import useViewModeStore, { ViewMode } from "@/lib/store/useViewModeStore";
 import clsx from "clsx";
+import { AnimatePresence, motion } from "motion/react";
 import React from "react";
 
 export default function ViewModeLayout({
@@ -22,7 +23,7 @@ export default function ViewModeLayout({
             viewMode === ViewMode.LIST,
         })}
       >
-        {children}
+        <AnimatePresence mode="popLayout">{children}</AnimatePresence>
       </div>
     </>
   );

@@ -2,6 +2,7 @@
 
 import { Ellipsis, EllipsisVertical } from "lucide-react";
 import cn from "@/lib/cn";
+import { motion, AnimatePresence } from "motion/react";
 
 interface AsideToggleButtonProps {
   isOpen: boolean;
@@ -26,11 +27,29 @@ export default function AsideToggleButton({
           },
         )}
       >
-        {isOpen ? (
-          <EllipsisVertical size={iconSize} />
-        ) : (
-          <Ellipsis size={iconSize} />
-        )}
+        <AnimatePresence mode="wait">
+          {isOpen ? (
+            <motion.div
+              key="open"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              transition={{ duration: 0.2 }}
+            >
+              <EllipsisVertical size={iconSize} />
+            </motion.div>
+          ) : (
+            <motion.div
+              key="closed"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              transition={{ duration: 0.2 }}
+            >
+              <Ellipsis size={iconSize} />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </button>
     </>
   );

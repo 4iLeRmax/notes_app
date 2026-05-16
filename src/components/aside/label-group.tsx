@@ -90,6 +90,7 @@ import React, { Activity, useEffect, useState } from "react";
 import LabelItem from "./label-item";
 import cn from "@/lib/cn";
 import { LabelsIconSkeleton } from "../UI/skeletons";
+import { motion, AnimatePresence } from "motion/react";
 
 interface LabelGroupProps {
   menuIsOpen: boolean;
@@ -113,25 +114,33 @@ export default function LabelGroup({ menuIsOpen }: LabelGroupProps) {
 
   return (
     <>
-      <div className="w-full">
+      <motion.div animate={{ width: menuIsOpen ? 240 : 73 }}>
         <div className="px-4">
           <button
-            onClick={() => {
-              setIsOpen((p) => !p);
-            }}
             className={cn(
-              "h-[41px] flex items-center gap-2 bg-primary p-2 rounded-3xl justify-between",
+              "w-full h-[41px] flex items-center gap-2 bg-primary p-2 rounded-3xl justify-between",
               {
                 "shadow-outside-small": !isOpen,
                 "shadow-inside": isOpen,
-                "w-[41px]": !menuIsOpen,
-                "w-full": menuIsOpen,
               },
             )}
+            onClick={() => {
+              setIsOpen((p) => !p);
+            }}
           >
             <div className="flex items-center gap-2">
               <Tags size={25} />
-              {menuIsOpen ? <span className="">Labels</span> : null}
+              <AnimatePresence mode="wait">
+                {menuIsOpen ? (
+                  <motion.span
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                  >
+                    Labels
+                  </motion.span>
+                ) : null}
+              </AnimatePresence>
             </div>
             {menuIsOpen ? (
               isOpen ? (
@@ -142,15 +151,18 @@ export default function LabelGroup({ menuIsOpen }: LabelGroupProps) {
             ) : null}
           </button>
         </div>
-        {labels ? (
-          <Activity mode={isOpen ? "visible" : "hidden"}>
-            <div
+        <AnimatePresence mode="wait">
+          {isOpen ? (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
               className={cn(
                 "w-full flex flex-col items-start gap-4 max-h-[calc(100vh-358px-40px-16px)]",
-                "mt-4 overflow-y-scroll snap-y snap-mandatory scrollbar-thin",
+                "mt-4 overflow-y-scroll snap-y snap-mandatory scrollbar-thin pr-3",
                 {
-                  "pl-4 pr-3": !menuIsOpen,
-                  "pl-8 pr-3": menuIsOpen,
+                  "pl-4": !menuIsOpen,
+                  "pl-8": menuIsOpen,
                 },
               )}
             >
@@ -161,10 +173,10 @@ export default function LabelGroup({ menuIsOpen }: LabelGroupProps) {
                   menuIsOpen={menuIsOpen}
                 />
               ))}
-            </div>
-          </Activity>
-        ) : null}
-      </div>
+            </motion.div>
+          ) : null}
+        </AnimatePresence>
+      </motion.div>
     </>
   );
 }

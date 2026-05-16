@@ -5,16 +5,64 @@ import prisma from "../prisma";
 
 export const createNoteItem = async (noteId: string) => {
   console.log("createNoteItem");
-  await prisma.noteItem.create({
-    data: {
-      content: "",
-      isDone: false,
+  const lastNoteItem = await prisma.noteItem.findFirst({
+    where: {
       noteId,
+    },
+    orderBy: {
+      position: "desc",
+    },
+    select: {
+      position: true,
     },
   });
 
+  const newPosition = lastNoteItem ? lastNoteItem.position + 1 : 0;
+
+  try {
+    await prisma.noteItem.create({
+      data: {
+        content: "",
+        isDone: false,
+        noteId,
+        position: newPosition,
+      },
+    });
+  } catch (error) {
+    console.error("Error creating note item:", error);
+  }
+
   revalidatePath(`/notes`);
   revalidatePath(`/notes/${noteId}`);
+};
+
+export const deleteNoteItem = async (noteItemId: string) => {
+  console.log("deleteNoteItem");
+
+  const item = await prisma.noteItem.findUnique({
+    where: { id: noteItemId },
+    select: { position: true, noteId: true },
+  });
+
+  if (!item) return;
+
+  await prisma.$transaction([
+    prisma.noteItem.delete({
+      where: { id: noteItemId },
+    }),
+    prisma.noteItem.updateMany({
+      where: {
+        noteId: item.noteId,
+        position: { gt: item.position },
+      },
+      data: {
+        position: { decrement: 1 },
+      },
+    }),
+  ]);
+
+  revalidatePath(`/notes`);
+  revalidatePath(`/notes/${item.noteId}`);
 };
 
 // export const updateNoteItem = async (
@@ -54,19 +102,6 @@ export const toggleNoteItemStatus = async (
     },
     data: {
       isDone: !currentStatus,
-    },
-  });
-
-  revalidatePath(`/notes`);
-  revalidatePath(`/notes/${res.noteId}`);
-};
-
-export const deleteNoteItem = async (noteItemId: string) => {
-  console.log("deleteNoteItem");
-
-  const res = await prisma.noteItem.delete({
-    where: {
-      id: noteItemId,
     },
   });
 

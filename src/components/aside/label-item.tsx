@@ -5,6 +5,7 @@ import { Tag } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
+import { motion, AnimatePresence } from "motion/react";
 
 interface LabelItemProps {
   label: Label;
@@ -27,7 +28,19 @@ export default function LabelItem({ label, menuIsOpen }: LabelItemProps) {
         )}
       >
         <Tag size={25} className="shrink-0" />
-        {menuIsOpen ? <span className="truncate">{label.name}</span> : null}
+        <AnimatePresence>
+          {menuIsOpen ? (
+            <motion.span
+              className="truncate"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              {label.name}
+            </motion.span>
+          ) : null}
+        </AnimatePresence>
+        {/* {menuIsOpen ? <span className="truncate">{label.name}</span> : null} */}
       </Link>
     </>
   );

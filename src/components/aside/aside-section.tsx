@@ -9,6 +9,7 @@ import cn from "@/lib/cn";
 import AsideLink from "./aside-link";
 import EditLabels from "./edit-labels/edit-labels";
 import ThemeSwitcher from "../header/theme-switcher";
+import { motion, AnimatePresence } from "motion/react";
 
 export default function AsideSection() {
   const [menuIsOpen, setMenuIsOpen] = useState(false);
@@ -36,16 +37,19 @@ export default function AsideSection() {
         })}
       ></div>
 
-      <div
+      <motion.div
+        initial={false}
+        animate={{ width: menuIsOpen ? 240 : 73 }}
+        // transition={{ duration: 1 }}
         data-aside
         className={cn(
           "fixed z-30 top-0 left-5 ",
           "py-4 mt-5",
           "bg-secondary shadow-outside rounded-4xl select-none outline-none",
-          {
-            "w-[73px]": !menuIsOpen,
-            "w-60": menuIsOpen,
-          },
+          // {
+          //   "w-[73px]": !menuIsOpen,
+          //   "w-60": menuIsOpen,
+          // },
         )}
       >
         <div className="flex flex-col items-start gap-4 text-txt-primary justify-start">
@@ -76,7 +80,7 @@ export default function AsideSection() {
             <ViewModeSwitcher iconSize={25} />
           </div>
         </div>
-      </div>
+      </motion.div>
     </>
   );
 }

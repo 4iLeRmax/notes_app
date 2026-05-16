@@ -1,6 +1,9 @@
+"use client";
+
 import cn from "@/lib/cn";
 import { Pencil } from "lucide-react";
 import React from "react";
+import { motion, AnimatePresence } from "motion/react";
 
 interface EditLabelsBtnProps {
   menuIsOpen: boolean;
@@ -15,12 +18,11 @@ export default function EditLabelsBtn({
 }: EditLabelsBtnProps) {
   return (
     <>
-      <button
+      <motion.button
+        animate={{ width: menuIsOpen ? 208 : 41 }}
         className={cn(
-          "h-[41px] flex items-center bg-primary gap-2 rounded-3xl",
+          "h-[41px] flex items-center bg-primary gap-2 rounded-3xl p-2",
           {
-            "w-[41px] justify-center": !menuIsOpen,
-            "w-52 justify-start p-2": menuIsOpen,
             "shadow-outside-small": !modalIsOpen,
             "shadow-inside": modalIsOpen,
           },
@@ -28,8 +30,18 @@ export default function EditLabelsBtn({
         onClick={toggleModalOpen}
       >
         <Pencil size={25} className="shrink-0" />
-        {menuIsOpen ? <span>Edit Labels</span> : null}
-      </button>
+        <AnimatePresence>
+          {menuIsOpen ? (
+            <motion.span
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              Edit Labels
+            </motion.span>
+          ) : null}
+        </AnimatePresence>
+      </motion.button>
     </>
   );
 }

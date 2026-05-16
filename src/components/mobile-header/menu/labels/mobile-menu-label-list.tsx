@@ -10,8 +10,9 @@ import {
   Tag,
   Tags,
 } from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
 import Link from "next/link";
-import { Activity, useState, memo } from "react";
+import { useState, memo } from "react";
 
 interface MobileMenuLabelListProps {
   //   menuIsOpen: boolean;
@@ -50,32 +51,45 @@ function MobileMenuLabelList(
           <Tags size={20} />
           <span>Labels</span>
         </div>
-        {listIsOpen ? <ChevronDown size={20} /> : <ChevronRight size={20} />}
+        <AnimatePresence mode="wait">
+          <motion.div
+            animate={{ transform: listIsOpen ? "rotate(90deg)" : "rotate(0)" }}
+          >
+            <ChevronRight size={20} />
+          </motion.div>
+        </AnimatePresence>
       </button>
       {labels ? (
-        <Activity mode={listIsOpen ? "visible" : "hidden"}>
-          <div
-            className={cn(
-              //   "w-full flex flex-col items-start gap-4 max-h-[calc(208px)]",
-              "w-full flex flex-col items-start gap-4 h-[calc(100vh*0.9-533px-16px)]", //must be 124
-              "pl-4 pr-2 overflow-y-scroll snap-y snap-mandatory",
-            )}
-          >
-            {labels.map((label) => (
-              <Link
-                href={`/labels/${label.id}`}
-                key={label.id}
-                className="flex items-center justify-between bg-secondary rounded-3xl shadow-outside-small w-full p-2 text-txt-primary"
-              >
-                <div className="flex items-center gap-2 w-full">
-                  <Tag size={20} />
-                  <span className="w-full truncate">{label.name}</span>
-                </div>
-                <ExternalLink size={20} />
-              </Link>
-            ))}
-          </div>
-        </Activity>
+        <AnimatePresence mode="popLayout">
+          {listIsOpen ? (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{
+                opacity: 1,
+                height: "calc(100vh * 0.9 - 533px - 16px)",
+              }}
+              exit={{ opacity: 0, height: 0 }}
+              className={cn(
+                "w-full flex flex-col items-start gap-4", //must be 124
+                "pl-4 pr-2 overflow-y-scroll snap-y snap-mandatory",
+              )}
+            >
+              {labels.map((label) => (
+                <Link
+                  href={`/labels/${label.id}`}
+                  key={label.id}
+                  className="flex items-center justify-between bg-secondary rounded-3xl shadow-outside-small w-full p-2 text-txt-primary"
+                >
+                  <div className="flex items-center gap-2 w-full">
+                    <Tag size={20} />
+                    <span className="w-full truncate">{label.name}</span>
+                  </div>
+                  <ExternalLink size={20} />
+                </Link>
+              ))}
+            </motion.div>
+          ) : null}
+        </AnimatePresence>
       ) : null}
     </>
   );

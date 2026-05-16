@@ -2,16 +2,17 @@
 
 import React from "react";
 import EditLabelItem from "./edit-label-item";
+import { AnimatePresence } from "motion/react";
 
-interface EditListLabelsProps {
+interface EditLabelsListProps {
   labels: Label[];
   searchValue: string;
 }
 
-export default function EditListLabels({
+export default function EditLabelsList({
   labels,
   searchValue,
-}: EditListLabelsProps) {
+}: EditLabelsListProps) {
   const sortedLabels = labels.filter((label) =>
     label.name.toLowerCase().includes(searchValue.toLowerCase()),
   );
@@ -26,9 +27,11 @@ export default function EditListLabels({
   return (
     <>
       <div className="flex flex-col gap-4 overflow-y-scroll max-h-[calc(3/5*100vh)] mt-4 py-4 px-4 sm:px-8">
-        {sortedLabels.map((label) => (
-          <EditLabelItem label={label} key={label.id} />
-        ))}
+        <AnimatePresence mode="wait">
+          {sortedLabels.map((label) => (
+            <EditLabelItem label={label} key={label.id} />
+          ))}
+        </AnimatePresence>
       </div>
     </>
   );

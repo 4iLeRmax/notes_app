@@ -19,7 +19,7 @@ function MobileMenuLinkGroup() {
             className={cn(
               "bg-secondary p-4 rounded-3xl text-txt-primary flex items-center justify-between",
               {
-                "shadow-outside": path !== "/notes",
+                "shadow-outside-small": path !== "/notes",
                 "shadow-inside": path === "/notes",
               },
             )}

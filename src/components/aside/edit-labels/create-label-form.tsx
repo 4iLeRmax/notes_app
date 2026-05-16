@@ -24,6 +24,7 @@ export default function CreateLabelForm({
         <FormInput
           type="text"
           name="label"
+          className="bg-secondary"
           placeholder="Create label..."
           value={searchValue}
           onChange={handleChangeValue}

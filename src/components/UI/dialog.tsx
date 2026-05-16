@@ -4,6 +4,7 @@ import { X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { createPortal } from "react-dom";
+import { motion } from "motion/react";
 
 const RootDialog = ({
   children,
@@ -59,10 +60,13 @@ const DialogPortal = ({ children }: { children: React.ReactNode }) => {
 const DialogOverlay = ({ handleClose }: { handleClose: () => void }) => {
   return (
     <>
-      <div
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
         className="fixed inset-0 bg-black/30 backdrop-blur-xs"
         onClick={handleClose}
-      ></div>
+      ></motion.div>
     </>
   );
 };
@@ -70,7 +74,14 @@ const DialogOverlay = ({ handleClose }: { handleClose: () => void }) => {
 const DialogContent = ({ children }: { children: React.ReactNode }) => {
   return (
     <>
-      <div className="relative">{children}</div>
+      <motion.div
+        initial={{ opacity: 0, scale: 0 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0 }}
+        className="relative"
+      >
+        {children}
+      </motion.div>
     </>
   );
 };

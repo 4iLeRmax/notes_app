@@ -5,6 +5,7 @@ type NoteItem = {
   content: string;
   noteId: string;
   isDone: boolean;
+  position: number;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -15,7 +16,7 @@ type Note = {
   content: NoteItem[];
   type: NoteType;
   isPinned: boolean;
-  color;
+  color: string | null;
   labels: Label[];
   userId: string;
   createdAt: Date;

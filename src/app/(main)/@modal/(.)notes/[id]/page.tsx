@@ -1,11 +1,11 @@
 import { getNoteById } from "@/lib/actions/note";
 
 import { CloseModalOnNotFound } from "@/components/UI/dialog";
-import NoteMoreMenu from "@/components/note-card/note-more-menu";
 import BaseModal from "@/components/UI/base-modal";
 import NoteViewLastUpdate from "@/components/note-view/note-view-last-update";
 import NoteViewContent from "@/components/note-view/note-view-content";
 import NoteViewTitleForm from "@/components/note-view/note-view-title-form";
+import NoteOptions from "@/components/note-card/note-card-options/note-options";
 
 export default async function InterceptRoute({
   params,
@@ -34,7 +34,7 @@ export default async function InterceptRoute({
                 <div className="w-full flex justify-start">
                   <NoteViewLastUpdate note={note} />
                 </div>
-                <NoteMoreMenu noteId={note.id} fixed />
+                <NoteOptions noteId={note.id} fixed />
               </div>
             </div>
           </BaseModal>

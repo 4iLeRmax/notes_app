@@ -69,7 +69,7 @@ export default function SignUpForm() {
 
   return (
     <>
-      <div className="bg-secondary shadow-outside px-8 xs:px-16 py-4 xs:py-8 rounded-4xl w-120">
+      <div className="bg-secondary shadow-outside px-8 xs:px-16 py-8 rounded-4xl w-120">
         {/* <div className="bg-secondary px-16 py-8 rounded-secondary w-120"> */}
         <h1 className="text-center text-txt-primary text-2xl font-bold">
           Sign Up

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Activity, Suspense, useState } from "react";
+import React, { Activity, Suspense, useEffect, useState } from "react";
 import User from "../header/user/user";
 import ConditionalSearch from "../header/search/conditional-search";
 import MobileMenu from "./menu/mobile-menu";
@@ -8,13 +8,20 @@ import useSelectedNotesStore from "@/lib/store/useSelectedNotesStore";
 import SelectNotesSection from "../header/select-notes/select-notes-section";
 import { UserIconSkeleton } from "../UI/skeletons";
 import cn from "@/lib/cn";
+import { AnimatePresence, motion } from "motion/react";
+import { usePathname } from "next/navigation";
 
 export default function MobileHeader() {
   const [menuIsOpen, setMenuIsOpen] = useState(false);
   const { selectedNotes } = useSelectedNotesStore();
+  const pathname = usePathname();
 
   const toggleMenuIsOpen = () => setMenuIsOpen((p) => !p);
   const handleClose = () => setMenuIsOpen(false);
+
+  useEffect(() => {
+    handleClose();
+  }, [pathname]);
 
   return (
     <>
@@ -25,12 +32,8 @@ export default function MobileHeader() {
           handleClose={handleClose}
         />
       </div>
-      <div
-        className={cn("", {
-          hidden: menuIsOpen,
-          flex: !menuIsOpen,
-        })}
-      >
+
+      <motion.div animate={{ display: menuIsOpen ? "none" : "flex" }}>
         <div className="fixed top-3 right-3 z-30">
           <div className="flex items-center gap-4">
             {selectedNotes.length === 0 ? (
@@ -45,7 +48,7 @@ export default function MobileHeader() {
             )}
           </div>
         </div>
-      </div>
+      </motion.div>
     </>
   );
 }

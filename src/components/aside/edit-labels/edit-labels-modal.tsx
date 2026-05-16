@@ -4,8 +4,9 @@ import React, { useState } from "react";
 import BaseModal from "../../UI/base-modal";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import CreateLabelForm from "./create-label-form";
-import EditListLabels from "./edit-list-labels";
 import { createLabel, getLabels } from "@/lib/actions/label";
+import EditLabelsList from "./edit-labels-list";
+import { Loader2 } from "lucide-react";
 
 interface EditLabelsModalProps {
   handleClose: () => void;
@@ -60,7 +61,13 @@ export default function EditLabelsModal({ handleClose }: EditLabelsModalProps) {
                 exactMatchOfSearch={exactMatchOfSearch}
               />
             </div>
-            <EditListLabels labels={labels} searchValue={searchValue} />
+            {isPending ? (
+              <div className="flex items-center justify-center h-20 text-txt-primary">
+                <Loader2 size={20} />
+              </div>
+            ) : (
+              <EditLabelsList labels={labels} searchValue={searchValue} />
+            )}
           </div>
         </div>
       </BaseModal>

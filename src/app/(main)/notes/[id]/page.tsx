@@ -1,4 +1,3 @@
-import NoteMoreMenu from "@/components/note-card/note-more-menu";
 import { getNoteById } from "@/lib/actions/note";
 import { redirect } from "next/navigation";
 import BackButton from "@/components/UI/back-button";
@@ -6,6 +5,7 @@ import { ArrowLeft } from "lucide-react";
 import NoteViewLastUpdate from "@/components/note-view/note-view-last-update";
 import NoteViewContent from "@/components/note-view/note-view-content";
 import NoteViewTitleForm from "@/components/note-view/note-view-title-form";
+import NoteOptions from "@/components/note-card/note-card-options/note-options";
 
 export default async function NotePage({
   params,
@@ -37,7 +37,7 @@ export default async function NotePage({
             <div className="w-full flex justify-end">
               <NoteViewLastUpdate note={note} />
             </div>
-            <NoteMoreMenu noteId={note.id} />
+            <NoteOptions noteId={note.id} />
           </div>
         </div>
       </div>

@@ -1,12 +1,4 @@
-order of list items
-
-status bar mobile version
-
 Animation where needed
-
-add react-hook-form to create-note
-
-when user convert note content from text to todo empty rows must be deleted
 
 encrypt and decrypt titles and content of note
 

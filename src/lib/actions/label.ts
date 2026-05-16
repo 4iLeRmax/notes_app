@@ -57,12 +57,24 @@ export const createLabel = async (formData: FormData) => {
   if (label.length === 0) return { error: "Label is empty" };
   if (label.length > 50) return { error: "Label is too long" };
 
-  await prisma.label.create({
-    data: {
+  const labelExist = await prisma.label.findFirst({
+    where: {
       name: label,
-      userId: session.session.userId,
     },
   });
+
+  if (labelExist) return null;
+
+  try {
+    await prisma.label.create({
+      data: {
+        name: label,
+        userId: session.session.userId,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+  }
 
   revalidatePath("/notes");
 };

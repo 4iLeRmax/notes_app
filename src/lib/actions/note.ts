@@ -3,7 +3,10 @@
 import prisma from "../prisma";
 import { getSession } from "./auth";
 import { NoteTitleScheme } from "../zod-schemes/basic-schemes";
-import { CreateNoteScheme } from "../zod-schemes/create-note.scheme";
+import {
+  CreateNoteScheme,
+  TCreateNote,
+} from "../zod-schemes/create-note.scheme";
 import { revalidatePath } from "next/cache";
 import { cache } from "react";
 
@@ -28,7 +31,11 @@ export const getAllNotes = cache(async () => {
       userId: session.session.userId,
     },
     include: {
-      content: true,
+      content: {
+        orderBy: {
+          position: "asc",
+        },
+      },
       labels: true,
     },
     orderBy: {
@@ -49,7 +56,7 @@ export const getNoteById = cache(async (noteId: string) => {
     include: {
       content: {
         orderBy: {
-          createdAt: "asc",
+          position: "asc",
         },
       },
       labels: true,
@@ -81,45 +88,93 @@ export const getAllNotesByLabelId = cache(async (labelId: string) => {
   return notes;
 });
 
-export const createNote = async (
-  noteType: NoteType,
-  isPinned: boolean,
-  formData: FormData,
-) => {
+// export const createNote = async (
+//   noteType: NoteType,
+//   isPinned: boolean,
+//   formData: FormData,
+//   content: string[],
+// ) => {
+//   console.log("createNote");
+//   const title = formData.get("title") as string;
+
+//   const safeData = CreateNoteScheme.safeParse({
+//     title,
+//     content,
+//     noteType,
+//     isPinned,
+//   });
+
+//   if (!safeData.success) return;
+//   const session = await getSession();
+
+//   if (!session) return;
+//   try {
+//     await prisma.note.create({
+//       data: {
+//         title: safeData.data.title,
+//         type: safeData.data.noteType,
+//         isPinned: isPinned,
+//         userId: session.user.id,
+//         content: {
+//           createMany: {
+//             data: content.map((line, index) => ({
+//               content: line,
+//               position: index,
+//             })),
+//           },
+//         },
+//       },
+//     });
+//   } catch (error) {
+//     console.error("Error creating note:", error);
+//   }
+
+//   revalidatePath("/notes");
+// };
+
+export const createNote = async (note: TCreateNote) => {
   console.log("createNote");
-  const title = formData.get("title") as string;
-  const content = formData.get("content") as string;
 
   const safeData = CreateNoteScheme.safeParse({
-    title,
-    content,
-    noteType,
-    isPinned,
+    ...note,
   });
 
-  if (safeData.success) {
-    const session = await getSession();
-    const contentLines = safeData.data.content.split("\n");
+  console.log(safeData.success);
+  console.log(safeData.data);
 
-    if (!session) return;
-    const newNote = await prisma.note.create({
+  if (!safeData.success) return;
+  const session = await getSession();
+
+  if (!session) return;
+  try {
+    const { title, content, type, isPinned } = safeData.data;
+
+    let cleanContent = content;
+    if (type === "TODO") {
+      cleanContent = content.filter((item) => item.content !== "");
+    }
+
+    await prisma.note.create({
       data: {
-        title: safeData.data.title,
-        type: safeData.data.noteType,
-        isPinned: isPinned,
+        title,
+        type,
+        isPinned,
         userId: session.user.id,
         content: {
           createMany: {
-            data: contentLines.map((line) => ({
-              content: line,
+            data: cleanContent.map((item, index) => ({
+              ...item,
+              position: index,
             })),
           },
         },
       },
     });
-
-    revalidatePath("/notes");
+  } catch (error) {
+    console.error("Error creating note:", error);
   }
+
+  revalidatePath("/notes");
 };
 
 export const deleteNotes = async (noteIds: string[]) => {
@@ -256,36 +311,6 @@ export const updateNoteTitle = async (noteId: string, title: string) => {
   revalidatePath(`/notes/${noteId}`);
 };
 
-// export const updateNoteText = async (noteId: string, formData: FormData) => {
-// export const updateNoteText = async (noteId: string, textContent: string) => {
-//   console.log("updateNoteText");
-
-//   // const content = formData.get("text") as string;
-//   const contentLines = textContent.split("\n");
-
-//   const session = await getSession();
-//   if (!session) return;
-
-//   await prisma.$transaction([
-//     prisma.noteItem.deleteMany({
-//       where: {
-//         noteId,
-//       },
-//     }),
-//     prisma.noteItem.createMany({
-//       data: [
-//         ...contentLines.map((line) => ({
-//           content: line,
-//           isDone: false,
-//           noteId,
-//         })),
-//       ],
-//     }),
-//   ]);
-
-//   revalidatePath("/notes");
-//   revalidatePath(`/notes/${noteId}`);
-// };
 export const updateNoteText = async (noteId: string, textContent: string) => {
   console.log("updateNoteText");
 
@@ -303,10 +328,11 @@ export const updateNoteText = async (noteId: string, textContent: string) => {
     }),
     prisma.noteItem.createMany({
       data: [
-        ...contentLines.map((line) => ({
+        ...contentLines.map((line, index) => ({
           content: line,
           isDone: false,
           noteId,
+          position: index,
         })),
       ],
     }),
@@ -338,6 +364,7 @@ export const createCopies = async (noteIds: string[]) => {
               data: note.content.map((item) => ({
                 content: item.content,
                 isDone: item.isDone,
+                position: item.position,
               })),
             },
           },

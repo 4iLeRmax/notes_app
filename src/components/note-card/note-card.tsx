@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import NoteMoreMenu from "./note-more-menu";
+import NoteMoreMenu from "./note-card-options/note-options";
 import NoteCardLabels from "./note-card-labels";
 import NoteCardHeader from "./note-card-header";
 import NoteCardMain from "./note-card-main";

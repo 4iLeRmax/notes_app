@@ -1,39 +1,52 @@
 "use client";
 
-import { createNote } from "@/lib/actions/note";
-import clsx from "clsx";
 import React, { useState, useTransition } from "react";
-import FormInput from "../UI/formElements/form-input";
-import cn from "@/lib/cn";
+import { motion, AnimatePresence } from "motion/react";
+
+import { createNote } from "@/lib/actions/note";
+import { TCreateNote } from "@/lib/zod-schemes/create-note.scheme";
+
 import CreateNoteTextarea from "./create-note-textarea";
 import ToggleNoteTypeButton from "./toggle-note-type-button";
 import CreateNoteList from "./create-note-list";
-import { Plus } from "lucide-react";
 import CreateNotePinButton from "./create-note-pin-button";
+
+import FormInput from "../UI/formElements/form-input";
 import FormButton from "../UI/formElements/form-button";
+import { Plus } from "lucide-react";
 
 export default function CreateNote() {
-  const [titleValue, setTitleValue] = useState("");
-  const [contentValue, setContentValue] = useState("");
-  const [noteType, setNoteType] = useState<NoteType>("TEXT");
-  const [isPinned, setIsPinned] = useState(false);
   const [formIsOpen, setFormIsOpen] = useState(false);
-
   const [isPending, startTransition] = useTransition();
   const containerRef = React.useRef<HTMLDivElement>(null);
 
+  const [note, setNote] = useState<TCreateNote>({
+    title: "",
+    content: [],
+    type: "TEXT",
+    isPinned: false,
+  });
+
   const closeForm = () => {
     setFormIsOpen(false);
-    setNoteType("TEXT");
-    setIsPinned(false);
-  };
-  const clearForm = () => {
-    setTitleValue("");
-    setContentValue("");
+    setNote((n) => ({ ...n, type: "TEXT" }));
+    setNote((n) => ({ ...n, isPinned: false }));
   };
 
-  const handleSubmit = async (formData: FormData) => {
-    startTransition(() => createNote(noteType, isPinned, formData));
+  const clearForm = () => {
+    setNote((n) => ({ ...n, title: "" }));
+    setNote((n) => ({ ...n, content: [] }));
+  };
+
+  const submit = () => {
+    if (!note.title && !note.content.some((el) => el.content.length > 0))
+      return;
+    startTransition(() => createNote(note));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    submit();
     clearForm();
     closeForm();
   };
@@ -47,159 +60,145 @@ export default function CreateNote() {
       containerRef.current &&
       !containerRef.current.contains(e.relatedTarget as Node)
     ) {
-      if (titleValue || contentValue) {
-        const formData = new FormData();
-        formData.append("title", titleValue);
-        formData.append("content", contentValue);
-        handleSubmit(formData);
-      }
+      submit();
+      clearForm();
       closeForm();
     }
   };
 
-  const toggleNoteType = (e: React.MouseEvent<HTMLButtonElement>) => {
-    if (noteType === "TEXT" && !formIsOpen) {
-      setNoteType("TODO");
+  const toggleNoteType = () => {
+    if (note.type === "TEXT" && !formIsOpen) {
+      setNote((n) => ({ ...n, type: "TODO" }));
       setFormIsOpen(true);
-    } else if (noteType === "TEXT" && formIsOpen) {
-      setNoteType("TODO");
+    } else if (note.type === "TEXT" && formIsOpen) {
+      setNote((n) => ({ ...n, type: "TODO" }));
     } else {
-      setNoteType("TEXT");
+      setNote((n) => ({ ...n, type: "TEXT" }));
     }
 
     containerRef.current?.focus();
   };
-  // interface SearchResult {
-  //   element: Element;
-  //   matchedText: string;
-  // }
-  // function findElementsWithText(
-  //   searchText: string,
-  //   container: Element = document.body,
-  // ): SearchResult[] {
-  //   const results: SearchResult[] = [];
-  //   const searchLower = searchText.toLowerCase();
-
-  //   function traverse(node: Node) {
-  //     if (node.nodeType === Node.TEXT_NODE) {
-  //       const text = node.textContent?.toLowerCase() || "";
-  //       if (text.includes(searchLower)) {
-  //         const parent = node.parentElement;
-  //         if (parent && !results.find((r) => r.element === parent)) {
-  //           results.push({
-  //             element: parent,
-  //             matchedText: node.textContent || "",
-  //           });
-  //         }
-  //       }
-  //     } else if (node.nodeType === Node.ELEMENT_NODE) {
-  //       node.childNodes.forEach(traverse);
-  //     }
-  //   }
-
-  //   traverse(container);
-  //   return results;
-  // }
-
-  // function highlightMatches(
-  //   results: SearchResult[],
-  //   className: string = "bg-yellow-200",
-  // ): void {
-  //   results.forEach(({ element }) => {
-  //     element.classList.add(className);
-  //   });
-  // }
-
-  // highlightMatches(
-  //   findElementsWithText(
-  //     "1",
-  //     document.querySelector(".search_block") as Element,
-  //   ),
-  // );
 
   return (
     <>
-      <div
+      <motion.div
         ref={containerRef}
         tabIndex={-1}
         onFocus={handleFocus}
         onBlur={handleBlur}
-        className={cn(
-          "bg-secondary relative w-full sm:max-w-120 rounded-4xl shadow-outside-small outline-none",
-          {
-            "py-4": !formIsOpen,
-            "py-8": formIsOpen,
-          },
-        )}
+        animate={{ padding: formIsOpen ? "32px 0" : "16px 0" }}
+        className="bg-secondary relative w-full sm:max-w-120 rounded-4xl shadow-outside-small outline-none"
       >
-        {formIsOpen ? (
-          <div className="flex items-center justify-between px-4 md:px-8 mb-5">
-            <h1 className="text-txt-secondary font-bold text-xl">
-              Create New Note
-            </h1>
-            <CreateNotePinButton
-              isPinned={isPinned}
-              togglePin={() => setIsPinned((p) => !p)}
-            />
-          </div>
-        ) : null}
-        <div>
-          <form action={handleSubmit} className={clsx("flex flex-col", {})}>
-            <div
-              className={cn("flex gap-4 text-txt-secondary", {
-                "": !formIsOpen,
-                "flex-col": formIsOpen,
-              })}
+        <AnimatePresence mode="wait">
+          {formIsOpen ? (
+            <motion.div
+              key="header"
+              initial={{ opacity: 0, height: 0, marginBottom: 0 }}
+              animate={{ opacity: 1, height: "auto", marginBottom: "16px" }}
+              exit={{ opacity: 0, height: 0, marginBottom: 0 }}
+              // transition={{ duration: 0.15 }}
+              // transition={{ delay: 0.3 }}
+              className="flex items-center justify-between px-4 md:px-8"
             >
-              {formIsOpen ? (
-                <div className="px-4 md:px-8">
-                  <FormInput
-                    type="text"
-                    name="title"
-                    value={titleValue}
-                    onChange={(e) => setTitleValue(e.target.value)}
-                    placeholder="Title..."
-                    className="rounded-2xl text-txt-primary bg-primary"
-                  />
-                </div>
-              ) : null}
+              <h1 className="text-txt-secondary font-bold text-xl">
+                Create note
+              </h1>
+              <CreateNotePinButton
+                isPinned={note.isPinned}
+                togglePin={() =>
+                  setNote((n) => ({ ...n, isPinned: !n.isPinned }))
+                }
+              />
+            </motion.div>
+          ) : null}
+        </AnimatePresence>
 
-              {noteType === "TEXT" ? (
-                <CreateNoteTextarea
-                  value={contentValue}
-                  handleChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                    setContentValue(e.target.value)
-                  }
-                  formIsOpen={formIsOpen}
-                />
-              ) : (
-                <CreateNoteList
-                  value={contentValue}
-                  setContentValue={setContentValue}
-                />
-              )}
+        <div>
+          <form onSubmit={handleSubmit} className="flex flex-col">
+            <div className="flex flex-col text-txt-secondary">
+              <AnimatePresence mode="wait">
+                {formIsOpen ? (
+                  <motion.div
+                    key="title-input"
+                    initial={{ opacity: 0, height: 0, marginBottom: 0 }}
+                    animate={{
+                      opacity: 1,
+                      height: "auto",
+                      marginBottom: "16px",
+                    }}
+                    exit={{ opacity: 0, height: 0, marginBottom: 0 }}
+                    // transition={{ delay: 0.3 }}
+                    // transition={{ duration: 0.15 }}
+                    className="px-4 md:px-8"
+                  >
+                    <FormInput
+                      type="text"
+                      name="title"
+                      value={note.title}
+                      onChange={(e) =>
+                        setNote((n) => ({ ...n, title: e.target.value }))
+                      }
+                      placeholder="Title..."
+                      className="rounded-2xl text-txt-primary bg-primary"
+                    />
+                  </motion.div>
+                ) : null}
+                A
+              </AnimatePresence>
+
+              <AnimatePresence mode="wait">
+                {note.type === "TEXT" ? (
+                  <motion.div
+                    key="textarea"
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                  >
+                    <CreateNoteTextarea
+                      content={note.content}
+                      setNote={setNote}
+                      formIsOpen={formIsOpen}
+                    />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="list"
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                  >
+                    <CreateNoteList content={note.content} setNote={setNote} />
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
               <ToggleNoteTypeButton
-                noteType={noteType}
-                toggleNoteType={(e) => toggleNoteType(e)}
+                noteType={note.type}
+                toggleNoteType={toggleNoteType}
                 formIsOpen={formIsOpen}
               />
             </div>
-            {formIsOpen ? (
-              <div className="px-4 md:px-8">
-                {/* <button className="w-full flex items-center justify-center gap-1 bg-custom-blue text-primary py-2 rounded-2xl mt-5">
-                  {formIsOpen ? <Plus size={20} className="" /> : null}
-                  <span>Create</span>
-                </button> */}
-                <FormButton isLoading={isPending}>
-                  {formIsOpen ? <Plus size={20} className="" /> : null}
-                  <span>Create</span>
-                </FormButton>
-              </div>
-            ) : null}
+            <AnimatePresence mode="wait">
+              {formIsOpen ? (
+                <motion.div
+                  key="submit-btn"
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  // transition={{ delay: 0.3 }}
+                  // transition={{ duration: 0.15 }}
+                  className="px-4 md:px-8 mt-4"
+                >
+                  <FormButton isLoading={isPending}>
+                    {formIsOpen ? <Plus size={20} className="" /> : null}
+                    <span>Create</span>
+                  </FormButton>
+                </motion.div>
+              ) : null}
+            </AnimatePresence>
           </form>
         </div>
-      </div>
+      </motion.div>
     </>
   );
 }
