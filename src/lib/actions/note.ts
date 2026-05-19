@@ -9,24 +9,20 @@ import {
 } from "../zod-schemes/create-note.scheme";
 import { revalidatePath } from "next/cache";
 import { cache } from "react";
-
-export const getNoteIds = async () => {
-  console.log("getNoteIds");
-  const noteIds = await prisma.note.findMany({
-    select: {
-      id: true,
-    },
-  });
-
-  return noteIds;
-};
+import encrypt from "../encryption/encrypt";
+import {
+  decryptNote,
+  encryptContent,
+  encryptCreateContent,
+} from "../encryption/encryption-helpers";
+import decrypt from "../encryption/decrypt";
 
 export const getAllNotes = cache(async () => {
   console.log("getAllNotes");
   const session = await getSession();
   if (!session) return;
 
-  return await prisma.note.findMany({
+  const notes = await prisma.note.findMany({
     where: {
       userId: session.session.userId,
     },
@@ -42,14 +38,18 @@ export const getAllNotes = cache(async () => {
       createdAt: "desc",
     },
   });
-});
+
+  const decryptedNotes = notes.map((note) => decryptNote(note));
+
+  return decryptedNotes;
+}); //+
 
 export const getNoteById = cache(async (noteId: string) => {
   console.log("getNoteById");
   const session = await getSession();
   if (!session) return;
 
-  return await prisma.note.findUnique({
+  const note = await prisma.note.findUnique({
     where: {
       id: noteId,
     },
@@ -62,12 +62,17 @@ export const getNoteById = cache(async (noteId: string) => {
       labels: true,
     },
   });
-});
+
+  if (!note) return;
+
+  const decryptedNote = decryptNote(note);
+
+  return decryptedNote;
+}); //+
 
 export const getAllNotesByLabelId = cache(async (labelId: string) => {
   console.log("getAllNotesByLabelId");
   const session = await getSession();
-
   if (!session) return null;
 
   const notes = await prisma.note.findMany({
@@ -85,52 +90,10 @@ export const getAllNotesByLabelId = cache(async (labelId: string) => {
     },
   });
 
-  return notes;
-});
+  const decryptedNotes = notes.map((note) => decryptNote(note));
 
-// export const createNote = async (
-//   noteType: NoteType,
-//   isPinned: boolean,
-//   formData: FormData,
-//   content: string[],
-// ) => {
-//   console.log("createNote");
-//   const title = formData.get("title") as string;
-
-//   const safeData = CreateNoteScheme.safeParse({
-//     title,
-//     content,
-//     noteType,
-//     isPinned,
-//   });
-
-//   if (!safeData.success) return;
-//   const session = await getSession();
-
-//   if (!session) return;
-//   try {
-//     await prisma.note.create({
-//       data: {
-//         title: safeData.data.title,
-//         type: safeData.data.noteType,
-//         isPinned: isPinned,
-//         userId: session.user.id,
-//         content: {
-//           createMany: {
-//             data: content.map((line, index) => ({
-//               content: line,
-//               position: index,
-//             })),
-//           },
-//         },
-//       },
-//     });
-//   } catch (error) {
-//     console.error("Error creating note:", error);
-//   }
-
-//   revalidatePath("/notes");
-// };
+  return decryptedNotes;
+}); //+
 
 export const createNote = async (note: TCreateNote) => {
   console.log("createNote");
@@ -138,9 +101,6 @@ export const createNote = async (note: TCreateNote) => {
   const safeData = CreateNoteScheme.safeParse({
     ...note,
   });
-
-  console.log(safeData.success);
-  console.log(safeData.data);
 
   if (!safeData.success) return;
   const session = await getSession();
@@ -154,15 +114,18 @@ export const createNote = async (note: TCreateNote) => {
       cleanContent = content.filter((item) => item.content !== "");
     }
 
+    const encryptedTitle = encrypt(title);
+    const encryptedContent = encryptCreateContent(cleanContent);
+
     await prisma.note.create({
       data: {
-        title,
+        title: encryptedTitle,
         type,
         isPinned,
         userId: session.user.id,
         content: {
           createMany: {
-            data: cleanContent.map((item, index) => ({
+            data: encryptedContent.map((item, index) => ({
               ...item,
               position: index,
             })),
@@ -175,13 +138,12 @@ export const createNote = async (note: TCreateNote) => {
   }
 
   revalidatePath("/notes");
-};
+}; //+
 
 export const deleteNotes = async (noteIds: string[]) => {
   console.log("deleteNotes");
 
   const session = await getSession();
-
   if (!session) return;
 
   try {
@@ -200,10 +162,12 @@ export const deleteNotes = async (noteIds: string[]) => {
   noteIds.forEach((noteId) => {
     revalidatePath(`/notes/${noteId}`);
   });
-};
+}; //+
 
 export const toggleNoteType = async (noteId: string) => {
   console.log("toggleNoteType");
+  const session = await getSession();
+  if (!session) return;
 
   const currentNote = await prisma.note.findUnique({
     where: {
@@ -227,10 +191,12 @@ export const toggleNoteType = async (noteId: string) => {
 
   revalidatePath("/notes");
   revalidatePath(`/notes/${noteId}`);
-};
+}; //+
 
 export const toggleManyNoteTypes = async (noteIds: string[]) => {
   console.log("toggleManyNoteTypes");
+  const session = await getSession();
+  if (!session) return;
 
   const currentNotes = await prisma.note.findMany({
     where: {
@@ -240,8 +206,6 @@ export const toggleManyNoteTypes = async (noteIds: string[]) => {
       type: true,
     },
   });
-
-  console.log(currentNotes);
 
   if (!currentNotes.some((el) => el !== undefined)) return;
   const oldNoteType = currentNotes[0].type;
@@ -256,7 +220,7 @@ export const toggleManyNoteTypes = async (noteIds: string[]) => {
   });
 
   revalidatePath("/notes");
-};
+}; //+
 
 export const togglePinnedStatus = async (noteId: string) => {
   console.log("togglePinnedStatus");
@@ -285,13 +249,11 @@ export const togglePinnedStatus = async (noteId: string) => {
   }
 
   revalidatePath("/notes");
-};
+}; //+
 
-// export const updateNoteTitle = async (noteId: string, formData: FormData) => {
 export const updateNoteTitle = async (noteId: string, title: string) => {
   console.log("updateNoteTitle");
 
-  // const title = formData.get("title") as string;
   const session = await getSession();
   if (!session) return;
 
@@ -303,22 +265,21 @@ export const updateNoteTitle = async (noteId: string, title: string) => {
       id: noteId,
     },
     data: {
-      title: title,
+      title: encrypt(title),
     },
   });
 
   revalidatePath("/notes");
   revalidatePath(`/notes/${noteId}`);
-};
+}; //+
 
 export const updateNoteText = async (noteId: string, textContent: string) => {
   console.log("updateNoteText");
 
-  // const content = formData.get("text") as string;
-  const contentLines = textContent.split("\n");
-
   const session = await getSession();
   if (!session) return;
+
+  const contentLines = textContent.split("\n");
 
   await prisma.$transaction([
     prisma.noteItem.deleteMany({
@@ -329,7 +290,7 @@ export const updateNoteText = async (noteId: string, textContent: string) => {
     prisma.noteItem.createMany({
       data: [
         ...contentLines.map((line, index) => ({
-          content: line,
+          content: encrypt(line),
           isDone: false,
           noteId,
           position: index,
@@ -340,7 +301,7 @@ export const updateNoteText = async (noteId: string, textContent: string) => {
 
   revalidatePath("/notes");
   revalidatePath(`/notes/${noteId}`);
-};
+}; //+
 
 export const createCopies = async (noteIds: string[]) => {
   console.log("createCopies");
@@ -355,14 +316,14 @@ export const createCopies = async (noteIds: string[]) => {
     validNotes.map(async (note) => {
       await prisma.note.create({
         data: {
-          title: note.title + " (copy)",
+          title: encrypt(note.title + " (copy)"),
           userId: note.userId,
           isPinned: note.isPinned,
           type: note.type,
           content: {
             createMany: {
               data: note.content.map((item) => ({
-                content: item.content,
+                content: encrypt(item.content),
                 isDone: item.isDone,
                 position: item.position,
               })),
@@ -377,4 +338,4 @@ export const createCopies = async (noteIds: string[]) => {
   );
 
   revalidatePath("/notes");
-};
+}; //+

@@ -2,9 +2,14 @@
 
 import { revalidatePath } from "next/cache";
 import prisma from "../prisma";
+import encrypt from "../encryption/encrypt";
+import { getSession } from "./auth";
 
 export const createNoteItem = async (noteId: string) => {
   console.log("createNoteItem");
+  const session = await getSession();
+  if (!session) return;
+
   const lastNoteItem = await prisma.noteItem.findFirst({
     where: {
       noteId,
@@ -22,7 +27,7 @@ export const createNoteItem = async (noteId: string) => {
   try {
     await prisma.noteItem.create({
       data: {
-        content: "",
+        content: encrypt(""),
         isDone: false,
         noteId,
         position: newPosition,
@@ -34,10 +39,12 @@ export const createNoteItem = async (noteId: string) => {
 
   revalidatePath(`/notes`);
   revalidatePath(`/notes/${noteId}`);
-};
+}; //+
 
 export const deleteNoteItem = async (noteItemId: string) => {
   console.log("deleteNoteItem");
+  const session = await getSession();
+  if (!session) return;
 
   const item = await prisma.noteItem.findUnique({
     where: { id: noteItemId },
@@ -63,23 +70,20 @@ export const deleteNoteItem = async (noteItemId: string) => {
 
   revalidatePath(`/notes`);
   revalidatePath(`/notes/${item.noteId}`);
-};
+}; //+
 
-// export const updateNoteItem = async (
-//   noteItemId: string,
-//   formData: FormData,
-// ) => {
 export const updateNoteItem = async (noteItemId: string, text: string) => {
   console.log("updateNoteItem");
-  // const text = formData.get("text") as string;
-  // let res: NoteItem;
-  // try {
+
+  const session = await getSession();
+  if (!session) return;
+
   const res = await prisma.noteItem.update({
     where: {
       id: noteItemId,
     },
     data: {
-      content: text,
+      content: encrypt(text),
     },
   });
   // } catch (error) {
@@ -88,13 +92,15 @@ export const updateNoteItem = async (noteItemId: string, text: string) => {
 
   revalidatePath(`/notes`);
   revalidatePath(`/notes/${res.noteId}`);
-};
+}; //+
 
 export const toggleNoteItemStatus = async (
   noteItemId: string,
   currentStatus: boolean,
 ) => {
   console.log("toggleNoteItemStatus");
+  const session = await getSession();
+  if (!session) return;
 
   const res = await prisma.noteItem.update({
     where: {
@@ -107,10 +113,12 @@ export const toggleNoteItemStatus = async (
 
   revalidatePath(`/notes`);
   revalidatePath(`/notes/${res.noteId}`);
-};
+}; //+
 
 export const deleteAllMarkedItems = async (noteId: string) => {
   console.log("deleteAllMarkedItems");
+  const session = await getSession();
+  if (!session) return;
 
   await prisma.noteItem.deleteMany({
     where: {
@@ -121,10 +129,12 @@ export const deleteAllMarkedItems = async (noteId: string) => {
 
   revalidatePath(`/notes`);
   revalidatePath(`/notes/${noteId}`);
-};
+}; //+
 
 export const removeAllMarks = async (noteId: string) => {
   console.log("removeAllMarks");
+  const session = await getSession();
+  if (!session) return;
 
   await prisma.noteItem.updateMany({
     where: {
@@ -137,4 +147,4 @@ export const removeAllMarks = async (noteId: string) => {
 
   revalidatePath(`/notes`);
   revalidatePath(`/notes/${noteId}`);
-};
+}; //+

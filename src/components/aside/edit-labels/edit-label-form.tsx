@@ -1,11 +1,9 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { useDebounce } from "use-debounce";
 import { updateLabel } from "@/lib/actions/label";
-import { Loader, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
+import { useAutoSubmit } from "@/hooks/useAutoSubmit";
 import { useQueryClient } from "@tanstack/react-query";
-import { DEBOUNCE_VALUE } from "@/lib/constants";
 
 interface EditLabelFormProps {
   labelName: string;
@@ -16,43 +14,25 @@ export default function EditLabelForm({
   labelName,
   labelId,
 }: EditLabelFormProps) {
-  const [text, setText] = useState(labelName);
-  const [value] = useDebounce(text, DEBOUNCE_VALUE);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
   const queryClient = useQueryClient();
 
-  useEffect(() => {
-    if (value === labelName) return;
-
-    const submitForm = async () => {
-      setIsSubmitting(true);
-      try {
-        const formData = new FormData();
-        formData.append("label", value);
-        await updateLabel(labelId, formData);
-        await queryClient.invalidateQueries({ queryKey: ["labels"] });
-      } catch (error) {
-        console.error("Failed to update label:", error);
-      } finally {
-        setIsSubmitting(false);
-      }
-    };
-
-    submitForm();
-  }, [value, labelId, labelName]);
+  const { value, setValue, isPending } = useAutoSubmit(async (text) => {
+    await updateLabel(labelId, text);
+    await queryClient.invalidateQueries({
+      queryKey: ["labels"],
+    });
+  }, labelName);
 
   return (
     <>
       <div className="w-full flex items-center gap-2">
         <textarea
           name="label"
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          disabled={isSubmitting}
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
           className="w-full overflow-hidden outline-none resize-none field-sizing-content"
         ></textarea>
-        {isSubmitting ? (
+        {isPending ? (
           <Loader2 size={20} className="animate-spin shrink-0" />
         ) : null}
       </div>

@@ -17,12 +17,12 @@ export default function EditLabelsModal({ handleClose }: EditLabelsModalProps) {
 
   const queryClient = useQueryClient();
 
-  const { data: labels, refetch } = useQuery({
+  const { data: labels } = useQuery({
     queryKey: ["labels"],
-    queryFn: getLabels,
+    queryFn: async () => await getLabels(),
   });
 
-  const { mutate: handleSubmit, isPending } = useMutation({
+  const { mutate: handleSubmit } = useMutation({
     mutationFn: async (FormData: FormData) => {
       await createLabel(FormData);
     },
@@ -61,13 +61,7 @@ export default function EditLabelsModal({ handleClose }: EditLabelsModalProps) {
                 exactMatchOfSearch={exactMatchOfSearch}
               />
             </div>
-            {isPending ? (
-              <div className="flex items-center justify-center h-20 text-txt-primary">
-                <Loader2 size={20} />
-              </div>
-            ) : (
-              <EditLabelsList labels={labels} searchValue={searchValue} />
-            )}
+            <EditLabelsList labels={labels} searchValue={searchValue} />
           </div>
         </div>
       </BaseModal>

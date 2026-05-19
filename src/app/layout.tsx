@@ -25,16 +25,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <RootWrappers>
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-          suppressHydrationWarning
-        >
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        suppressHydrationWarning
+      >
+        <RootWrappers>
           {children}
 
           <div id="modals"></div>
-        </body>
-      </RootWrappers>
+        </RootWrappers>
+      </body>
     </html>
   );
 }

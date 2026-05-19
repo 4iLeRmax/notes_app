@@ -132,7 +132,7 @@ export const SignOutAction = async () => {
     console.log("Error during sign out:", err);
   }
   //
-  redirect("/sign-in");
+  // redirect("/sign-in");
 };
 
 export const signinActionWithGoogle = async () => {

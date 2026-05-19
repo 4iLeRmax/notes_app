@@ -12,19 +12,18 @@ export default function EditLabelItem({ label }: EditLabelItemProps) {
   return (
     <>
       <motion.div
+        layout
         initial={{ opacity: 0, x: -20 }}
         animate={{
           opacity: 1,
           x: 0,
         }}
         exit={{ opacity: 0, x: 20 }}
-        className="flex items-center justify-between px-4 py-2 rounded-3xl bg-secondary shadow-outside-small text-txt-primary"
+        className="flex items-center justify-between gap-2  px-4 py-2 rounded-3xl bg-secondary shadow-outside-small text-txt-primary"
       >
+        <LabelLinkBtn labelId={label.id} />
         <EditLabelForm labelId={label.id} labelName={label.name} />
-        <div className="flex items-center gap-2">
-          <LabelLinkBtn labelId={label.id} />
-          <DeleteLabelBtn labelId={label.id} />
-        </div>
+        <DeleteLabelBtn labelId={label.id} />
       </motion.div>
     </>
   );

@@ -1,24 +1,23 @@
+"use client";
+
 import { SignOutAction } from "@/lib/actions/auth";
-import { authClient } from "@/lib/auth-client";
 import cn from "@/lib/cn";
+import { useQueryClient } from "@tanstack/react-query";
 import { LogOut } from "lucide-react";
-import { useRouter } from "next/navigation";
-import React from "react";
 
 export default function LogoutButton() {
-  // const router = useRouter();
+  const queryClient = useQueryClient();
 
-  // const logout = () =>
-  //   authClient.signOut({
-  //     fetchOptions: {
-  //       onSuccess: () => router.push("/sign-in"),
-  //     },
-  //   });
+  const logout = async () => {
+    await SignOutAction();
+    queryClient.clear();
+    window.location.href = "/sign-in";
+  };
 
   return (
     <>
       <button
-        onClick={SignOutAction}
+        onClick={logout}
         className={cn(
           "flex items-center justify-center px-4 py-2 rounded-2xl gap-2 y shadow-outside-small",
           "w-full bg-custom-blue text-primary",

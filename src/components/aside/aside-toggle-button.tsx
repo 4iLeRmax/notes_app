@@ -27,7 +27,14 @@ export default function AsideToggleButton({
           },
         )}
       >
-        <AnimatePresence mode="wait">
+        <motion.div
+          key="open"
+          animate={{ transform: isOpen ? "rotate(90deg)" : "rotate(0)" }}
+          transition={{ duration: 0.2 }}
+        >
+          <Ellipsis size={iconSize} />
+        </motion.div>
+        {/* <AnimatePresence mode="wait">
           {isOpen ? (
             <motion.div
               key="open"
@@ -49,7 +56,7 @@ export default function AsideToggleButton({
               <Ellipsis size={iconSize} />
             </motion.div>
           )}
-        </AnimatePresence>
+        </AnimatePresence> */}
       </button>
     </>
   );

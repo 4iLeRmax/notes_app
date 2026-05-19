@@ -56,7 +56,7 @@ export default function EditLabels({ menuIsOpen }: EditLabelsProps) {
 
   return (
     <>
-      <AnimatePresence mode="wait">
+      <AnimatePresence mode="popLayout">
         {modalIsOpen ? (
           <EditLabelsModal handleClose={() => setModalIsOpen(false)} />
         ) : null}

@@ -84,9 +84,8 @@
 
 import { getLabels } from "@/lib/actions/label";
 import { useQuery } from "@tanstack/react-query";
-import { ChevronDown, ChevronRight, ChevronUp, Tag, Tags } from "lucide-react";
-import Link from "next/link";
-import React, { Activity, useEffect, useState } from "react";
+import { ChevronRight, Tags } from "lucide-react";
+import React, { useState } from "react";
 import LabelItem from "./label-item";
 import cn from "@/lib/cn";
 import { LabelsIconSkeleton } from "../UI/skeletons";
@@ -98,7 +97,12 @@ interface LabelGroupProps {
 
 export default function LabelGroup({ menuIsOpen }: LabelGroupProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const { data: labels, isLoading } = useQuery({
+  const {
+    data: labels,
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
     queryKey: ["labels"],
     queryFn: async () => await getLabels(),
   });
@@ -143,11 +147,13 @@ export default function LabelGroup({ menuIsOpen }: LabelGroupProps) {
               </AnimatePresence>
             </div>
             {menuIsOpen ? (
-              isOpen ? (
-                <ChevronDown size={20} />
-              ) : (
+              <motion.div
+                animate={{
+                  transform: isOpen ? "rotate(90deg)" : "rotate(0)",
+                }}
+              >
                 <ChevronRight size={20} />
-              )
+              </motion.div>
             ) : null}
           </button>
         </div>
@@ -155,15 +161,15 @@ export default function LabelGroup({ menuIsOpen }: LabelGroupProps) {
           {isOpen ? (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
+              animate={{
+                opacity: 1,
+                height: "auto",
+                paddingLeft: menuIsOpen ? "32px" : "16px",
+              }}
               exit={{ opacity: 0, height: 0 }}
               className={cn(
                 "w-full flex flex-col items-start gap-4 max-h-[calc(100vh-358px-40px-16px)]",
                 "mt-4 overflow-y-scroll snap-y snap-mandatory scrollbar-thin pr-3",
-                {
-                  "pl-4": !menuIsOpen,
-                  "pl-8": menuIsOpen,
-                },
               )}
             >
               {labels.map((label) => (

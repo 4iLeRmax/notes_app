@@ -1,7 +1,7 @@
 import cn from "@/lib/cn";
 import { Pin, PinOff } from "lucide-react";
 import React from "react";
-
+import { motion } from "motion/react";
 interface CreateNotePinButtonProps {
   isPinned: boolean;
   togglePin: () => void;

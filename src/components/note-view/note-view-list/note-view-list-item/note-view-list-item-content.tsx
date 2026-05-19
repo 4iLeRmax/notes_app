@@ -3,18 +3,19 @@
 import { useAutoSubmit } from "@/hooks/useAutoSubmit";
 import { updateNoteItem } from "@/lib/actions/note-item";
 import { Loader2 } from "lucide-react";
-import React from "react";
 
 interface NoteViewListItemContentProps {
   listItemId: string;
   content: string;
   isDone: boolean;
+  hovered: boolean;
 }
 
 export default function NoteViewListItemContent({
   listItemId,
   content,
   isDone,
+  hovered,
 }: NoteViewListItemContentProps) {
   const { value, setValue, isPending } = useAutoSubmit(
     (text) => updateNoteItem(listItemId, text),
@@ -23,7 +24,7 @@ export default function NoteViewListItemContent({
 
   return (
     <>
-      <div className="flex items-center justify-center gap-2 min-h-7 w-full min-w-0 pr-4">
+      <div className="flex items-center justify-center gap-2 min-h-7 w-full min-w-0">
         {!isDone ? (
           <textarea
             name="text"
@@ -32,9 +33,7 @@ export default function NoteViewListItemContent({
             className="w-full overflow-hidden outline-none resize-none field-sizing-content py-4"
           />
         ) : (
-          <div className="w-full flex items-center justify-start line-through">
-            {content}
-          </div>
+          <div className="w-full overflow-hidden line-through">{content}</div>
         )}
         {isPending ? (
           <div className="">

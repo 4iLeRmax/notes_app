@@ -29,7 +29,7 @@ const NoteContentScheme = z
   .array(
     z.object({
       content: z.string().trim().max(128, "Note content is too long"),
-      isDone: z.boolean().default(false),
+      isDone: z.boolean("it can be only true or false").default(false),
     }),
   )
   .max(100, "Note content is too long");

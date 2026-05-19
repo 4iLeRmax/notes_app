@@ -82,6 +82,7 @@ export default function CreateNote() {
   return (
     <>
       <motion.div
+        layout
         ref={containerRef}
         tabIndex={-1}
         onFocus={handleFocus}
@@ -182,12 +183,12 @@ export default function CreateNote() {
               {formIsOpen ? (
                 <motion.div
                   key="submit-btn"
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  exit={{ opacity: 0, height: 0 }}
+                  initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                  animate={{ opacity: 1, height: "auto", marginTop: "16px" }}
+                  exit={{ opacity: 0, height: 0, marginTop: 0 }}
                   // transition={{ delay: 0.3 }}
                   // transition={{ duration: 0.15 }}
-                  className="px-4 md:px-8 mt-4"
+                  className="px-4 md:px-8"
                 >
                   <FormButton isLoading={isPending}>
                     {formIsOpen ? <Plus size={20} className="" /> : null}

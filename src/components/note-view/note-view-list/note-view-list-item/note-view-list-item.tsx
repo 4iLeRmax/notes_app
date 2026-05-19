@@ -32,20 +32,19 @@ export default function NoteViewListItem({ listItem }: NoteViewListItemProps) {
         tabIndex={0}
         className={cn("rounded-4xl bg-secondary shadow-outside-small w-full")}
       >
-        <div className="flex items-center justify-between">
-          <div className="w-full flex items-center gap-2">
-            <NoteViewListItemStatusBtn
-              listItemId={listItem.id}
-              isDone={listItem.isDone}
-              size={32}
-            />
+        <div className="w-full flex items-center gap-2">
+          <NoteViewListItemStatusBtn
+            listItemId={listItem.id}
+            isDone={listItem.isDone}
+            size={32}
+          />
 
-            <NoteViewListItemContent
-              listItemId={listItem.id}
-              content={listItem.content}
-              isDone={listItem.isDone}
-            />
-          </div>
+          <NoteViewListItemContent
+            listItemId={listItem.id}
+            content={listItem.content}
+            isDone={listItem.isDone}
+            hovered={hovered}
+          />
           <NoteViewListItemDeleteBtn
             listItemId={listItem.id}
             hovered={hovered}

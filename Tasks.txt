@@ -1,7 +1,3 @@
-Animation where needed
-
-encrypt and decrypt titles and content of note
-
 optimistic updates for:
     - Pinning notes
     - etc

@@ -16,7 +16,7 @@ export default function NoteViewListItemDeleteBtn({
 }: NoteViewListItemDeleteBtnProps) {
   return (
     <>
-      {hovered ? (
+      {hovered || true ? (
         <form
           action={deleteNoteItem.bind(null, listItemId)}
           className="flex h-full py-4 pr-4"
