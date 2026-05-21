@@ -5,40 +5,65 @@ import prisma from "../prisma";
 import encrypt from "../encryption/encrypt";
 import { getSession } from "./auth";
 
-export const createNoteItem = async (noteId: string) => {
+export const createNoteItem = async (
+  noteId: string,
+  createAtPosition?: number,
+) => {
   console.log("createNoteItem");
   const session = await getSession();
   if (!session) return;
 
-  const lastNoteItem = await prisma.noteItem.findFirst({
-    where: {
-      noteId,
-    },
-    orderBy: {
-      position: "desc",
-    },
-    select: {
-      position: true,
-    },
-  });
+  if (createAtPosition) {
+    await prisma.noteItem.updateMany({
+      where: {
+        noteId: noteId,
+        position: { gt: createAtPosition - 1 },
+      },
+      data: {
+        position: { increment: 1 },
+      },
+    });
 
-  const newPosition = lastNoteItem ? lastNoteItem.position + 1 : 0;
-
-  try {
     await prisma.noteItem.create({
       data: {
         content: encrypt(""),
         isDone: false,
         noteId,
-        position: newPosition,
+        position: createAtPosition,
       },
     });
-  } catch (error) {
-    console.error("Error creating note item:", error);
+  } else {
+    const lastNoteItem = await prisma.noteItem.findFirst({
+      where: {
+        noteId,
+      },
+      orderBy: {
+        position: "desc",
+      },
+      select: {
+        position: true,
+      },
+    });
+    const newPosition = lastNoteItem ? lastNoteItem.position + 1 : 0;
+
+    try {
+      await prisma.noteItem.create({
+        data: {
+          content: encrypt(""),
+          isDone: false,
+          noteId,
+          position: newPosition,
+        },
+      });
+    } catch (error) {
+      console.error("Error creating note item:", error);
+    }
   }
 
   revalidatePath(`/notes`);
   revalidatePath(`/notes/${noteId}`);
+
+  return { success: true };
 }; //+
 
 export const deleteNoteItem = async (noteItemId: string) => {

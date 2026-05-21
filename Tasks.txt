@@ -3,5 +3,4 @@ optimistic updates for:
     - etc
 
 ??? When a caret is in the end of the row end user press "Enter" key then "Create Item" will run (only when note type is TODO)
-??? Auto delete when title and content is empty.
 ??? Add color for each Note

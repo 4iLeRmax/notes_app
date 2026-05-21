@@ -4,11 +4,13 @@ import { Check, X } from "lucide-react";
 import AnimatePresenceWrapper from "@/components/UI/animate-presence-wrapper";
 
 interface NoteViewListGroupProps {
+  noteId: string;
   title?: string;
   list: NoteItem[];
 }
 
 export default function NoteViewListGroup({
+  noteId,
   list,
   title,
 }: NoteViewListGroupProps) {
@@ -19,7 +21,7 @@ export default function NoteViewListGroup({
         <div className="flex flex-col items-center gap-2">
           <AnimatePresenceWrapper mode="popLayout">
             {list.map((item) => (
-              <NoteViewListItem listItem={item} key={item.id} />
+              <NoteViewListItem key={item.id} listItem={item} noteId={noteId} />
             ))}
           </AnimatePresenceWrapper>
         </div>

@@ -1,10 +1,9 @@
 "use client";
 
-import cn from "@/lib/cn";
 import { Search, X } from "lucide-react";
 import FormInput from "../../UI/formElements/form-input";
-import { useRef, useState } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import { motion } from "motion/react";
+import { useEffect, useRef } from "react";
 
 interface SearchBarProps {
   searchValue: string;
@@ -15,6 +14,14 @@ export default function SearchBar({
   searchValue,
   handleSearch,
 }: SearchBarProps) {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, []);
+
   return (
     <>
       <motion.div
@@ -32,6 +39,7 @@ export default function SearchBar({
             <FormInput
               type="text"
               name="search"
+              customRef={inputRef}
               value={searchValue}
               onChange={handleSearch}
               placeholder="Search..."

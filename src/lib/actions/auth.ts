@@ -120,7 +120,9 @@ export const SigninAction = async (formData: TSignIn) => {
     }
   }
 
-  redirect("/notes");
+  return { success: true };
+
+  // redirect("/notes");
 };
 
 export const SignOutAction = async () => {

@@ -1,6 +1,4 @@
 import React from "react";
-import { Plus } from "lucide-react";
-import { createNoteItem } from "@/lib/actions/note-item";
 import NoteViewListDisplay from "./note-view-list-display";
 import NoteViewCreateItemBtn from "./note-view-create-item-btn";
 
@@ -16,6 +14,7 @@ export default function NoteViewList({ noteId, list }: NoteViewListProps) {
   return (
     <>
       <NoteViewListDisplay
+        noteId={noteId}
         unmarkedList={unmarkedList}
         markedList={markedList}
       />

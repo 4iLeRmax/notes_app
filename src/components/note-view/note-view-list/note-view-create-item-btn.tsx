@@ -13,7 +13,10 @@ export default function NoteViewCreateItemBtn({
 }: NoteViewCreateItemBtnProps) {
   return (
     <>
-      <form action={createNoteItem.bind(null, noteId)} className="ml-5 mt-5">
+      <form
+        action={createNoteItem.bind(null, noteId, undefined)}
+        className="ml-5 mt-5"
+      >
         <button className="flex items-center gap-1 text-txt-secondary">
           <Plus size={20} />
           <span>{listLength === 0 ? "Create first item" : "Create item"}</span>

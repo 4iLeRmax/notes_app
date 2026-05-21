@@ -12,6 +12,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 export default function SignInFrom() {
@@ -29,13 +30,19 @@ export default function SignInFrom() {
     },
   });
 
+  const router = useRouter();
+
   const onSubmit: SubmitHandler<TSignIn> = async (data) => {
     const res = await SigninAction(data);
+
     if (res?.error) {
       setError("root", { message: res.error.message });
     }
-    if (res?.error.code === "EMAIL_NOT_VERIFIED") {
+    if (res?.error?.code === "EMAIL_NOT_VERIFIED") {
       setError("root", { message: res.error.message, type: res.error.code });
+    }
+    if (res?.success) {
+      router.replace("/notes");
     }
   };
 
