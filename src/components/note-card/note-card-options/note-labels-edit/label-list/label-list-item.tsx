@@ -1,8 +1,8 @@
 "use client";
 
-import clsx from "clsx";
 import React from "react";
-import ToggleLabelItemForm from "./toggle-label-item-form";
+import ToggleLabelItemBtn from "./toggle-label-item-btn";
+import cn from "@/lib/cn";
 
 interface LabelListItemProps {
   label: Label;
@@ -17,21 +17,17 @@ export default function LabelListItem({
 }: LabelListItemProps) {
   return (
     <>
-      <div
-        className={clsx("flex items-center gap-2 px-4 py-2", {
+      <button
+        onClick={() => handleToggleLabelToNote(label.id)}
+        className={cn("flex items-center gap-2 px-4 py-2 cursor-pointer", {
           "text-txt-primary hover:bg-custom-blue hover:text-primary":
             !labelIsAdded,
           "bg-custom-blue text-primary": labelIsAdded,
         })}
       >
-        <ToggleLabelItemForm
-          label={label}
-          handleToggleLabelToNote={handleToggleLabelToNote}
-          labelIsAdded={labelIsAdded}
-        />
-
+        <ToggleLabelItemBtn labelIsAdded={labelIsAdded} />
         <span className="break-all">{label.name}</span>
-      </div>
+      </button>
     </>
   );
 }

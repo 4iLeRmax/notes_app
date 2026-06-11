@@ -3,6 +3,7 @@
 import cn from "@/lib/cn";
 import useSelectedNotesStore from "@/lib/store/useSelectedNotesStore";
 import { Check } from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
 import React, { useState, memo, useEffect } from "react";
 
 const ChildrenWrapper = memo(({ children }: { children: React.ReactNode }) => (
@@ -19,10 +20,17 @@ export default function SelectNote({
   note: Note;
 }) {
   const [isHovered, setIsHovered] = useState(false);
-  const { selectedNotes, toggleSelectedNote, removeAll } =
-    useSelectedNotesStore();
 
-  const isSelected = selectedNotes.some((sn) => sn.id === note.id);
+  // const selectedNoteIds = useSelectedNotesStore((s) => s.selectedNoteIds);
+  const toggleSelectedNote = useSelectedNotesStore((s) => s.toggleSelectedNote);
+  const removeAll = useSelectedNotesStore((s) => s.removeAll);
+
+  const isSelected = useSelectedNotesStore((s) =>
+    s.selectedNoteIds.includes(note.id),
+  );
+  const hasAnySelected = useSelectedNotesStore(
+    (s) => s.selectedNoteIds.length > 0,
+  );
 
   let mouseTimer: any;
   let touchStartX = 0;
@@ -30,31 +38,14 @@ export default function SelectNote({
   const LONG_PRESS_DURATION = 400;
   const TOUCH_MOVE_THRESHOLD = 10; // pixels
 
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-
-      if (target.closest("[data-note-card]")) return;
-      if (target.closest("[data-note-card-button]")) return;
-      if (target.closest("[data-header]")) return;
-      if (target.closest("[data-aside]")) return;
-
-      removeAll();
-    };
-
-    document.addEventListener("click", handleClickOutside);
-    return () => document.removeEventListener("click", handleClickOutside);
-  }, [removeAll]);
-
-  useEffect(() => {
-    return () => removeAll();
-  }, []);
+  // useEffect(() => {
+  //   return () => removeAll();
+  // }, []);
 
   const handlePressStart = () => {
     if (mouseTimer) clearTimeout(mouseTimer);
     mouseTimer = window.setTimeout(() => {
-      console.log("note selected");
-      toggleSelectedNote(note);
+      toggleSelectedNote(note.id);
       navigator.vibrate?.(200);
     }, LONG_PRESS_DURATION);
   };
@@ -116,29 +107,38 @@ export default function SelectNote({
           },
         )}
       >
-        {isSelected || isHovered ? (
-          <div className="hidden sm:flex absolute z-20 top-3 -left-3.5">
-            <button
-              data-note-card-button
-              onClick={() => toggleSelectedNote(note)}
-              className="bg-txt-primary rounded-3xl shadow-outside-small p-1 text-primary"
+        <AnimatePresence mode="wait">
+          {isSelected || isHovered ? (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              transition={{ duration: 0.15 }}
+              className="hidden sm:flex absolute z-20 top-2.5 -left-2.5"
             >
-              <Check size={20} />
-            </button>
-          </div>
-        ) : null}
-        {selectedNotes.length > 0 && (
+              <button
+                data-note-card-button
+                onClick={() => toggleSelectedNote(note.id)}
+                className="bg-custom-blue rounded-3xl shadow-outside-small p-0.5 text-primary"
+              >
+                <Check size={16} />
+              </button>
+            </motion.div>
+          ) : null}
+        </AnimatePresence>
+        {hasAnySelected ? (
           <div
-            style={{ position: "absolute", inset: 0, zIndex: 1 }}
-            className={cn("absolute inset-0 z-10 cursor-pointer", {
-              "bg-txt-primary/20 rounded-xl sm:rounded-3xl border-2 border-txt-primary":
-                isSelected,
-            })}
-            onClick={() => toggleSelectedNote(note)}
+            className={cn(
+              "absolute inset-0 z-10 cursor-pointer rounded-xl sm:rounded-3xl",
+              {
+                "bg-custom-blue/20 border-2 border-custom-blue": isSelected,
+              },
+            )}
+            onClick={() => toggleSelectedNote(note.id)}
           />
-        )}
+        ) : null}
 
-        <ChildrenWrapper>{children}</ChildrenWrapper>
+        <>{children}</>
       </div>
     </>
   );

@@ -1,67 +1,55 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
 import prisma from "../prisma";
 import encrypt from "../encryption/encrypt";
 import { getSession } from "./auth";
+import { NoteActionErrors, NoteItemActionErrors } from "./errors";
+import z from "zod";
+import { TODONoteItemScheme } from "../zod-schemes/note-schemes/note-item-scheme";
+import { NOTE_LIMITS } from "../constants";
+import decrypt from "../encryption/decrypt";
 
-export const createNoteItem = async (
-  noteId: string,
-  createAtPosition?: number,
-) => {
+export const createNoteItem = async (newNoteItem: NoteItem) => {
   console.log("createNoteItem");
   const session = await getSession();
-  if (!session) return;
+  if (!session) throw new Error(NoteItemActionErrors.UNAUTHORIZED);
 
-  if (createAtPosition) {
+  // max chars per item
+  const { data: safeNewNoteItem, success: validNoteItem } =
+    TODONoteItemScheme.safeParse(newNoteItem);
+  if (!validNoteItem)
+    throw new Error(NoteItemActionErrors.INVALID_NOTE_ITEM_DATA);
+
+  const noteItemsCount = await prisma.noteItem.count({
+    where: { noteId: safeNewNoteItem.noteId },
+  });
+
+  // max items
+  if (noteItemsCount >= NOTE_LIMITS.TODO.maxItems)
+    throw new Error(NoteItemActionErrors.NOTE_ITEM_LIMIT);
+
+  try {
     await prisma.noteItem.updateMany({
       where: {
-        noteId: noteId,
-        position: { gt: createAtPosition - 1 },
+        noteId: safeNewNoteItem.noteId,
+        position: { gt: safeNewNoteItem.position - 1 },
       },
       data: {
         position: { increment: 1 },
       },
     });
-
     await prisma.noteItem.create({
       data: {
-        content: encrypt(""),
-        isDone: false,
-        noteId,
-        position: createAtPosition,
+        ...safeNewNoteItem,
+        content: encrypt(safeNewNoteItem.content),
       },
     });
-  } else {
-    const lastNoteItem = await prisma.noteItem.findFirst({
-      where: {
-        noteId,
-      },
-      orderBy: {
-        position: "desc",
-      },
-      select: {
-        position: true,
-      },
-    });
-    const newPosition = lastNoteItem ? lastNoteItem.position + 1 : 0;
-
-    try {
-      await prisma.noteItem.create({
-        data: {
-          content: encrypt(""),
-          isDone: false,
-          noteId,
-          position: newPosition,
-        },
-      });
-    } catch (error) {
-      console.error("Error creating note item:", error);
-    }
+  } catch (error) {
+    throw new Error(NoteItemActionErrors.CREATE_NOTE_ITEM_FAILED);
   }
 
-  revalidatePath(`/notes`);
-  revalidatePath(`/notes/${noteId}`);
+  // revalidatePath(`/notes`);
+  // revalidatePath(`/notes/${noteId}`);
 
   return { success: true };
 }; //+
@@ -69,54 +57,110 @@ export const createNoteItem = async (
 export const deleteNoteItem = async (noteItemId: string) => {
   console.log("deleteNoteItem");
   const session = await getSession();
-  if (!session) return;
+  if (!session) throw new Error(NoteItemActionErrors.UNAUTHORIZED);
+
+  const safeNoteItemIdData = z.uuid().safeParse(noteItemId);
+  if (!safeNoteItemIdData.success)
+    throw new Error(NoteItemActionErrors.INVALID_NOTE_ITEM_ID);
+  const { data: safeNoteItemId } = safeNoteItemIdData;
 
   const item = await prisma.noteItem.findUnique({
-    where: { id: noteItemId },
+    where: { id: safeNoteItemId },
     select: { position: true, noteId: true },
   });
 
-  if (!item) return;
+  if (!item) throw new Error(NoteItemActionErrors.NOTE_ITEM_NOT_FOUND);
 
-  await prisma.$transaction([
-    prisma.noteItem.delete({
-      where: { id: noteItemId },
-    }),
-    prisma.noteItem.updateMany({
-      where: {
-        noteId: item.noteId,
-        position: { gt: item.position },
-      },
-      data: {
-        position: { decrement: 1 },
-      },
-    }),
-  ]);
+  try {
+    await prisma.$transaction([
+      prisma.noteItem.delete({
+        where: { id: safeNoteItemId },
+      }),
+      prisma.noteItem.updateMany({
+        where: {
+          noteId: item.noteId,
+          position: { gt: item.position },
+        },
+        data: {
+          position: { decrement: 1 },
+        },
+      }),
+    ]);
 
-  revalidatePath(`/notes`);
-  revalidatePath(`/notes/${item.noteId}`);
+    // revalidatePath(`/notes`);
+    // revalidatePath(`/notes/${item.noteId}`);
+  } catch {
+    throw new Error(NoteItemActionErrors.DELETE_NOTE_ITEM_FAILED);
+  }
 }; //+
 
-export const updateNoteItem = async (noteItemId: string, text: string) => {
+export const updateNoteItem = async (
+  noteId: string,
+  noteItemId: string,
+  text: string,
+) => {
   console.log("updateNoteItem");
 
   const session = await getSession();
-  if (!session) return;
+  if (!session) throw new Error(NoteItemActionErrors.UNAUTHORIZED);
 
-  const res = await prisma.noteItem.update({
-    where: {
-      id: noteItemId,
-    },
-    data: {
-      content: encrypt(text),
-    },
+  const safeNoteIdData = z.uuid().safeParse(noteId);
+  if (!safeNoteIdData.success)
+    throw new Error(NoteActionErrors.INVALID_NOTE_ID);
+  const { data: safeNoteId } = safeNoteIdData;
+
+  const safeNoteItemIdData = z.uuid().safeParse(noteItemId);
+  if (!safeNoteItemIdData.success)
+    throw new Error(NoteItemActionErrors.INVALID_NOTE_ITEM_ID);
+  const { data: safeNoteItemId } = safeNoteItemIdData;
+
+  // max chars per item
+  const safeData = TODONoteItemScheme.pick({ content: true }).safeParse({
+    content: text,
   });
-  // } catch (error) {
-  //   console.error("Error updating note item:", error);
-  // }
+  if (!safeData.success)
+    throw new Error(NoteItemActionErrors.INVALID_NOTE_ITEM_CONTENT);
+  const {
+    data: { content: safeText },
+  } = safeData;
 
-  revalidatePath(`/notes`);
-  revalidatePath(`/notes/${res.noteId}`);
+  const items = await prisma.noteItem.findMany({
+    where: { noteId: safeNoteId },
+    select: { id: true, content: true },
+  });
+
+  const currentTotal = items.reduce(
+    (sum, item) => sum + decrypt(item.content).length,
+    0,
+  );
+  const existingItem = items.find((item) => item.id === safeNoteItemId);
+  if (!existingItem) throw new Error(NoteItemActionErrors.NOTE_ITEM_NOT_FOUND);
+
+  const projectedTotal =
+    currentTotal -
+    (decrypt(existingItem.content).length ?? 0) +
+    safeText.length;
+
+  // total chars max
+
+  if (projectedTotal > NOTE_LIMITS.TODO.totalChars)
+    throw new Error(NoteActionErrors.NOTE_TOTAL_CHARS_LIMIT);
+
+  try {
+    await prisma.noteItem.update({
+      where: {
+        id: safeNoteItemId,
+      },
+      data: {
+        content: encrypt(safeText),
+      },
+    });
+
+    // revalidatePath(`/notes`);
+    // revalidatePath(`/notes/${res.noteId}`);
+  } catch {
+    throw new Error(NoteItemActionErrors.UPDATE_NOTE_ITEM_FAILED);
+  }
 }; //+
 
 export const toggleNoteItemStatus = async (
@@ -125,51 +169,106 @@ export const toggleNoteItemStatus = async (
 ) => {
   console.log("toggleNoteItemStatus");
   const session = await getSession();
-  if (!session) return;
+  if (!session) throw new Error(NoteItemActionErrors.UNAUTHORIZED);
 
-  const res = await prisma.noteItem.update({
-    where: {
-      id: noteItemId,
-    },
-    data: {
-      isDone: !currentStatus,
-    },
-  });
+  const safeNoteItemIdData = z.uuid().safeParse(noteItemId);
+  if (!safeNoteItemIdData.success)
+    throw new Error(NoteItemActionErrors.INVALID_NOTE_ITEM_ID);
+  const { data: safeNoteItemId } = safeNoteItemIdData;
 
-  revalidatePath(`/notes`);
-  revalidatePath(`/notes/${res.noteId}`);
-}; //+
+  const safeStatusData = z.boolean().safeParse(currentStatus);
+  if (!safeStatusData.success)
+    throw new Error(NoteItemActionErrors.INVALID_NOTE_ITEM_STATUS);
+  const { data: safeStatus } = safeStatusData;
 
-export const deleteAllMarkedItems = async (noteId: string) => {
-  console.log("deleteAllMarkedItems");
-  const session = await getSession();
-  if (!session) return;
+  try {
+    const res = await prisma.noteItem.update({
+      where: {
+        id: safeNoteItemId,
+      },
+      data: {
+        isDone: !safeStatus,
+      },
+    });
 
-  await prisma.noteItem.deleteMany({
-    where: {
-      noteId,
-      isDone: true,
-    },
-  });
-
-  revalidatePath(`/notes`);
-  revalidatePath(`/notes/${noteId}`);
+    // revalidatePath(`/notes`);
+    // revalidatePath(`/notes/${res.noteId}`);
+  } catch {
+    throw new Error(NoteItemActionErrors.TOGGLE_NOTE_ITEM_STATUS_FAILED);
+  }
 }; //+
 
 export const removeAllMarks = async (noteId: string) => {
   console.log("removeAllMarks");
   const session = await getSession();
-  if (!session) return;
+  if (!session) throw new Error(NoteItemActionErrors.UNAUTHORIZED);
 
-  await prisma.noteItem.updateMany({
-    where: {
-      noteId,
-    },
-    data: {
-      isDone: false,
-    },
-  });
+  const safeNoteIdData = z.uuid().safeParse(noteId);
+  if (!safeNoteIdData.success)
+    throw new Error(NoteActionErrors.INVALID_NOTE_ID);
+  const { data: safeNoteId } = safeNoteIdData;
 
-  revalidatePath(`/notes`);
-  revalidatePath(`/notes/${noteId}`);
+  try {
+    await prisma.noteItem.updateMany({
+      where: {
+        noteId: safeNoteId,
+      },
+      data: {
+        isDone: false,
+      },
+    });
+
+    // revalidatePath(`/notes`);
+    // revalidatePath(`/notes/${safeNoteId}`);
+  } catch {
+    throw new Error(NoteItemActionErrors.REMOVE_ALL_MARKS_FAILED);
+  }
+}; //+
+
+export const deleteAllMarkedItems = async (
+  noteId: string,
+  remainingItems: { id: string; position: number }[],
+) => {
+  console.log("deleteAllMarkedItems");
+  const session = await getSession();
+  if (!session) throw new Error(NoteItemActionErrors.UNAUTHORIZED);
+
+  const safeNoteIdData = z.uuid().safeParse(noteId);
+  if (!safeNoteIdData.success)
+    throw new Error(NoteActionErrors.INVALID_NOTE_ID);
+  const { data: safeNoteId } = safeNoteIdData;
+
+  const safeItemsData = z
+    .array(
+      z.object({
+        id: z.uuid(),
+        position: z.number().int().nonnegative(),
+      }),
+    )
+    .safeParse(remainingItems);
+  if (!safeItemsData.success)
+    throw new Error(NoteItemActionErrors.INVALID_NOTE_ITEM_DATA);
+  const { data: safeItems } = safeItemsData;
+
+  try {
+    await prisma.$transaction(async (tx) => {
+      await tx.noteItem.deleteMany({
+        where: { noteId: safeNoteId, isDone: true },
+      });
+
+      await Promise.all(
+        safeItems.map((item) =>
+          tx.noteItem.update({
+            where: { id: item.id },
+            data: { position: item.position },
+          }),
+        ),
+      );
+    });
+
+    // revalidatePath(`/notes`);
+    // revalidatePath(`/notes/${safeNoteId}`);
+  } catch {
+    throw new Error(NoteItemActionErrors.DELETE_ALL_MARKED_ITEMS_FAILED);
+  }
 }; //+

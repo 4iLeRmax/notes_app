@@ -12,38 +12,74 @@ const LabelsIconSkeleton = () => {
   );
 };
 
-const NoteCardSkeleton = () => {
+const ThemeIconSkeleton = () => {
+  return (
+    <div className="w-[41px] h-[41px] rounded-full shadow-outside-small bg-secondary animate-pulse"></div>
+  );
+};
+const NoteCardSkeleton = ({ height }: { height: number }) => {
   return (
     <div
       style={{
-        height: `${Math.floor(Math.random() * (500 - 200 + 1)) + 200}px`,
+        height: `${height}px`,
       }}
       className="break-inside-avoid w-full lg:w-[250px] mb-2 xs:mb-5 bg-secondary rounded-xl sm:rounded-3xl shadow-outside animate-pulse"
     ></div>
   );
 };
 
-const NoteGroupSkeleton = () => {
+const NotesGroupSkeleton = () => {
+  const blocksHeights = [450, 500, 280, 200, 300, 270, 400, 400, 420, 330];
+
   return (
     <div className="columns-2 md:columns-3 xl:columns-4 3xl:columns-5! gap-2 xs:gap-5 h-full">
-      {Array(10)
-        .fill(0)
-        .map((_, index) => (
-          <NoteCardSkeleton key={index} />
-        ))}
+      {blocksHeights.map((height, index) => (
+        <NoteCardSkeleton key={index} height={height} />
+      ))}
     </div>
   );
 };
 
-const NoteDisplaySkeleton = () => {
+const NotesDisplaySkeleton = () => {
   return (
     <div className="flex flex-col lg:items-center gap-3 w-full mt-10 h-full">
       <div className="flex items-center justify-center">
         <div className="w-25 h-6 rounded-3xl bg-secondary shadow-outside"></div>
       </div>
-      <NoteGroupSkeleton />
+      <NotesGroupSkeleton />
     </div>
   );
 };
 
-export { UserIconSkeleton, LabelsIconSkeleton, NoteDisplaySkeleton };
+const NoteViewSkeleton = () => {
+  return (
+    <div className="w-full flex items-center justify-center">
+      <div className="w-full md:w-150 bg-secondary shadow-outside-small rounded-4xl pt-15 pb-4 px-8">
+        <div className="flex items-center">
+          <div className="w-9 h-9 rounded-full shadow-outside-small bg-primary animate-pulse"></div>
+        </div>
+
+        <div className="mt-5 flex flex-col gap-2">
+          <div className="w-full h-16 rounded-4xl shadow-outside-small bg-primary animate-pulse"></div>
+          <div className="w-full h-16 rounded-4xl shadow-outside-small bg-primary animate-pulse"></div>
+          <div className="w-full h-16 rounded-4xl shadow-outside-small bg-primary animate-pulse"></div>
+          <div className="w-full h-16 rounded-4xl shadow-outside-small bg-primary animate-pulse"></div>
+          <div className="w-full h-16 rounded-4xl shadow-outside-small bg-primary animate-pulse"></div>
+        </div>
+
+        <div className="flex items-center justify-end mt-10">
+          <div className="w-7 h-7 rounded-full shadow-outside-small bg-primary animate-pulse"></div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export {
+  UserIconSkeleton,
+  LabelsIconSkeleton,
+  ThemeIconSkeleton,
+  NotesDisplaySkeleton,
+  NoteViewSkeleton,
+  NotesGroupSkeleton,
+};

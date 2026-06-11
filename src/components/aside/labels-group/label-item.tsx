@@ -20,10 +20,10 @@ export default function LabelItem({ label, menuIsOpen }: LabelItemProps) {
       <Link
         href={`/labels/${label.id}`}
         className={cn(
-          "w-full flex items-center gap-2 p-2 bg-primary rounded-3xl snap-center",
+          "w-full flex items-center gap-2 p-2 bg-primary rounded-3xl snap-center text-txt-primary hover:text-custom-blue transition-colors",
           {
             "shadow-outside-small": path !== `/labels/${label.id}`,
-            "shadow-inside": path === `/labels/${label.id}`,
+            "shadow-inside text-custom-blue": path === `/labels/${label.id}`,
           },
         )}
       >

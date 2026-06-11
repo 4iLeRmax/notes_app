@@ -1,17 +1,22 @@
+"use client";
+
 import React from "react";
 import NoteViewListGroup from "./note-view-list-group";
 
 interface NoteViewListDisplayProps {
   noteId: string;
-  markedList: NoteItem[];
-  unmarkedList: NoteItem[];
+  list: NoteItem[];
 }
 
 export default function NoteViewListDisplay({
   noteId,
-  markedList,
-  unmarkedList,
+  list,
 }: NoteViewListDisplayProps) {
+  if (list.length === 0) return null;
+
+  const unmarkedList = list.filter((item) => !item.isDone);
+  const markedList = list.filter((item) => item.isDone);
+
   return (
     <>
       <div className="flex flex-col gap-4">

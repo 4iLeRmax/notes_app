@@ -3,6 +3,8 @@
 import { useAutoSubmit } from "@/hooks/useAutoSubmit";
 import { updateNoteTitle } from "@/lib/actions/note";
 import cn from "@/lib/cn";
+import { NOTE_LIMITS } from "@/lib/constants";
+import { useNotesStore } from "@/lib/store/useNotesStore";
 import { Loader2 } from "lucide-react";
 import React, { useState } from "react";
 
@@ -14,9 +16,10 @@ export default function NoteViewTitleForm({
   noteId: string;
 }) {
   const [focused, setFocused] = useState(false);
+  const updateTitle = useNotesStore((s) => s.updateTitle);
 
   const { value, setValue, isPending } = useAutoSubmit<string>(
-    (title: string) => updateNoteTitle(noteId, title),
+    (title: string) => updateTitle(noteId, title),
     defaultTitle,
   );
 
@@ -27,15 +30,17 @@ export default function NoteViewTitleForm({
           type="text"
           name="title"
           value={value}
-          onChange={(e) => setValue(e.target.value)}
+          onChange={(e) =>
+            setValue(e.target.value.slice(0, NOTE_LIMITS.MAX_TITLE_CHARS))
+          }
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
           className={cn(
             "text-xl w-full outline-none font-bold px-4 py-2 rounded-4xl pr-[52px] ",
             {
-              "text-txt-secondary hover:text-txt-primary cursor-pointer":
+              "text-txt-secondary cursor-pointer":
                 !focused && defaultTitle === value,
-              "shadow-inside text-txt-primary cursor-text bg-secondary":
+              "shadow-inside text-txt-primary cursor-text bg-primary":
                 focused || defaultTitle !== value,
             },
           )}

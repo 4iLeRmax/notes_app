@@ -1,6 +1,9 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import NoteViewListDisplay from "./note-view-list-display";
 import NoteViewCreateItemBtn from "./note-view-create-item-btn";
+import { useNotesStore } from "@/lib/store/useNotesStore";
 
 interface NoteViewListProps {
   noteId: string;
@@ -8,17 +11,19 @@ interface NoteViewListProps {
 }
 
 export default function NoteViewList({ noteId, list }: NoteViewListProps) {
-  const unmarkedList = list.filter((item) => !item.isDone);
-  const markedList = list.filter((item) => item.isDone);
+  const addNoteItem = useNotesStore((s) => s.addNoteItem);
+
+  const handleCreateItem = async () => {
+    await addNoteItem(noteId);
+  };
 
   return (
     <>
-      <NoteViewListDisplay
-        noteId={noteId}
-        unmarkedList={unmarkedList}
-        markedList={markedList}
+      <NoteViewListDisplay noteId={noteId} list={list} />
+      <NoteViewCreateItemBtn
+        listLength={list.length}
+        handleCreateItem={handleCreateItem}
       />
-      <NoteViewCreateItemBtn noteId={noteId} listLength={list.length} />
     </>
   );
 }

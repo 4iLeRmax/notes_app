@@ -1,29 +1,31 @@
 "use client";
 
-import { Loader, Loader2 } from "lucide-react";
-import { useFormStatus } from "react-dom";
+import cn from "@/lib/cn";
 
 interface CreateLabelBtnProps {
-  searchValue: string;
+  onClick: () => Promise<void>;
+  disabled?: boolean;
 }
 
-export default function CreateLabelBtn({ searchValue }: CreateLabelBtnProps) {
-  const { pending } = useFormStatus();
-
+export default function CreateLabelBtn({
+  onClick,
+  disabled = false,
+}: CreateLabelBtnProps) {
   return (
     <>
       <button
-        className="bg-custom-blue text-primary py-2 rounded-2xl wrap-break-word flex items-center justify-center disabled:bg-txt-primary"
-        disabled={pending}
-      >
-        {pending ? (
-          <Loader2 size={20} className="animate-spin shrink-0" />
-        ) : (
-          <>
-            <span>Create Label</span>
-            {searchValue.length > 0 ? `: "${searchValue}"` : ""}
-          </>
+        type="button"
+        onClick={disabled ? () => {} : () => onClick()}
+        // disabled={disabled}
+        className={cn(
+          "bg-custom-blue text-primary py-2 rounded-2xl wrap-break-word flex items-center justify-center",
+          // "disabled:bg-custom-blue/40 disabled:cursor-default!",
+          {
+            "bg-custom-blue/40 cursor-default!": disabled,
+          },
         )}
+      >
+        Create Label
       </button>
     </>
   );

@@ -1,15 +1,9 @@
 "use client";
 
-import { getLabels } from "@/lib/actions/label";
+import { DialogOverlay } from "@/components/UI/dialog";
 import cn from "@/lib/cn";
-import { useQuery } from "@tanstack/react-query";
-import {
-  ChevronDown,
-  ChevronRight,
-  ExternalLink,
-  Tag,
-  Tags,
-} from "lucide-react";
+import { useNotesStore } from "@/lib/store/useNotesStore";
+import { ChevronRight, ExternalLink, Tag, Tags } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import Link from "next/link";
 import { useState, memo } from "react";
@@ -24,12 +18,7 @@ function MobileMenuLabelList(
   }: MobileMenuLabelListProps,
 ) {
   const [listIsOpen, setListIsOpen] = useState(false);
-  const { data: labels } = useQuery({
-    queryKey: ["labels"],
-    queryFn: async () => await getLabels(),
-    enabled: listIsOpen,
-    staleTime: 5 * 60 * 1000,
-  });
+  const labels = useNotesStore((s) => s.labels);
 
   if (!labels || labels.length < 1) return null;
 
@@ -40,10 +29,10 @@ function MobileMenuLabelList(
           setListIsOpen((p) => !p);
         }}
         className={cn(
-          "flex items-center justify-between text-txt-primary p-4 rounded-3xl bg-secondary",
+          "flex items-center justify-between p-4 rounded-3xl bg-secondary transition-colors",
           {
-            "shadow-outside-small": !listIsOpen,
-            "shadow-inside": listIsOpen,
+            "shadow-outside-small text-txt-primary": !listIsOpen,
+            "shadow-inside text-custom-blue": listIsOpen,
           },
         )}
       >
@@ -62,32 +51,39 @@ function MobileMenuLabelList(
       {labels ? (
         <AnimatePresence mode="popLayout">
           {listIsOpen ? (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{
-                opacity: 1,
-                height: "calc(100vh * 0.9 - 533px - 16px)",
-              }}
-              exit={{ opacity: 0, height: 0 }}
-              className={cn(
-                "w-full flex flex-col items-start gap-4", //must be 124
-                "pl-4 pr-2 overflow-y-scroll snap-y snap-mandatory",
-              )}
-            >
-              {labels.map((label) => (
-                <Link
-                  href={`/labels/${label.id}`}
-                  key={label.id}
-                  className="flex items-center justify-between bg-secondary rounded-3xl shadow-outside-small w-full p-2 text-txt-primary"
+            <>
+              <div className="fixed z-50">
+                <DialogOverlay handleClose={() => setListIsOpen(false)} />
+                <motion.div
+                  initial={{ y: 150, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: 150, opacity: 0 }}
+                  transition={{ type: "tween" }}
+                  className="fixed bg-secondary bottom-0 left-0 shadow-outside-small  rounded-ss-3xl rounded-se-3xl w-full pt-10 pb-4"
                 >
-                  <div className="flex items-center gap-2 w-full">
-                    <Tag size={20} />
-                    <span className="w-full truncate">{label.name}</span>
+                  <div
+                    className={cn(
+                      "w-full flex flex-col items-start gap-4",
+                      "pl-4 pr-2 py-1 overflow-y-scroll max-h-[60vh] snap-y snap-mandatory",
+                    )}
+                  >
+                    {labels.map((label) => (
+                      <Link
+                        href={`/labels/${label.id}`}
+                        key={label.id}
+                        className="flex items-center justify-between bg-secondary rounded-3xl shadow-outside-small w-full p-4 text-txt-primary"
+                      >
+                        <div className="flex items-center gap-2 w-full">
+                          <Tag size={20} />
+                          <span className="w-full truncate">{label.name}</span>
+                        </div>
+                        <ExternalLink size={20} />
+                      </Link>
+                    ))}
                   </div>
-                  <ExternalLink size={20} />
-                </Link>
-              ))}
-            </motion.div>
+                </motion.div>
+              </div>
+            </>
           ) : null}
         </AnimatePresence>
       ) : null}

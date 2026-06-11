@@ -2,11 +2,7 @@
 
 import prisma from "../prisma";
 import { getSession } from "./auth";
-import { NoteTitleScheme } from "../zod-schemes/basic-schemes";
-import {
-  CreateNoteScheme,
-  TCreateNote,
-} from "../zod-schemes/create-note.scheme";
+import { NoteTitleScheme, NoteTypeScheme } from "../zod-schemes/basic-schemes";
 import { revalidatePath } from "next/cache";
 import { cache } from "react";
 import encrypt from "../encryption/encrypt";
@@ -16,113 +12,148 @@ import {
   encryptCreateContent,
 } from "../encryption/encryption-helpers";
 import decrypt from "../encryption/decrypt";
+import z from "zod";
+import {
+  CreateNoteScheme,
+  TCreateNote,
+} from "../zod-schemes/note-schemes/create-note.scheme";
+import { NoteScheme } from "../zod-schemes/note-schemes/note-scheme";
+import { NoteActionErrors, NoteItemActionErrors } from "./errors";
+import {
+  NoteItemScheme,
+  TEXTNoteItemScheme,
+} from "../zod-schemes/note-schemes/note-item-scheme";
+import { NOTE_LIMITS } from "../constants";
 
 export const getAllNotes = cache(async () => {
   console.log("getAllNotes");
   const session = await getSession();
-  if (!session) return;
+  if (!session) throw new Error(NoteActionErrors.UNAUTHORIZED);
 
-  const notes = await prisma.note.findMany({
-    where: {
-      userId: session.session.userId,
-    },
-    include: {
-      content: {
-        orderBy: {
-          position: "asc",
-        },
+  try {
+    const notes = await prisma.note.findMany({
+      where: {
+        userId: session.session.userId,
       },
-      labels: true,
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
+      include: {
+        content: {
+          orderBy: {
+            position: "asc",
+          },
+        },
+        labels: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
 
-  const decryptedNotes = notes.map((note) => decryptNote(note));
+    const decryptedNotes = notes.map((note) => decryptNote(note));
 
-  return decryptedNotes;
+    return decryptedNotes;
+  } catch (err) {
+    throw new Error(NoteActionErrors.FETCH_NOTES_FAILED);
+  }
 }); //+
 
 export const getNoteById = cache(async (noteId: string) => {
   console.log("getNoteById");
   const session = await getSession();
-  if (!session) return;
+  if (!session) throw new Error(NoteActionErrors.UNAUTHORIZED);
 
-  const note = await prisma.note.findUnique({
-    where: {
-      id: noteId,
-    },
-    include: {
-      content: {
-        orderBy: {
-          position: "asc",
-        },
+  const safeNoteIdData = z.uuid().safeParse(noteId);
+  if (!safeNoteIdData.success)
+    throw new Error(NoteActionErrors.INVALID_NOTE_ID);
+  const { data: safeNoteId } = safeNoteIdData;
+
+  try {
+    const note = await prisma.note.findUnique({
+      where: {
+        id: safeNoteId,
+        userId: session.session.userId,
       },
-      labels: true,
-    },
-  });
+      include: {
+        content: {
+          orderBy: {
+            position: "asc",
+          },
+        },
+        labels: true,
+      },
+    });
 
-  if (!note) return;
+    if (!note) throw new Error(NoteActionErrors.NOTE_NOT_FOUND);
 
-  const decryptedNote = decryptNote(note);
+    const decryptedNote = decryptNote(note);
 
-  return decryptedNote;
+    return decryptedNote;
+  } catch {
+    throw new Error(NoteActionErrors.FETCH_NOTES_FAILED);
+  }
 }); //+
 
 export const getAllNotesByLabelId = cache(async (labelId: string) => {
   console.log("getAllNotesByLabelId");
   const session = await getSession();
-  if (!session) return null;
+  if (!session) throw new Error(NoteActionErrors.UNAUTHORIZED);
 
-  const notes = await prisma.note.findMany({
-    where: {
-      labels: {
-        some: {
-          id: labelId,
-        },
+  const safeLabelIdData = z.uuid().safeParse(labelId);
+  if (!safeLabelIdData.success)
+    throw new Error(NoteActionErrors.INVALID_LABEL_ID);
+  const { data: safeLabelId } = safeLabelIdData;
+
+  try {
+    const notes = await prisma.note.findMany({
+      where: {
+        labels: { some: { id: safeLabelId } },
+        userId: session.session.userId,
       },
-      userId: session.session.userId,
-    },
-    include: {
-      content: true,
-      labels: true,
-    },
-  });
+      include: { content: true, labels: true },
+    });
 
-  const decryptedNotes = notes.map((note) => decryptNote(note));
-
-  return decryptedNotes;
+    return notes.map((note) => decryptNote(note));
+  } catch {
+    throw new Error(NoteActionErrors.FETCH_NOTES_FAILED);
+  }
 }); //+
 
-export const createNote = async (note: TCreateNote) => {
+export const createNote = async (note: TCreateNote, noteId: string) => {
   console.log("createNote");
-
-  const safeData = CreateNoteScheme.safeParse({
-    ...note,
-  });
-
-  if (!safeData.success) return;
   const session = await getSession();
+  if (!session) throw new Error(NoteActionErrors.UNAUTHORIZED);
 
-  if (!session) return;
+  const safeData = CreateNoteScheme.safeParse(note);
+  console.log(safeData.error);
+  if (!safeData.success) throw new Error(NoteActionErrors.INVALID_NOTE_DATA);
+
+  const safeNoteIdData = z.uuid().safeParse(noteId);
+  if (!safeNoteIdData.success)
+    throw new Error(NoteActionErrors.INVALID_NOTE_ID);
+  const { data: safeNoteId } = safeNoteIdData;
+
   try {
     const { title, content, type, isPinned } = safeData.data;
 
-    let cleanContent = content;
-    if (type === "TODO") {
-      cleanContent = content.filter((item) => item.content !== "");
-    }
+    const cleanContent =
+      type === "TODO" ? content.filter((item) => item.content !== "") : content;
 
-    const encryptedTitle = encrypt(title);
     const encryptedContent = encryptCreateContent(cleanContent);
 
-    await prisma.note.create({
+    const notesCount = await prisma.note.count({
+      where: { userId: session.session.userId },
+    });
+
+    if (notesCount >= NOTE_LIMITS.MAX_NOTES) {
+      throw new Error(NoteActionErrors.NOTE_LIMIT_EXCEEDED);
+    }
+
+    const note = await prisma.note.create({
       data: {
-        title: encryptedTitle,
+        id: safeNoteId,
+        title: encrypt(title),
         type,
         isPinned,
-        userId: session.user.id,
+        userId: session.session.userId,
         content: {
           createMany: {
             data: encryptedContent.map((item, index) => ({
@@ -132,210 +163,263 @@ export const createNote = async (note: TCreateNote) => {
           },
         },
       },
+      include: {
+        content: true,
+        labels: true,
+      },
     });
-  } catch (error) {
-    console.error("Error creating note:", error);
-  }
 
-  revalidatePath("/notes");
+    return decryptNote(note);
+  } catch (error) {
+    throw new Error(NoteActionErrors.CREATE_NOTE_FAILED);
+  }
+  // revalidatePath("/notes");
 }; //+
 
 export const deleteNotes = async (noteIds: string[]) => {
   console.log("deleteNotes");
 
   const session = await getSession();
-  if (!session) return;
+  if (!session) throw new Error(NoteActionErrors.UNAUTHORIZED);
+
+  const safeNoteIdsData = z.array(z.uuid()).safeParse(noteIds);
+  if (!safeNoteIdsData.success)
+    throw new Error(NoteActionErrors.INVALID_NOTE_ID);
+  const { data: safeNoteIds } = safeNoteIdsData;
 
   try {
     await prisma.note.deleteMany({
       where: {
         id: {
-          in: noteIds,
+          in: safeNoteIds,
         },
       },
     });
   } catch {
-    throw new Error(`Deleting notes: ${noteIds}`);
+    throw new Error(NoteActionErrors.DELETE_NOTES_FAILED);
   }
 
-  revalidatePath("/notes");
-  noteIds.forEach((noteId) => {
-    revalidatePath(`/notes/${noteId}`);
-  });
+  // revalidatePath("/notes");
+  // safeNoteIds.forEach((noteId) => revalidatePath(`/notes/${noteId}`));
 }; //+
 
-export const toggleNoteType = async (noteId: string) => {
-  console.log("toggleNoteType");
-  const session = await getSession();
-  if (!session) return;
-
-  const currentNote = await prisma.note.findUnique({
-    where: {
-      id: noteId,
-    },
-    select: {
-      type: true,
-      userId: true,
-    },
-  });
-
-  if (!currentNote) return;
-  const oldNoteType = currentNote.type;
-
-  await prisma.note.update({
-    where: { id: noteId },
-    data: {
-      type: oldNoteType === "TEXT" ? "TODO" : "TEXT",
-    },
-  });
-
-  revalidatePath("/notes");
-  revalidatePath(`/notes/${noteId}`);
-}; //+
-
-export const toggleManyNoteTypes = async (noteIds: string[]) => {
+export const toggleManyNoteTypes = async (
+  noteIds: string[],
+  newType: NoteType,
+) => {
   console.log("toggleManyNoteTypes");
   const session = await getSession();
-  if (!session) return;
+  if (!session) throw new Error(NoteActionErrors.UNAUTHORIZED);
 
-  const currentNotes = await prisma.note.findMany({
-    where: {
-      id: { in: noteIds },
-    },
-    select: {
-      type: true,
-    },
-  });
+  const safeNoteIdsData = z.array(z.uuid()).safeParse(noteIds);
+  if (!safeNoteIdsData.success)
+    throw new Error(NoteActionErrors.INVALID_NOTE_ID);
+  const { data: safeNoteIds } = safeNoteIdsData;
 
-  if (!currentNotes.some((el) => el !== undefined)) return;
-  const oldNoteType = currentNotes[0].type;
+  const safeNoteTypeData = NoteTypeScheme.safeParse(newType);
+  if (!safeNoteTypeData.success)
+    throw new Error(NoteActionErrors.INVALID_NOTE_DATA);
+  const { data: safeNewType } = safeNoteTypeData;
 
-  await prisma.note.updateMany({
-    where: {
-      id: { in: noteIds },
-    },
-    data: {
-      type: oldNoteType === "TEXT" ? "TODO" : "TEXT",
-    },
-  });
-
-  revalidatePath("/notes");
-}; //+
-
-export const togglePinnedStatus = async (noteId: string) => {
-  console.log("togglePinnedStatus");
-
-  const session = await getSession();
-  if (!session) return;
-
-  const currentNote = await prisma.note.findUnique({
-    where: {
-      id: noteId,
-    },
-    select: {
-      isPinned: true,
-    },
-  });
-
-  if (currentNote) {
-    await prisma.note.update({
-      where: {
-        id: noteId,
-      },
-      data: {
-        isPinned: !currentNote.isPinned,
+  if (safeNewType === "TODO") {
+    const notes = await prisma.note.findMany({
+      where: { id: { in: safeNoteIds }, userId: session.session.userId },
+      select: {
+        id: true,
+        content: {
+          select: { content: true },
+        },
       },
     });
+
+    const unconvertable = notes.filter((note) => {
+      const totalChars = note.content.reduce(
+        (sum, item) => sum + decrypt(item.content).length,
+        0,
+      );
+      const anyItemTooLong = note.content.some(
+        (item) =>
+          decrypt(item.content).length > NOTE_LIMITS.TODO.maxCharsPerItem,
+      );
+
+      return totalChars > NOTE_LIMITS.TODO.totalChars || anyItemTooLong;
+    });
+    if (unconvertable.length > 0)
+      throw new Error(NoteActionErrors.NOTES_EXCEED_TODO_LIMITS);
   }
 
-  revalidatePath("/notes");
+  try {
+    await prisma.note.updateMany({
+      where: {
+        id: { in: safeNoteIds },
+      },
+      data: {
+        type: safeNewType,
+      },
+    });
+  } catch {
+    throw new Error(NoteActionErrors.TOGGLE_MANY_TYPES_FAILED);
+  }
+
+  // revalidatePath("/notes");
 }; //+
 
-export const updateNoteTitle = async (noteId: string, title: string) => {
+export const togglePinStatus = async (
+  noteId: string,
+  newPinStatus: boolean,
+) => {
+  console.log("togglePinStatus");
+
+  const session = await getSession();
+  if (!session) throw new Error(NoteActionErrors.UNAUTHORIZED);
+
+  const safeNoteIdData = z.uuid().safeParse(noteId);
+  if (!safeNoteIdData.success)
+    throw new Error(NoteActionErrors.INVALID_NOTE_ID);
+  const { data: safeNoteId } = safeNoteIdData;
+
+  const safeNewPinStatusData = z.boolean().safeParse(newPinStatus);
+  if (!safeNewPinStatusData.success)
+    throw new Error(NoteActionErrors.INVALID_NOTE_DATA);
+  const { data: safeNewPinStatus } = safeNewPinStatusData;
+
+  try {
+    await prisma.note.update({
+      where: {
+        id: safeNoteId,
+      },
+      data: {
+        isPinned: safeNewPinStatus,
+      },
+    });
+  } catch {
+    throw new Error(NoteActionErrors.TOGGLE_PIN_FAILED);
+  }
+
+  // revalidatePath("/notes");
+}; //+
+
+export const updateNoteTitle = async (noteId: string, newTitle: string) => {
   console.log("updateNoteTitle");
 
   const session = await getSession();
-  if (!session) return;
+  if (!session) throw new Error(NoteActionErrors.UNAUTHORIZED);
 
-  const safeData = NoteTitleScheme.safeParse(title);
-  if (!safeData.success) return;
+  const safeData = NoteTitleScheme.safeParse(newTitle);
+  if (!safeData.success) throw new Error(NoteActionErrors.INVALID_TITLE);
+  const { data: safeTitle } = safeData;
 
-  await prisma.note.update({
-    where: {
-      id: noteId,
-    },
-    data: {
-      title: encrypt(title),
-    },
-  });
+  const safeNoteIdData = z.uuid().safeParse(noteId);
+  if (!safeNoteIdData.success)
+    throw new Error(NoteActionErrors.INVALID_NOTE_ID);
+  const { data: safeNoteId } = safeNoteIdData;
 
-  revalidatePath("/notes");
-  revalidatePath(`/notes/${noteId}`);
+  try {
+    await prisma.note.update({
+      where: { id: safeNoteId },
+      data: { title: encrypt(safeTitle) },
+    });
+  } catch {
+    throw new Error(NoteActionErrors.UPDATE_TITLE_FAILED);
+  }
+
+  // revalidatePath("/notes");
+  // revalidatePath(`/notes/${safeNoteId}`);
 }; //+
 
-export const updateNoteText = async (noteId: string, textContent: string) => {
+export const updateNoteText = async (noteId: string, content: NoteItem[]) => {
   console.log("updateNoteText");
 
   const session = await getSession();
-  if (!session) return;
+  if (!session) throw new Error(NoteActionErrors.UNAUTHORIZED);
 
-  const contentLines = textContent.split("\n");
+  const safeNoteIdData = z.uuid().safeParse(noteId);
+  if (!safeNoteIdData.success)
+    throw new Error(NoteActionErrors.INVALID_NOTE_ID);
+  const { data: safeNoteId } = safeNoteIdData;
 
-  await prisma.$transaction([
-    prisma.noteItem.deleteMany({
-      where: {
-        noteId,
-      },
-    }),
-    prisma.noteItem.createMany({
-      data: [
-        ...contentLines.map((line, index) => ({
-          content: encrypt(line),
-          isDone: false,
-          noteId,
-          position: index,
+  // max chars per item
+  const safeData = z.array(TEXTNoteItemScheme).safeParse(content);
+  if (!safeData.success) throw new Error(NoteActionErrors.INVALID_NOTE_DATA);
+  const { data: safeContent } = safeData;
+
+  // max items
+  if (safeContent.length > NOTE_LIMITS.TEXT.maxItems)
+    throw new Error(NoteItemActionErrors.NOTE_ITEM_LIMIT);
+
+  const totalChars = safeContent.reduce(
+    (acc, el) => acc + el.content.length,
+    0,
+  );
+
+  // total chars max
+  if (totalChars > NOTE_LIMITS.TEXT.totalChars)
+    throw new Error(NoteActionErrors.NOTE_TOTAL_CHARS_LIMIT);
+
+  try {
+    await prisma.$transaction([
+      prisma.noteItem.deleteMany({ where: { noteId: safeNoteId } }),
+      prisma.noteItem.createMany({
+        data: safeContent.map((item) => ({
+          ...item,
+          content: encrypt(item.content),
         })),
-      ],
-    }),
-  ]);
+      }),
+    ]);
+  } catch {
+    throw new Error(NoteActionErrors.UPDATE_CONTENT_FAILED);
+  }
 
-  revalidatePath("/notes");
-  revalidatePath(`/notes/${noteId}`);
+  // revalidatePath("/notes");
+  // revalidatePath(`/notes/${safeNoteId}`);
 }; //+
 
-export const createCopies = async (noteIds: string[]) => {
+export const createCopies = async (copies: Note[]) => {
   console.log("createCopies");
-  const notes = await Promise.all(noteIds.map((noteId) => getNoteById(noteId)));
 
-  const validNotes = notes.filter(
-    (note) => note !== undefined && note !== null,
-  );
-  if (validNotes.length < 1) return;
+  const session = await getSession();
+  if (!session) throw new Error(NoteActionErrors.UNAUTHORIZED);
 
-  await Promise.all(
-    validNotes.map(async (note) => {
-      await prisma.note.create({
-        data: {
-          title: encrypt(note.title + " (copy)"),
-          userId: note.userId,
-          isPinned: note.isPinned,
-          type: note.type,
-          content: {
-            createMany: {
-              data: note.content.map((item) => ({
-                content: encrypt(item.content),
-                isDone: item.isDone,
-                position: item.position,
-              })),
+  const safeData = z.array(NoteScheme).safeParse(copies);
+  if (!safeData.success) throw new Error(NoteActionErrors.INVALID_NOTE_DATA);
+  const { data: safeCopies } = safeData;
+
+  const notesCount = await prisma.note.count({
+    where: { userId: session.session.userId },
+  });
+
+  if (notesCount + copies.length > NOTE_LIMITS.MAX_NOTES)
+    throw new Error(NoteActionErrors.NOTE_LIMIT_EXCEEDED);
+
+  try {
+    await prisma.$transaction(
+      safeCopies.map((note) =>
+        prisma.note.create({
+          data: {
+            id: note.id,
+            title: encrypt(note.title),
+            userId: session.session.userId,
+            isPinned: note.isPinned,
+            type: note.type,
+            content: {
+              createMany: {
+                data: note.content.map((item) => ({
+                  content: encrypt(item.content),
+                  isDone: item.isDone,
+                  position: item.position,
+                })),
+              },
+            },
+            labels: {
+              connect: note.labels.map((label) => ({ id: label.id })),
             },
           },
-          labels: {
-            connect: note.labels.map((label) => ({ id: label.id })),
-          },
-        },
-      });
-    }),
-  );
+        }),
+      ),
+    );
+  } catch (err) {
+    throw new Error(NoteActionErrors.CREATE_COPIES_FAILED);
+  }
 
-  revalidatePath("/notes");
+  // revalidatePath("/notes");
 }; //+

@@ -1,40 +1,35 @@
 import { create } from "zustand";
 
 interface SelectedNotesStore {
-  selectedNotes: Note[];
-  addSelectedNote: (selectedNote: Note) => void;
-  removeSelectedNote: (selectedNote: Note) => void;
-  toggleSelectedNote: (selectedNote: Note) => void;
+  selectedNoteIds: string[];
+  toggleSelectedNote: (noteIdToSelect: string) => void;
   removeAll: () => void;
 }
 
 const useSelectedNotesStore = create<SelectedNotesStore>((set) => ({
-  selectedNotes: [],
-  addSelectedNote: (selectedNote: Note) =>
-    set((state) => ({ selectedNotes: [...state.selectedNotes, selectedNote] })),
-  removeSelectedNote: (selectedNote: Note) =>
-    set((state) => ({
-      selectedNotes: [
-        ...state.selectedNotes.filter((sn) => sn.id !== selectedNote.id),
-      ],
-    })),
-  toggleSelectedNote: (selectedNote) =>
+  selectedNoteIds: [],
+
+  toggleSelectedNote: (noteIdToSelect) => {
     set((state) => {
-      const isAlreadySelected = state.selectedNotes.find(
-        (sn) => sn.id === selectedNote.id,
+      const isAlreadySelected = state.selectedNoteIds.find(
+        (id) => id === noteIdToSelect,
       );
 
       if (isAlreadySelected) {
-        const updatedNotes = [
-          ...state.selectedNotes.filter((sn) => sn.id !== selectedNote.id),
+        const updatedNoteIds = [
+          ...state.selectedNoteIds.filter((id) => id !== noteIdToSelect),
         ];
-        return { selectedNotes: updatedNotes };
+        return { selectedNoteIds: updatedNoteIds };
       } else {
-        const updatedNotes = [...state.selectedNotes, selectedNote];
-        return { selectedNotes: updatedNotes };
+        const updatedNotes = [...state.selectedNoteIds, noteIdToSelect];
+        return { selectedNoteIds: updatedNotes };
       }
-    }),
-  removeAll: () => set({ selectedNotes: [] }),
+    });
+  },
+  removeAll: () => {
+    // console.log("removeAll");
+    set({ selectedNoteIds: [] });
+  },
 }));
 
 export default useSelectedNotesStore;

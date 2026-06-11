@@ -21,13 +21,12 @@ import {
   ResetPasswordScheme,
   TResetPassword,
 } from "../zod-schemes/auth-schemes/reset-password-scheme";
-import { APIError, success } from "better-auth";
-import { scrypt } from "crypto";
+import { APIError } from "better-auth";
 import sha256 from "../SHA256";
 import { EmailScheme } from "../zod-schemes/basic-schemes";
 
-export const getSession = cache(async () => {
-  console.log("getSession");
+export const getSession = cache(async (caller?: string) => {
+  console.log(`getSession ${caller || ""}`);
   return await auth.api.getSession({ headers: await headers() });
 });
 

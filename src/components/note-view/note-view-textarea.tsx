@@ -1,11 +1,12 @@
 "use client";
 
 import { useAutoSubmit } from "@/hooks/useAutoSubmit";
-import { updateNoteText } from "@/lib/actions/note";
 import cn from "@/lib/cn";
-import { Copy, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import React, { useState } from "react";
 import CopyBtn from "../UI/copy-btn";
+import { useNotesStore } from "@/lib/store/useNotesStore";
+import { NOTE_LIMITS } from "@/lib/constants";
 
 interface NoteViewTextareaProps {
   noteId: string;
@@ -17,9 +18,10 @@ export default function NoteViewTextarea({
   noteId,
 }: NoteViewTextareaProps) {
   const [focused, setFocused] = useState(false);
+  const updateNoteContent = useNotesStore((s) => s.updateNoteContent);
 
   const { value, setValue, isPending } = useAutoSubmit(
-    (text) => updateNoteText(noteId, text),
+    (text) => updateNoteContent(noteId, text),
     list.map((item) => item.content).join("\n"),
     500,
   );
@@ -29,7 +31,7 @@ export default function NoteViewTextarea({
       <div className="relative flex">
         <textarea
           className={cn(
-            "w-full outline-none resize-none field-sizing-content rounded-3xl p-4",
+            "w-full outline-none resize-none field-sizing-content break-all rounded-3xl p-4",
             {
               "shadow-inside bg-secondary": focused,
             },
@@ -37,7 +39,9 @@ export default function NoteViewTextarea({
           name="text"
           id="myTextArea"
           value={value}
-          onChange={(e) => setValue(e.target.value)}
+          onChange={(e) =>
+            setValue(e.target.value.slice(0, NOTE_LIMITS.TEXT.totalChars))
+          }
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
           placeholder="Type something..."
@@ -50,11 +54,13 @@ export default function NoteViewTextarea({
             />
           </div>
         ) : null}
-        {true && !isPending ? (
-          <div className="absolute right-4 top-4">
-            <CopyBtn value={value} />
-          </div>
-        ) : null}
+      </div>
+      <div className="mt-2 flex items-center justify-end text-sm">
+        <div className="flex items-center gap-1">
+          <span>{value.length}</span>
+          <span>/</span>
+          <span>{NOTE_LIMITS.TEXT.totalChars}</span>
+        </div>
       </div>
     </>
   );

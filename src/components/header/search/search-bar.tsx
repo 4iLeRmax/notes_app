@@ -3,7 +3,7 @@
 import { Search, X } from "lucide-react";
 import FormInput from "../../UI/formElements/form-input";
 import { motion } from "motion/react";
-import { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 
 interface SearchBarProps {
   searchValue: string;

@@ -2,9 +2,10 @@
 
 :root {
   --bg-primary: #e8e8e8;
+  --bg-secondary: #e8e8e8;
+
   /* --bg-secondary: #f8f9fd; */
   /* --bg-secondary: #c9c9c9; */
-  --bg-secondary: #e8e8e8;
 
   --txt-primary: #959593;
   --txt-secondary: #363636;

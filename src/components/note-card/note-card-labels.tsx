@@ -1,29 +1,33 @@
+"use client";
+
 import NoteCardLabelItem from "./note-card-label-item";
 
 interface NoteCardLabelsProps {
-  note: Note;
+  noteId: string;
+  noteLabels: Label[];
   maxLength?: number;
 }
 
 export default function NoteCardLabels({
-  note,
+  noteId,
+  noteLabels,
   maxLength,
 }: NoteCardLabelsProps) {
-  if (note.labels.length === 0) return null;
+  if (noteLabels.length === 0) return null;
 
-  if (!maxLength) maxLength = note.labels.length;
+  if (!maxLength) maxLength = noteLabels.length;
 
   return (
     <>
       <div className="flex flex-wrap items-center gap-1">
-        {(note.labels.length > maxLength
-          ? note.labels.slice(0, maxLength)
-          : note.labels
+        {(noteLabels.length > maxLength
+          ? noteLabels.slice(0, maxLength)
+          : noteLabels
         ).map((label) => (
-          <NoteCardLabelItem noteId={note.id} label={label} key={label.id} />
+          <NoteCardLabelItem noteId={noteId} label={label} key={label.id} />
         ))}
-        {note.labels.length > maxLength ? (
-          <span>+{note.labels.length - maxLength}</span>
+        {noteLabels.length > maxLength ? (
+          <span>+{noteLabels.length - maxLength}</span>
         ) : null}
       </div>
     </>

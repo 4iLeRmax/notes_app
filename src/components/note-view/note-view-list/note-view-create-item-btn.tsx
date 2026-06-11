@@ -1,27 +1,30 @@
+"use client";
+
 import { createNoteItem } from "@/lib/actions/note-item";
+import { useNotesStore } from "@/lib/store/useNotesStore";
 import { Plus } from "lucide-react";
-import React from "react";
+import React, { useRef } from "react";
 
 interface NoteViewCreateItemBtnProps {
-  noteId: string;
   listLength: number;
+  handleCreateItem: () => Promise<void>;
 }
 
 export default function NoteViewCreateItemBtn({
-  noteId,
   listLength,
+  handleCreateItem,
 }: NoteViewCreateItemBtnProps) {
   return (
     <>
-      <form
-        action={createNoteItem.bind(null, noteId, undefined)}
-        className="ml-5 mt-5"
-      >
-        <button className="flex items-center gap-1 text-txt-secondary">
+      <div className="ml-5 mt-5">
+        <button
+          onClick={handleCreateItem}
+          className="flex items-center gap-1 text-txt-secondary"
+        >
           <Plus size={20} />
           <span>{listLength === 0 ? "Create first item" : "Create item"}</span>
         </button>
-      </form>
+      </div>
     </>
   );
 }

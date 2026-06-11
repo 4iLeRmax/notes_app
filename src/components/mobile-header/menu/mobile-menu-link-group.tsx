@@ -12,15 +12,15 @@ function MobileMenuLinkGroup() {
   return (
     <>
       <div>
-        <h1 className="text-txt-primary font-bold text-xl">Links</h1>
+        <h1 className="text-txt-primary text-sm">Links</h1>
         <div className="flex flex-col gap-4 mt-2">
           <Link
             href={"/notes"}
             className={cn(
-              "bg-secondary p-4 rounded-3xl text-txt-primary flex items-center justify-between",
+              "bg-secondary p-4 rounded-3xl text-txt-primary flex items-center justify-between transition-colors",
               {
-                "shadow-outside-small": path !== "/notes",
-                "shadow-inside": path === "/notes",
+                "shadow-outside-small text-txt-primary": path !== "/notes",
+                "shadow-inside text-custom-blue": path === "/notes",
               },
             )}
           >

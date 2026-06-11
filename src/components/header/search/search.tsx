@@ -3,51 +3,37 @@
 import React, { useEffect, useRef, useState } from "react";
 import SearchButton from "./search-button";
 import SearchBar from "./search-bar";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useDebounce } from "use-debounce";
-import { motion, AnimatePresence } from "motion/react";
+import { AnimatePresence } from "motion/react";
+import { useSearchQuery } from "@/hooks/useSearchQuey";
 
-const SEARCH_QUERY_LIMIT = 100;
-const DEBOUNCE_VALUE = 500;
-
-export default function Search() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams.toString());
-
+function Search() {
   const [isOpen, setIsOpen] = useState(false);
-  const [searchValue, setSearchValue] = useState("");
-  const [debouncedValue] = useDebounce(searchValue, DEBOUNCE_VALUE);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const q = searchParams.get("q") || "";
-    if (q) {
-      setSearchValue(q);
-      setIsOpen(true);
-    }
-  }, []);
+    const handleScroll = () => {
+      if (isOpen) setIsOpen(false);
+    };
 
-  useEffect(() => {
-    if (debouncedValue.length > 0) {
-      params.set("q", debouncedValue);
-    } else {
-      params.delete("q");
-    }
-    router.replace(`?${params.toString()}`);
-  }, [debouncedValue]);
+    window.addEventListener("scroll", handleScroll);
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.slice(0, SEARCH_QUERY_LIMIT);
-    setSearchValue(value);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [isOpen]);
+
+  const { searchValue, handleSearch, clearSearch } = useSearchQuery();
+
+  const toggleOpen = () => {
+    if (isOpen) clearSearch();
+    setIsOpen((p) => !p);
   };
-
-  const toggleOpen = () => setIsOpen((p) => !p);
 
   const handleBlur = (e: React.FocusEvent<HTMLDivElement>) => {
     if (
       containerRef.current &&
-      !containerRef.current.contains(e.relatedTarget as Node)
+      !containerRef.current.contains(e.relatedTarget as Node) &&
+      searchValue.length === 0
     ) {
       setIsOpen(false);
     }
@@ -55,10 +41,10 @@ export default function Search() {
 
   return (
     <>
-      <div ref={containerRef} tabIndex={1} onBlur={handleBlur}>
+      <div ref={containerRef} tabIndex={0} onBlur={handleBlur}>
         <SearchButton isActive={isOpen} toggleOpen={toggleOpen} />
         <AnimatePresence mode="wait">
-          {isOpen || searchValue.length > 0 ? (
+          {isOpen ? (
             <SearchBar searchValue={searchValue} handleSearch={handleSearch} />
           ) : null}
         </AnimatePresence>
@@ -66,3 +52,5 @@ export default function Search() {
     </>
   );
 }
+
+export default React.memo(Search);

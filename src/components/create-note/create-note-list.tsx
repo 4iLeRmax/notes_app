@@ -1,19 +1,15 @@
 "use client";
 
-import cn from "@/lib/cn";
-import { Plus, Square, X } from "lucide-react";
 import React from "react";
 import CreateNoteListItem from "./create-note-list-item";
-import CreateNoteCreateItemBtn from "./create-note-create-item-btn";
-import { TCreateNote } from "@/lib/zod-schemes/create-note.scheme";
+import CreateNoteItemBtn from "./create-note-item-btn";
 import { AnimatePresence, motion } from "motion/react";
+import { TCreateNote } from "@/lib/zod-schemes/note-schemes/create-note.scheme";
+import { CreateLocalNote } from "./create-note";
 
 interface CreateNoteListProps {
-  content: {
-    content: string;
-    isDone: boolean;
-  }[];
-  setNote: React.Dispatch<React.SetStateAction<TCreateNote>>;
+  content: CreateLocalNote["content"];
+  setNote: React.Dispatch<React.SetStateAction<CreateLocalNote>>;
 }
 
 export default function CreateNoteList({
@@ -22,56 +18,68 @@ export default function CreateNoteList({
 }: CreateNoteListProps) {
   const listRef = React.useRef<HTMLDivElement>(null);
 
-  const handleChangeItem = (targetValue: string, rowId: number) => {
+  const handleChangeItem = (targetValue: string, itemIndex: number) => {
     setNote((n) => ({
       ...n,
-      content: n.content.map((el, i) =>
-        i === rowId ? { ...el, content: targetValue } : el,
+      content: n.content.map((item) =>
+        item.index === itemIndex ? { ...item, content: targetValue } : item,
       ),
     }));
   };
 
-  const addNewItem = async () => {
-    await setNote((n) => ({
-      ...n,
-      content: [...n.content, { content: "", isDone: false }],
-    }));
-    const listItem = listRef.current?.lastChild?.childNodes[0]
-      .childNodes[1] as HTMLTextAreaElement;
-    console.log();
-    if (listItem) {
-      listItem.focus();
-    }
+  const addNewItem = (createAtPosition?: number) => {
+    setNote((n) => {
+      const newItem = {
+        index: createAtPosition ?? n.content.length,
+        content: "",
+        isDone: false,
+      };
+
+      return {
+        ...n,
+        content: [
+          ...n.content.map((el) =>
+            el.index >= newItem.index ? { ...el, index: el.index + 1 } : el,
+          ),
+          newItem,
+        ].sort((a, b) => a.index - b.index),
+      };
+    });
   };
 
-  const removeItem = (rowId: number) => {
+  const removeItem = (itemIndex: number) => {
+    const isLast = content.length === 1;
     setNote((n) => ({
       ...n,
-      content: n.content.filter((_, i) => i !== rowId),
+      content: n.content
+        .filter((item) => item.index !== itemIndex)
+        .sort((a, b) => a.index - b.index)
+        .map((item, i) => ({ ...item, index: i })),
     }));
+    if (isLast) listRef.current?.focus();
   };
 
-  const toggleItemStatus = (rowId: number) => {
+  const toggleItemStatus = (itemIndex: number) => {
     setNote((n) => ({
       ...n,
-      content: n.content.map((el, i) =>
-        i === rowId ? { ...el, isDone: !el.isDone } : el,
+      content: n.content.map((item) =>
+        item.index === itemIndex ? { ...item, isDone: !item.isDone } : item,
       ),
     }));
   };
-
   return (
     <>
       <div className="flex flex-col py-2">
         <div
-          className="flex flex-col gap-3 text-txt-primary overflow-y-scroll max-h-[50vh] px-4 md:px-8 py-2"
+          className="flex flex-col gap-3 text-txt-primary overflow-y-scroll max-h-[50vh] px-4 md:px-8 py-2 outline-none"
+          tabIndex={0}
           ref={listRef}
         >
           <AnimatePresence initial={false}>
             {content.length > 0
-              ? content.map((item, id) => (
+              ? content.map((item) => (
                   <motion.div
-                    key={id}
+                    key={item.index}
                     initial={{ opacity: 0, x: -20, height: 0 }}
                     animate={{
                       opacity: 1,
@@ -82,12 +90,12 @@ export default function CreateNoteList({
                     transition={{ duration: 0.25, ease: "easeInOut" }}
                   >
                     <CreateNoteListItem
-                      // key={id}
-                      itemId={id}
                       item={item}
+                      addNewItem={addNewItem}
                       removeItem={removeItem}
                       handleChangeItem={handleChangeItem}
                       toggleItemStatus={toggleItemStatus}
+                      listRef={listRef}
                     />
                   </motion.div>
                 ))
@@ -96,7 +104,8 @@ export default function CreateNoteList({
         </div>
 
         <div className="px-4 md:px-8">
-          <CreateNoteCreateItemBtn
+          <CreateNoteItemBtn
+            listRef={listRef}
             addNewItem={addNewItem}
             valueLength={content.length}
           />

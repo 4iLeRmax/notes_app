@@ -1,11 +1,8 @@
 "use client";
 
-import { getLabels, toggleLabelToNote } from "@/lib/actions/label";
-import { getNoteById } from "@/lib/actions/note";
-import { useQuery } from "@tanstack/react-query";
-import clsx from "clsx";
-import { Loader, Loader2, Square, SquareCheck } from "lucide-react";
+import cn from "@/lib/cn";
 import LabelListItem from "./label-list-item";
+import { useNotesStore } from "@/lib/store/useNotesStore";
 
 interface LabelListProps {
   noteId: string;
@@ -13,42 +10,25 @@ interface LabelListProps {
 }
 
 export default function LabelList({ noteId, searchValue }: LabelListProps) {
-  const {
-    data: note,
-    isLoading: noteIsLoading,
-    refetch: refetchNote,
-  } = useQuery({
-    queryKey: [`note-${noteId}`],
-    queryFn: async () => await getNoteById(noteId),
-  });
+  const note = useNotesStore((s) => s.notes.find((n) => n.id === noteId));
+  if (!note) return null;
+  const labels = useNotesStore((s) => s.labels);
+  const toggleNoteLabel = useNotesStore((s) => s.toggleNoteLabel);
+  if (!labels) return null;
 
-  const {
-    data: labels,
-    isLoading: labelsIsLoading,
-    refetch: refetchLabels,
-  } = useQuery({
-    queryKey: [`labels`],
-    queryFn: () => getLabels(),
-  });
-
-  const handleToggleLabelToNote = async (labelId: string) => {
-    await toggleLabelToNote(noteId, labelId, labelIsAdded(labelId));
-    await refetchNote();
-    await refetchLabels();
-  };
-
-  const labelIsAdded = (labelId: string) =>
-    note?.labels.some((l) => l.id === labelId) ?? false;
-
-  if (noteIsLoading || labelsIsLoading)
+  if (labels.length === 0)
     return (
-      <div className="px-4 flex items-center justify-center h-20 text-txt-primary">
-        <Loader2 size={20} className="animate-spin" />
+      <div className="w-full h-30 flex items-center justify-center text-txt-primary">
+        No labels found
       </div>
     );
 
-  if (!note || !labels) return null;
-  if (labels.length === 0) return null;
+  const handleToggleLabelToNote = async (labelId: string) => {
+    await toggleNoteLabel(noteId, labelId);
+  };
+
+  const labelIsAdded = (labelId: string) =>
+    note.labels.some((l) => l.id === labelId) ?? false;
 
   const sortedLabels = labels.filter((label) =>
     label.name.toLowerCase().includes(searchValue.toLowerCase()),
@@ -56,25 +36,15 @@ export default function LabelList({ noteId, searchValue }: LabelListProps) {
 
   return (
     <>
-      <div
-        className={clsx("flex flex-col", {
-          "h-40 overflow-y-scroll": labels.length > 5,
-        })}
-      >
-        {sortedLabels.length === 0 ? (
-          <div className="px-4 flex items-center justify-center h-20 text-txt-primary">
-            No labels found
-          </div>
-        ) : (
-          sortedLabels.map((label) => (
-            <LabelListItem
-              key={label.id}
-              label={label}
-              handleToggleLabelToNote={handleToggleLabelToNote}
-              labelIsAdded={labelIsAdded(label.id)}
-            />
-          ))
-        )}
+      <div className={cn("flex flex-col max-h-30 overflow-y-scroll", {})}>
+        {sortedLabels.map((label) => (
+          <LabelListItem
+            key={label.id}
+            label={label}
+            handleToggleLabelToNote={handleToggleLabelToNote}
+            labelIsAdded={labelIsAdded(label.id)}
+          />
+        ))}
       </div>
     </>
   );

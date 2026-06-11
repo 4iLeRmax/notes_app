@@ -7,11 +7,16 @@ import { cache } from "react";
 import encrypt from "../encryption/encrypt";
 import decrypt from "../encryption/decrypt";
 import { decryptLabels } from "../encryption/encryption-helpers";
+import { LabelActionErrors, NoteActionErrors } from "./errors";
+import { LabelScheme } from "../zod-schemes/note-schemes/label-scheme";
+import z from "zod";
+import { LabelNameScheme } from "../zod-schemes/basic-schemes";
+import { LABEL_LIMITS } from "../constants";
 
 export const getLabels = cache(async () => {
   console.log("getLabels");
   const session = await getSession();
-  if (!session) throw new Error("session error");
+  if (!session) throw new Error(LabelActionErrors.UNAUTHORIZED);
 
   try {
     const labels = await prisma.label.findMany({
@@ -26,41 +31,44 @@ export const getLabels = cache(async () => {
     const decryptedLabels = decryptLabels(labels);
     return decryptedLabels;
   } catch {
-    throw new Error(`Can't get labels for user ${session.session.userId}`);
+    throw new Error(LabelActionErrors.FETCH_LABELS_FAILED);
   }
 }); //+
 
 export const getLabelById = cache(async (labelId: string) => {
   console.log("getLabelById");
   const session = await getSession();
-  if (!session) throw new Error("session error");
+  if (!session) throw new Error(LabelActionErrors.UNAUTHORIZED);
+
+  const safeLabelIdData = z.uuid().safeParse(labelId);
+  if (!safeLabelIdData.success)
+    throw new Error(LabelActionErrors.INVALID_LABEL_ID);
+  const { data: safeLabelId } = safeLabelIdData;
 
   try {
     const label = await prisma.label.findUnique({
       where: {
-        id: labelId,
+        id: safeLabelId,
         userId: session.user.id,
       },
     });
-    if (!label) return;
+    if (!label) throw new Error(LabelActionErrors.LABEL_NOT_FOUND);
 
     const decryptedLabel = decryptLabels([label])[0];
     return decryptedLabel;
   } catch (e) {
-    throw new Error(`Can't get label ${labelId}`);
+    throw new Error(LabelActionErrors.FETCH_SINGLE_LABEL_FAILED);
   }
 }); //+
 
-export const createLabel = async (formData: FormData) => {
+export const createLabel = async (label: Label) => {
   console.log("createLabel");
 
   const session = await getSession();
-  if (!session) return { error: "Session error" };
+  if (!session) throw new Error(LabelActionErrors.UNAUTHORIZED);
 
-  const labelName = formData.get("label") as string;
-
-  if (labelName.length === 0) return { error: "Label is empty" };
-  if (labelName.length > 50) return { error: "Label is too long" };
+  const { data: safeLabel, success: validLabel } = LabelScheme.safeParse(label);
+  if (!validLabel) throw new Error(LabelActionErrors.INVALID_LABEL_DATA);
 
   const labels = await prisma.label.findMany({
     where: {
@@ -72,58 +80,81 @@ export const createLabel = async (formData: FormData) => {
   });
 
   const isDuplicate = labels.some(
-    (item) => decrypt(item.name).toLowerCase() === labelName.toLowerCase(),
+    (item) => decrypt(item.name).toLowerCase() === safeLabel.name.toLowerCase(),
   );
 
-  if (isDuplicate) return;
+  if (isDuplicate) throw new Error(LabelActionErrors.LABEL_DUPLICATE);
 
   try {
     await prisma.label.create({
       data: {
-        name: encrypt(labelName),
+        id: safeLabel.id,
+        name: encrypt(safeLabel.name),
         userId: session.session.userId,
       },
     });
-  } catch (error) {
-    console.error(error);
-  }
 
-  revalidatePath("/notes");
+    // revalidatePath("/notes");
+  } catch (error) {
+    throw new Error(LabelActionErrors.CREATE_LABEL_FAILED);
+  }
 }; //+
 
 export const updateLabel = async (labelId: string, newLabelName: string) => {
   console.log("updateLabel");
 
   const session = await getSession();
-  if (!session) return;
+  if (!session) throw new Error(LabelActionErrors.UNAUTHORIZED);
 
-  await prisma.label.update({
-    where: {
-      id: labelId,
-      userId: session.user.id,
-    },
-    data: {
-      name: encrypt(newLabelName),
-    },
-  });
+  const safeLabelIdData = z.uuid().safeParse(labelId);
+  if (!safeLabelIdData.success)
+    throw new Error(LabelActionErrors.INVALID_LABEL_ID);
+  const { data: safeLabelId } = safeLabelIdData;
 
-  revalidatePath("/notes");
+  const safeData = LabelNameScheme.safeParse(newLabelName);
+  if (!safeData.success) throw new Error(LabelActionErrors.INVALID_LABEL_DATA);
+  const { data: safeLabelName } = safeData;
+
+  try {
+    await prisma.label.update({
+      where: {
+        id: safeLabelId,
+        userId: session.user.id,
+      },
+      data: {
+        name: encrypt(safeLabelName),
+      },
+    });
+
+    // revalidatePath("/notes");
+  } catch {
+    throw new Error(LabelActionErrors.UPDATE_LABEL_FAILED);
+  }
 }; //+
 
 export const deleteLabel = async (labelId: string) => {
   console.log("deleteLabel");
 
   const session = await getSession();
-  if (!session) return;
+  if (!session) throw new Error(LabelActionErrors.UNAUTHORIZED);
 
-  await prisma.label.delete({
-    where: {
-      id: labelId,
-      userId: session.user.id,
-    },
-  });
+  const safeLabelIdData = z.uuid().safeParse(labelId);
+  if (!safeLabelIdData.success)
+    throw new Error(LabelActionErrors.INVALID_LABEL_ID);
+  const { data: safeLabelId } = safeLabelIdData;
 
-  revalidatePath("/notes");
+  try {
+    await prisma.label.delete({
+      where: {
+        id: safeLabelId,
+        userId: session.user.id,
+      },
+    });
+
+    // revalidatePath("/notes");
+  } catch {
+    throw new Error(LabelActionErrors.DELETE_LABEL_FAILED);
+  }
 }; //+
 
 export const toggleLabelToNote = async (
@@ -132,58 +163,101 @@ export const toggleLabelToNote = async (
   labelIsAdded: boolean,
 ) => {
   console.log("toggleLabelToNote");
+  const session = await getSession();
+  if (!session) throw new Error(LabelActionErrors.UNAUTHORIZED);
 
-  const currentNote = await prisma.note.findUnique({
-    where: {
-      id: noteId,
-    },
-    select: {
-      _count: {
-        select: { labels: true },
+  const safeNoteIdData = z.uuid().safeParse(noteId);
+  if (!safeNoteIdData.success)
+    throw new Error(NoteActionErrors.INVALID_NOTE_ID);
+  const { data: safeNoteId } = safeNoteIdData;
+
+  const safeLabelIdData = z.uuid().safeParse(labelId);
+  if (!safeLabelIdData.success)
+    throw new Error(LabelActionErrors.INVALID_LABEL_ID);
+  const { data: safeLabelId } = safeLabelIdData;
+
+  const safeStatusData = z.boolean().safeParse(labelIsAdded);
+  if (!safeStatusData.success)
+    throw new Error(LabelActionErrors.INVALID_LABEL_DATA);
+  const { data: safeLabelIsAdded } = safeStatusData;
+
+  try {
+    const currentNote = await prisma.note.findUnique({
+      where: {
+        id: safeNoteId,
       },
-    },
-  });
-
-  if (!currentNote || currentNote._count.labels > 10) return;
-  await prisma.note.update({
-    where: {
-      id: noteId,
-    },
-    data: {
-      labels: labelIsAdded
-        ? {
-            disconnect: {
-              id: labelId,
-            },
-          }
-        : {
-            connect: {
-              id: labelId,
-            },
-          },
-    },
-  });
-
-  revalidatePath("/notes");
-  revalidatePath(`/notes/${noteId}`);
-}; //+
-
-export const removeLabelFromNote = async (noteId: string, labelId: string) => {
-  console.log("removeLabelFromNote");
-
-  await prisma.note.update({
-    where: {
-      id: noteId,
-    },
-    data: {
-      labels: {
-        disconnect: {
-          id: labelId,
+      select: {
+        _count: {
+          select: { labels: true },
         },
       },
-    },
-  });
+    });
 
-  revalidatePath("/notes");
-  revalidatePath(`/notes/${noteId}`);
+    if (!currentNote) throw new Error(LabelActionErrors.NOTE_NOT_FOUND);
+    if (currentNote._count.labels >= LABEL_LIMITS.MAX_LABELS_PER_NOTE)
+      throw new Error(LabelActionErrors.NOTE_LABELS_LIMIT_REACHED);
+    await prisma.note.update({
+      where: {
+        id: safeNoteId,
+        userId: session.user.id,
+      },
+      data: {
+        labels: safeLabelIsAdded
+          ? {
+              disconnect: {
+                id: safeLabelId,
+              },
+            }
+          : {
+              connect: {
+                id: safeLabelId,
+              },
+            },
+      },
+    });
+
+    // revalidatePath("/notes");
+    // revalidatePath(`/notes/${safeNoteId}`);
+  } catch {
+    throw new Error(LabelActionErrors.TOGGLE_LABEL_TO_NOTE_FAILED);
+  }
 }; //+
+
+// export const removeLabelFromNoteAction = async (
+//   noteId: string,
+//   labelId: string,
+// ) => {
+//   console.log("removeLabelFromNote");
+//   const session = await getSession();
+//   if (!session) throw new Error(LabelActionErrors.UNAUTHORIZED);
+
+//   const safeNoteIdData = z.uuid().safeParse(noteId);
+//   if (!safeNoteIdData.success)
+//     throw new Error(NoteActionErrors.INVALID_NOTE_ID);
+//   const { data: safeNoteId } = safeNoteIdData;
+
+//   const safeLabelIdData = z.uuid().safeParse(labelId);
+//   if (!safeLabelIdData.success)
+//     throw new Error(LabelActionErrors.INVALID_LABEL_ID);
+//   const { data: safeLabelId } = safeLabelIdData;
+
+//   try {
+//     await prisma.note.update({
+//       where: {
+//         id: safeNoteId,
+//       },
+//       data: {
+//         labels: {
+//           disconnect: {
+//             id: safeLabelId,
+//           },
+//         },
+//       },
+//     });
+
+//     // revalidatePath("/notes");
+//     // revalidatePath(`/notes/${safeNoteId}`);
+//   } catch {
+//     throw new Error(LabelActionErrors.REMOVE_LABEL_FROM_NOTE_FAILED);
+//   }
+// }; //+

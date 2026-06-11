@@ -15,9 +15,10 @@ export default function CreateNotePinButton({
     <>
       <button
         onClick={togglePin}
-        className={cn("text-txt-secondary p-2 rounded-full bg-primary", {
-          "shadow-outside-small": !isPinned,
-          "shadow-inside": isPinned,
+        className={cn("p-2 rounded-full bg-primary transition-colors", {
+          "shadow-outside-small text-txt-secondary hover:text-custom-blue":
+            !isPinned,
+          "shadow-inside text-custom-blue": isPinned,
         })}
       >
         {isPinned ? <PinOff size={20} /> : <Pin size={20} />}

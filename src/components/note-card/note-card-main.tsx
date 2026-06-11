@@ -1,9 +1,8 @@
+"use client";
+
 import React from "react";
 import NoteCardList from "./note-card-list";
 import NoteCardText from "./note-card-text";
-
-const LIST_LENGTH = 5;
-const TEXT_LINES = 10;
 
 interface NoteCardMainProps {
   noteType: NoteType;
@@ -14,16 +13,19 @@ export default function NoteCardMain({
   noteType,
   noteContent,
 }: NoteCardMainProps) {
+  noteContent.sort((a, b) => a.position - b.position);
+
+  const sortedNoteContent = [...noteContent].sort(
+    (a, b) => a.position - b.position,
+  );
+
   return (
     <>
       {noteType === "TODO" ? (
-        <NoteCardList noteContent={noteContent} listLength={LIST_LENGTH} />
+        <NoteCardList noteContent={sortedNoteContent} />
       ) : (
-        <NoteCardText noteContent={noteContent} textLines={TEXT_LINES} />
+        <NoteCardText noteContent={sortedNoteContent} />
       )}
-      {noteContent.length > (noteType === "TODO" ? LIST_LENGTH : TEXT_LINES) ? (
-        <span>...</span>
-      ) : null}
     </>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import UserButton from "./user-button";
 import UserBar from "./user-bar";
 import { AnimatePresence } from "motion/react";
@@ -12,6 +12,18 @@ interface UserInfoProps {
 export default function UserInfo({ user }: UserInfoProps) {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (isOpen) setIsOpen(false);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [isOpen]);
 
   const toggleOpen = () => {
     setIsOpen((p) => !p);

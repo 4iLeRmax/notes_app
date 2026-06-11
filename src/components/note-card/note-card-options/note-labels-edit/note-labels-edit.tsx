@@ -1,20 +1,16 @@
-import React from "react";
+"use client";
+
+import React, { useRef, useState } from "react";
 import LabelList from "./label-list/label-list";
 import CreateLabel from "./create-label/create-label";
 
 interface NoteCardLabelsModalProps {
   noteId: string;
-  searchValue: string;
-  inputLabelRef: React.RefObject<HTMLInputElement | null>;
-  setSearchValue: React.Dispatch<React.SetStateAction<string>>;
 }
 
-export default function NoteLabelsEdit({
-  noteId,
-  searchValue,
-  setSearchValue,
-  inputLabelRef,
-}: NoteCardLabelsModalProps) {
+export default function NoteLabelsEdit({ noteId }: NoteCardLabelsModalProps) {
+  const [searchValue, setSearchValue] = useState("");
+
   return (
     <>
       <div className="pt-2">
@@ -23,7 +19,6 @@ export default function NoteLabelsEdit({
         </div>
         <LabelList noteId={noteId} searchValue={searchValue} />
         <CreateLabel
-          customRef={inputLabelRef}
           searchValue={searchValue}
           setSearchValue={setSearchValue}
         />

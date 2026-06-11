@@ -8,7 +8,7 @@ function MobileMenuLabelGroup() {
   return (
     <>
       <div>
-        <h1 className="text-txt-primary font-bold text-xl">Labels</h1>
+        <h1 className="text-txt-primary text-sm">Labels</h1>
         <div className="flex flex-col gap-4 mt-2">
           <MobileMenuEditLabels />
           <MobileMenuLabelList />

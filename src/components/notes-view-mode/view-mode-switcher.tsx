@@ -10,17 +10,19 @@ export default function ViewModeSwitcher({
 }: {
   iconSize?: number;
 }) {
-  const { viewMode, toggleViewMode } = useViewModeStore();
+  const viewMode = useViewModeStore((s) => s.viewMode);
+  const toggleViewMode = useViewModeStore((s) => s.toggleViewMode);
 
   return (
     <>
       <button
         onClick={toggleViewMode}
         className={cn(
-          "w-[41px] h-[41px] flex items-center justify-center bg-secondary sm:bg-primary rounded-full shrink-0",
+          "w-[41px] h-[41px] flex items-center justify-center bg-secondary sm:bg-primary rounded-full shrink-0 transition-colors",
           {
-            "shadow-outside-small": viewMode === ViewMode.GRID,
-            "shadow-inside": viewMode === ViewMode.LIST,
+            "shadow-outside-small text-txt-primary hover:text-custom-blue":
+              viewMode === ViewMode.GRID,
+            "shadow-inside text-custom-blue": viewMode === ViewMode.LIST,
           },
         )}
       >

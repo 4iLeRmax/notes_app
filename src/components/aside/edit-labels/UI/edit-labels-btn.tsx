@@ -21,10 +21,11 @@ export default function EditLabelsBtn({
       <motion.button
         animate={{ width: menuIsOpen ? 208 : 41 }}
         className={cn(
-          "h-[41px] flex items-center bg-primary gap-2 rounded-3xl p-2",
+          "h-[41px] flex items-center bg-primary gap-2 rounded-3xl p-2  transition-colors",
           {
-            "shadow-outside-small": !modalIsOpen,
-            "shadow-inside": modalIsOpen,
+            "shadow-outside-small text-txt-primary hover:text-custom-blue":
+              !modalIsOpen,
+            "shadow-inside text-custom-blue": modalIsOpen,
           },
         )}
         onClick={toggleModalOpen}
@@ -34,8 +35,11 @@ export default function EditLabelsBtn({
           {menuIsOpen ? (
             <motion.span
               initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+              animate={{
+                opacity: 1,
+                transition: { duration: 0.2, delay: 0.15 },
+              }}
+              exit={{ opacity: 0, transition: { duration: 0.1, delay: 0 } }}
             >
               Edit Labels
             </motion.span>

@@ -1,4 +1,5 @@
 import z from "zod";
+import { LABEL_LIMITS, NOTE_LIMITS } from "../constants";
 
 const EmailScheme = z.email("Invalid email address");
 
@@ -23,16 +24,20 @@ const PasswordScheme = z
   .regex(/[a-z]/, "Password must contain at least one lowercase letter")
   .regex(/[0-9]/, "Password must contain at least one number");
 
-const NoteTitleScheme = z.string().trim().max(128, "Note title is too long");
+const NoteTitleScheme = z
+  .string()
+  .trim()
+  .max(NOTE_LIMITS.MAX_TITLE_CHARS, "Note title is too long");
 
-const NoteContentScheme = z
-  .array(
-    z.object({
-      content: z.string().trim().max(128, "Note content is too long"),
-      isDone: z.boolean("it can be only true or false").default(false),
-    }),
-  )
-  .max(100, "Note content is too long");
+const NoteTypeScheme = z.enum(["TEXT", "TODO"]);
+
+const LabelNameScheme = z
+  .string()
+  .trim()
+  .min(1, "Label is empty")
+  .max(LABEL_LIMITS.MAX_LABEL_NAME_CHARS, "Label is too long");
+
+const UserIdScheme = z.string().trim().min(1);
 
 export {
   EmailScheme,
@@ -40,5 +45,7 @@ export {
   LastNameScheme,
   PasswordScheme,
   NoteTitleScheme,
-  NoteContentScheme,
+  NoteTypeScheme,
+  LabelNameScheme,
+  UserIdScheme,
 };

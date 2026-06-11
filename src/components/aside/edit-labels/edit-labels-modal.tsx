@@ -2,11 +2,11 @@
 
 import React, { useState } from "react";
 import BaseModal from "../../UI/base-modal";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import CreateLabelForm from "./create-label-form";
-import { createLabel, getLabels } from "@/lib/actions/label";
 import EditLabelsList from "./edit-labels-list";
-import { Loader2 } from "lucide-react";
+import { useNotesStore } from "@/lib/store/useNotesStore";
+import { authClient } from "@/lib/auth-client";
+import { LABEL_LIMITS } from "@/lib/constants";
 
 interface EditLabelsModalProps {
   handleClose: () => void;
@@ -15,35 +15,30 @@ interface EditLabelsModalProps {
 export default function EditLabelsModal({ handleClose }: EditLabelsModalProps) {
   const [searchValue, setSearchValue] = useState("");
 
-  const queryClient = useQueryClient();
-
-  const { data: labels } = useQuery({
-    queryKey: ["labels"],
-    queryFn: async () => await getLabels(),
-  });
-
-  const { mutate: handleSubmit } = useMutation({
-    mutationFn: async (FormData: FormData) => {
-      await createLabel(FormData);
-    },
-    onSuccess: async () => {
-      setSearchValue("");
-      await queryClient.invalidateQueries({
-        queryKey: ["labels"],
-      });
-    },
-  });
-
+  const labels = useNotesStore((s) => s.labels);
+  const addLabel = useNotesStore((s) => s.addLabel);
   if (!labels) return null;
 
-  const handleChangeValue = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchValue(e.target.value.slice(0, 50));
+  const session = authClient.useSession();
+  if (!session.data) return null;
+  const userId = session.data.session.userId;
+
+  const handleSubmit = async () => {
+    await addLabel(searchValue, userId);
+    setSearchValue("");
   };
 
-  const exactMatchOfSearch = labels.some(
-    (label) => label.name.toLowerCase() === searchValue.toLowerCase(),
+  const handleChangeValue = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchValue(e.target.value.slice(0, LABEL_LIMITS.MAX_LABEL_NAME_CHARS));
+  };
+
+  const sortedLabels = labels.filter((label) =>
+    label.name.toLowerCase().includes(searchValue.toLowerCase()),
   );
 
+  const exactMatchOfSearch = sortedLabels.some(
+    (l) => l.name.toLowerCase() === searchValue.toLowerCase(),
+  );
   return (
     <>
       <BaseModal customClose={handleClose}>
@@ -61,7 +56,7 @@ export default function EditLabelsModal({ handleClose }: EditLabelsModalProps) {
                 exactMatchOfSearch={exactMatchOfSearch}
               />
             </div>
-            <EditLabelsList labels={labels} searchValue={searchValue} />
+            <EditLabelsList labels={sortedLabels} searchValue={searchValue} />
           </div>
         </div>
       </BaseModal>

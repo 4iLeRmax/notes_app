@@ -19,10 +19,10 @@ export default function UserButton({
     <>
       <button
         className={cn(
-          "w-[41px] h-[41px] flex items-center justify-center rounded-full bg-secondary text-txt-primary text-xl font-bold select-none",
+          "w-[41px] h-[41px] flex items-center justify-center rounded-full bg-secondary text-txt-primary transition-colors text-xl font-bold select-none",
           {
-            "shadow-outside": !isActive,
-            "shadow-inside": isActive,
+            "shadow-outside hover:bg-custom-blue hover:text-primary": !isActive,
+            "shadow-inside text-custom-blue": isActive,
           },
         )}
         onClick={toggleOpen}

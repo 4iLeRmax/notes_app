@@ -1,6 +1,7 @@
 "use client";
 
 import EditLabelsModal from "@/components/aside/edit-labels/edit-labels-modal";
+import cn from "@/lib/cn";
 import { ChevronRight, Edit } from "lucide-react";
 import React, { useState } from "react";
 
@@ -17,7 +18,13 @@ export default function MobileMenuEditLabels() {
       <div>
         <button
           onClick={toggleModalOpen}
-          className="bg-secondary shadow-outside-small p-4 rounded-3xl w-full flex items-center justify-between text-txt-primary"
+          className={cn(
+            "bg-secondary shadow-outside-small p-4 rounded-3xl w-full flex items-center justify-between transition-colors",
+            {
+              "text-txt-primary": !modalIsOpen,
+              "text-custom-blue": modalIsOpen,
+            },
+          )}
         >
           <div className="flex items-center gap-2">
             <Edit size={20} />

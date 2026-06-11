@@ -1,34 +1,58 @@
-import {
-  createCopies,
-  deleteNotes,
-  toggleManyNoteTypes,
-  toggleNoteType,
-} from "@/lib/actions/note";
-import { deleteAllMarkedItems, removeAllMarks } from "@/lib/actions/note-item";
-import { ChevronRight } from "lucide-react";
+"use client";
+
+import {} from "@/lib/actions/note";
+import { useNotesStore } from "@/lib/store/useNotesStore";
+import useSelectedNotesStore from "@/lib/store/useSelectedNotesStore";
 import React from "react";
 
 interface NoteOptionsListProps {
   noteIds: string[];
-  startTransition: React.TransitionStartFunction;
-  removeAll: () => void;
-  //   toggleShowLabel: () => void;
 }
 
-export default function SelectNotesOptionsList({
-  noteIds,
-  startTransition,
-  removeAll,
-  //   toggleShowLabel,
-}: NoteOptionsListProps) {
+function SelectNotesOptionsList({ noteIds }: NoteOptionsListProps) {
+  const toggleNoteTypes = useNotesStore((s) => s.toggleNoteTypes);
+  const addCopies = useNotesStore((s) => s.addCopies);
+  const removeNotes = useNotesStore((s) => s.removeNotes);
+
+  const removeAll = useSelectedNotesStore((s) => s.removeAll);
+
   return (
     <>
       <div className="flex flex-col">
-        <form
-          action={(e) => {
-            startTransition(() => toggleManyNoteTypes(noteIds));
+        {/* <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            toggleNoteTypes(noteIds);
           }}
+          className="rounded-ss-xl rounded-se-xl w-full hover:bg-custom-blue text-txt-primary hover:text-primary px-4 py-2 flex justify-start"
         >
+          TODO/TEXT
+        </button>
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            addCopies(noteIds);
+          }}
+          className="w-full hover:bg-custom-blue text-txt-primary hover:text-primary px-4 py-2 flex justify-start"
+        >
+          Create copy
+        </button>
+
+        <button
+          type="button"
+          onClick={async (e) => {
+            e.stopPropagation();
+            await removeNotes(noteIds);
+            removeAll();
+          }}
+          className="rounded-es-xl rounded-ee-xl w-full hover:bg-custom-blue text-txt-primary hover:text-primary px-4 py-2 flex justify-start"
+        >
+          Delete
+        </button> */}
+
+        <form action={(e) => toggleNoteTypes(noteIds)}>
           <button
             onClick={(e: any) => e.stopPropagation()}
             className="rounded-ss-xl rounded-se-xl w-full hover:bg-custom-blue text-txt-primary hover:text-primary px-4 py-2 flex justify-start"
@@ -43,7 +67,7 @@ export default function SelectNotesOptionsList({
                 <span>Add Label</span>
                 <ChevronRight size={20} />
               </button>*/}
-        <form action={() => startTransition(() => createCopies(noteIds))}>
+        <form action={() => addCopies(noteIds)}>
           <button
             onClick={(e: any) => e.stopPropagation()}
             className="w-full hover:bg-custom-blue text-txt-primary hover:text-primary px-4 py-2 flex justify-start"
@@ -52,12 +76,10 @@ export default function SelectNotesOptionsList({
           </button>
         </form>
         <form
-          action={() =>
-            startTransition(async () => {
-              await deleteNotes(noteIds);
-              removeAll();
-            })
-          }
+          action={async () => {
+            await removeNotes(noteIds);
+            removeAll();
+          }}
         >
           <button
             onClick={(e: any) => e.stopPropagation()}
@@ -70,3 +92,5 @@ export default function SelectNotesOptionsList({
     </>
   );
 }
+
+export default React.memo(SelectNotesOptionsList);

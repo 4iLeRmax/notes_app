@@ -3,9 +3,6 @@
 import React, { useState, useTransition } from "react";
 import { motion, AnimatePresence } from "motion/react";
 
-import { createNote } from "@/lib/actions/note";
-import { TCreateNote } from "@/lib/zod-schemes/create-note.scheme";
-
 import CreateNoteTextarea from "./create-note-textarea";
 import ToggleNoteTypeButton from "./toggle-note-type-button";
 import CreateNoteList from "./create-note-list";
@@ -14,18 +11,35 @@ import CreateNotePinButton from "./create-note-pin-button";
 import FormInput from "../UI/formElements/form-input";
 import FormButton from "../UI/formElements/form-button";
 import { Plus } from "lucide-react";
+import { useNotesStore } from "@/lib/store/useNotesStore";
+import { TCreateNote } from "@/lib/zod-schemes/note-schemes/create-note.scheme";
+import { authClient } from "@/lib/auth-client";
+import useViewModeStore, { ViewMode } from "@/lib/store/useViewModeStore";
+import cn from "@/lib/cn";
+
+export type CreateLocalNote = Omit<TCreateNote, "content"> & {
+  content: ({ index: number } & TCreateNote["content"][number])[];
+};
 
 export default function CreateNote() {
   const [formIsOpen, setFormIsOpen] = useState(false);
-  const [isPending, startTransition] = useTransition();
+  const viewMode = useViewModeStore((s) => s.viewMode);
+
+  const addNote = useNotesStore((s) => s.addNote);
+  const isPending = useNotesStore((s) => s.isPending);
+
+  const session = authClient.useSession();
   const containerRef = React.useRef<HTMLDivElement>(null);
 
-  const [note, setNote] = useState<TCreateNote>({
+  const [note, setNote] = useState<CreateLocalNote>({
     title: "",
     content: [],
     type: "TEXT",
     isPinned: false,
   });
+
+  if (!session.data) return null;
+  const userId = session.data.session.userId;
 
   const closeForm = () => {
     setFormIsOpen(false);
@@ -41,7 +55,16 @@ export default function CreateNote() {
   const submit = () => {
     if (!note.title && !note.content.some((el) => el.content.length > 0))
       return;
-    startTransition(() => createNote(note));
+    addNote(
+      {
+        ...note,
+        content: note.content.map((item) => ({
+          content: item.content,
+          isDone: item.isDone,
+        })),
+      },
+      userId,
+    );
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -88,7 +111,14 @@ export default function CreateNote() {
         onFocus={handleFocus}
         onBlur={handleBlur}
         animate={{ padding: formIsOpen ? "32px 0" : "16px 0" }}
-        className="bg-secondary relative w-full sm:max-w-120 rounded-4xl shadow-outside-small outline-none"
+        // className="bg-secondary relative w-full sm:max-w-150 rounded-4xl shadow-outside-small outline-none select-none"
+        className={cn(
+          "bg-secondary relative w-full rounded-4xl shadow-outside-small outline-none select-none",
+          {
+            "sm:max-w-120": viewMode === ViewMode.GRID,
+            "sm:max-w-150": viewMode === ViewMode.LIST,
+          },
+        )}
       >
         <AnimatePresence mode="wait">
           {formIsOpen ? (
@@ -97,8 +127,6 @@ export default function CreateNote() {
               initial={{ opacity: 0, height: 0, marginBottom: 0 }}
               animate={{ opacity: 1, height: "auto", marginBottom: "16px" }}
               exit={{ opacity: 0, height: 0, marginBottom: 0 }}
-              // transition={{ duration: 0.15 }}
-              // transition={{ delay: 0.3 }}
               className="flex items-center justify-between px-4 md:px-8"
             >
               <h1 className="text-txt-secondary font-bold text-xl">
@@ -128,8 +156,6 @@ export default function CreateNote() {
                       marginBottom: "16px",
                     }}
                     exit={{ opacity: 0, height: 0, marginBottom: 0 }}
-                    // transition={{ delay: 0.3 }}
-                    // transition={{ duration: 0.15 }}
                     className="px-4 md:px-8"
                   >
                     <FormInput
@@ -140,7 +166,7 @@ export default function CreateNote() {
                         setNote((n) => ({ ...n, title: e.target.value }))
                       }
                       placeholder="Title..."
-                      className="rounded-2xl text-txt-primary bg-primary"
+                      className="text-txt-primary bg-primary"
                     />
                   </motion.div>
                 ) : null}
@@ -186,8 +212,6 @@ export default function CreateNote() {
                   initial={{ opacity: 0, height: 0, marginTop: 0 }}
                   animate={{ opacity: 1, height: "auto", marginTop: "16px" }}
                   exit={{ opacity: 0, height: 0, marginTop: 0 }}
-                  // transition={{ delay: 0.3 }}
-                  // transition={{ duration: 0.15 }}
                   className="px-4 md:px-8"
                 >
                   <FormButton isLoading={isPending}>

@@ -2,7 +2,7 @@
 
 import { NotebookText } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import LabelGroup from "./label-group";
+import LabelsGroup from "./labels-group/labels-group";
 import ViewModeSwitcher from "../notes-view-mode/view-mode-switcher";
 import AsideToggleButton from "./aside-toggle-button";
 import cn from "@/lib/cn";
@@ -50,7 +50,7 @@ export default function AsideSection() {
           "bg-secondary shadow-outside rounded-4xl select-none outline-none",
         )}
       >
-        <div className="flex flex-col items-start gap-4 text-txt-primary justify-start">
+        <div className="flex flex-col items-start gap-4 justify-start">
           <div className="px-4">
             <AsideToggleButton
               isOpen={menuIsOpen}
@@ -66,14 +66,16 @@ export default function AsideSection() {
               icon={<NotebookText size={25} />}
             />
           </div>
-          <LabelGroup menuIsOpen={menuIsOpen} />
+          <LabelsGroup menuIsOpen={menuIsOpen} />
 
           <div className="w-full px-4">
             <EditLabels menuIsOpen={menuIsOpen} />
           </div>
+
           <div className="w-full px-4">
             <ThemeSwitcher iconSize={25} />
           </div>
+
           <div className="px-4">
             <ViewModeSwitcher iconSize={25} />
           </div>

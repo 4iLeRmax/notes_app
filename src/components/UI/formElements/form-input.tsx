@@ -1,11 +1,8 @@
 "use client";
 
 import cn from "@/lib/cn";
-import clsx from "clsx";
 import { Eye, EyeClosed, X } from "lucide-react";
-import { register } from "module";
 import React, { useState } from "react";
-import { Path, UseFormRegister } from "react-hook-form";
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   isPassword?: boolean;
@@ -60,6 +57,7 @@ export default function FormInput({
         ) : null}
         {String(value).length > 0 ? (
           <button
+            onMouseDown={(e) => e.preventDefault()}
             type="button"
             className="outline-0 cursor-pointer px-3 h-12 flex items-center justify-center"
             onClick={clearInput}

@@ -1,46 +1,25 @@
-// import User from "./user/user";
-// import ConditionalSearch from "./search/conditional-search";
-// import ThemeSwitcher from "./theme-switcher";
-// import SelectNotesSection from "./select-notes/select-notes-section";
-// import cn from "@/lib/cn";
-
-// export default function Header() {
-//   return (
-//     <>
-//       <div className={cn("fixed z-30 top-0 right-0", "")}>
-//         <div data-header="true" className="p-5 flex items-start gap-4">
-//           <SelectNotesSection>
-//             <>
-//               <ConditionalSearch />
-//               <ThemeSwitcher />
-//               <User />
-//             </>
-//           </SelectNotesSection>
-//         </div>
-//       </div>
-//     </>
-//   );
-// }
 "use client";
 
+import React from "react";
 import User from "./user/user";
 import ConditionalSearch from "./search/conditional-search";
-import ThemeSwitcher from "./theme-switcher";
 import SelectNotesSection from "./select-notes/select-notes-section";
 import cn from "@/lib/cn";
 import useSelectedNotesStore from "@/lib/store/useSelectedNotesStore";
+import SyncDataBtn from "./sync-data/sync-data-btn";
 
-export default function Header() {
-  const { selectedNotes } = useSelectedNotesStore();
+function Header() {
+  const selectedNoteIds = useSelectedNotesStore((s) => s.selectedNoteIds);
 
   return (
     <>
       <div className={cn("fixed z-30 top-5 right-5")}>
-        {selectedNotes.length === 0 ? (
+        {selectedNoteIds.length === 0 ? (
           <div
             data-header="true"
             className="flex items-start justify-end gap-4"
           >
+            <SyncDataBtn iconSize={25} />
             <ConditionalSearch />
             <User />
           </div>
@@ -51,3 +30,5 @@ export default function Header() {
     </>
   );
 }
+
+export default React.memo(Header);

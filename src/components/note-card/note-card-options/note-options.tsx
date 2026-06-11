@@ -5,6 +5,7 @@ import { EllipsisVertical, X } from "lucide-react";
 import More from "../../UI/more";
 import NoteOptionsList from "./note-options-list/note-options-list";
 import NoteLabelsEdit from "./note-labels-edit/note-labels-edit";
+import { useNotesStore } from "@/lib/store/useNotesStore";
 
 interface NoteMoreMenu {
   noteId: string;
@@ -14,16 +15,13 @@ interface NoteMoreMenu {
 export default function NoteOptions({ noteId, fixed }: NoteMoreMenu) {
   const [isOpen, setIsOpen] = useState(false);
   const [showLabel, setShowLabel] = useState(false);
-  const [isPending, startTransition] = useTransition();
-  const [searchValue, setSearchValue] = useState("");
 
-  const inputLabelRef = useRef<HTMLInputElement>(null);
+  const isPending = useNotesStore((s) => s.isPending);
 
-  useEffect(() => {
-    if (showLabel) {
-      inputLabelRef.current?.focus();
-    }
-  }, [showLabel]);
+  const handleClose = () => {
+    setIsOpen(false);
+    setShowLabel(false);
+  };
 
   useEffect(() => {
     if (isPending) handleClose();
@@ -40,39 +38,23 @@ export default function NoteOptions({ noteId, fixed }: NoteMoreMenu) {
     setShowLabel((p) => !p);
   };
 
-  const handleClose = () => {
-    setIsOpen(false);
-    setShowLabel(false);
-  };
-
   return (
     <>
       <More
-        btnChildren={
-          isOpen ? (
-            <X size={20} className="text-txt-primary" />
-          ) : (
-            <EllipsisVertical size={20} />
-          )
-        }
+        btnChildren={isOpen ? <X size={20} /> : <EllipsisVertical size={20} />}
         isOpen={isOpen}
         handleOpen={toggleOpen}
         handleClose={handleClose}
         fixed={fixed}
       >
-        <div className="w-[calc(100vw/2-24px-8px)] sm:w-[225px]">
+        <div className="w-full">
           {showLabel ? (
-            <NoteLabelsEdit
-              noteId={noteId}
-              searchValue={searchValue}
-              setSearchValue={setSearchValue}
-              inputLabelRef={inputLabelRef}
-            />
+            <NoteLabelsEdit noteId={noteId} />
           ) : (
             <NoteOptionsList
               noteId={noteId}
-              startTransition={startTransition}
               toggleShowLabel={toggleShowLabel}
+              handleClose={handleClose}
             />
           )}
         </div>

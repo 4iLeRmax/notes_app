@@ -2,9 +2,10 @@
 
 import { usePathname } from "next/navigation";
 import { Suspense } from "react";
+import React from "react";
 import Search from "./search";
 
-export default function ConditionalSearch() {
+function ConditionalSearch() {
   const pathname = usePathname();
   return pathname === "/notes" ? (
     <Suspense fallback={null}>
@@ -12,3 +13,5 @@ export default function ConditionalSearch() {
     </Suspense>
   ) : null;
 }
+
+export default React.memo(ConditionalSearch);

@@ -14,10 +14,10 @@ export default function SearchButton({ isActive, toggleOpen }: UserIconProps) {
     <>
       <button
         className={cn(
-          "w-[41px] h-[41px] flex items-center justify-center rounded-full bg-secondary text-txt-primary text-xl font-bold select-none",
+          "w-[41px] h-[41px] flex items-center justify-center rounded-full bg-secondary transition-colors text-xl font-bold select-none",
           {
-            "shadow-outside": !isActive,
-            "shadow-inside": isActive,
+            "shadow-outside text-txt-primary hover:text-custom-blue": !isActive,
+            "shadow-inside text-custom-blue": isActive,
           },
         )}
         onClick={toggleOpen}

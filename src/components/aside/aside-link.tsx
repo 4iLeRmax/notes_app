@@ -30,10 +30,11 @@ export default function AsideLink({
         <Link
           href={link}
           className={cn(
-            "w-full flex items-center gap-2 p-2 bg-primary shadow-outside-small rounded-3xl",
+            "w-full flex items-center gap-2 p-2 bg-primary shadow-outside-small rounded-3xl transition-colors",
             {
-              "shadow-outside-small": path !== link,
-              "shadow-inside": path === link,
+              "shadow-outside-small text-txt-primary hover:text-custom-blue":
+                path !== link,
+              "shadow-inside text-custom-blue": path === link,
               // "w-[41px] ": !menuIsOpen,
               // "w-52 ": menuIsOpen,
             },
@@ -44,8 +45,11 @@ export default function AsideLink({
             {menuIsOpen ? (
               <motion.span
                 initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
+                animate={{
+                  opacity: 1,
+                  transition: { duration: 0.2, delay: 0.15 },
+                }}
+                exit={{ opacity: 0, transition: { duration: 0.1, delay: 0 } }}
               >
                 {label}
               </motion.span>

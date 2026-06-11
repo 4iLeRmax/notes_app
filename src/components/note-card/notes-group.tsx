@@ -1,13 +1,15 @@
+"use client";
+
 import ViewModeLayout from "../notes-view-mode/wrappers/view-mode-layout";
 import ViewModeNoteCard from "../notes-view-mode/wrappers/view-mode-note-card";
 import NoteCard from "./note-card";
 
-interface NoteGroupProps {
+interface NotesGroupProps {
   label: string;
   notes: Note[];
 }
 
-export default function NoteGroup({ notes, label }: NoteGroupProps) {
+export default function NotesGroup({ notes, label }: NotesGroupProps) {
   if (notes.length === 0) return null;
 
   return (

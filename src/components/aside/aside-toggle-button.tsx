@@ -20,10 +20,11 @@ export default function AsideToggleButton({
       <button
         onClick={toggle}
         className={cn(
-          "w-[41px] h-[41px] flex items-center justify-center bg-primary rounded-full shrink-0",
+          "w-[41px] h-[41px] flex items-center justify-center bg-primary rounded-full shrink-0 transition-colors",
           {
-            "shadow-outside-small": !isOpen,
-            "shadow-inside": isOpen,
+            "shadow-outside-small text-txt-primary hover:text-custom-blue":
+              !isOpen,
+            "shadow-inside text-custom-blue": isOpen,
           },
         )}
       >

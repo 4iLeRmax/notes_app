@@ -1,9 +1,7 @@
 "use client";
 
-import { updateLabel } from "@/lib/actions/label";
-import { Loader2 } from "lucide-react";
 import { useAutoSubmit } from "@/hooks/useAutoSubmit";
-import { useQueryClient } from "@tanstack/react-query";
+import { useNotesStore } from "@/lib/store/useNotesStore";
 
 interface EditLabelFormProps {
   labelName: string;
@@ -14,28 +12,20 @@ export default function EditLabelForm({
   labelName,
   labelId,
 }: EditLabelFormProps) {
-  const queryClient = useQueryClient();
+  const updateLabelName = useNotesStore((s) => s.updateLabelName);
 
   const { value, setValue, isPending } = useAutoSubmit(async (text) => {
-    await updateLabel(labelId, text);
-    await queryClient.invalidateQueries({
-      queryKey: ["labels"],
-    });
+    await updateLabelName(labelId, text);
   }, labelName);
 
   return (
     <>
-      <div className="w-full flex items-center gap-2">
-        <textarea
-          name="label"
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-          className="w-full overflow-hidden outline-none resize-none field-sizing-content"
-        ></textarea>
-        {isPending ? (
-          <Loader2 size={20} className="animate-spin shrink-0" />
-        ) : null}
-      </div>
+      <textarea
+        name="label"
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        className="w-full overflow-hidden outline-none resize-none field-sizing-content"
+      ></textarea>
     </>
   );
 }

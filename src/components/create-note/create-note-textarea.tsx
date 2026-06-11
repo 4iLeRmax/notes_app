@@ -1,14 +1,14 @@
 "use client";
 
 import cn from "@/lib/cn";
-import clsx from "clsx";
 import React from "react";
 import { motion } from "motion/react";
-import { TCreateNote } from "@/lib/zod-schemes/create-note.scheme";
+import { TCreateNote } from "@/lib/zod-schemes/note-schemes/create-note.scheme";
+import { CreateLocalNote } from "./create-note";
 
 interface CreateNoteTextareaProps {
-  content: TCreateNote["content"];
-  setNote: React.Dispatch<React.SetStateAction<TCreateNote>>;
+  content: CreateLocalNote["content"];
+  setNote: React.Dispatch<React.SetStateAction<CreateLocalNote>>;
   formIsOpen: boolean;
 }
 
@@ -21,7 +21,7 @@ export default function CreateNoteTextarea({
   const textToObj = (text: string) => {
     const content = text
       .split("\n")
-      .map((el) => ({ content: el, isDone: false }));
+      .map((el, i) => ({ content: el, isDone: false, index: i }));
 
     setNote((n) => ({ ...n, content }));
   };
@@ -53,7 +53,7 @@ export default function CreateNoteTextarea({
         }}
         // transition={{ duration: 2 }}
       />
-      {!formIsOpen ? <div className="w-[52px]"></div> : null}
+      {!formIsOpen ? <div className="w-[52px] shrink-0"></div> : null}
     </motion.div>
   );
 }

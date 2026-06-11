@@ -1,4 +1,4 @@
-import { TCreateNote } from "../zod-schemes/create-note.scheme";
+import { TCreateNote } from "../zod-schemes/note-schemes/create-note.scheme";
 import decrypt from "./decrypt";
 import encrypt from "./encrypt";
 

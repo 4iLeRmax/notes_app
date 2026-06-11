@@ -1,11 +1,4 @@
-import { getNoteById } from "@/lib/actions/note";
-
-import { CloseModalOnNotFound } from "@/components/UI/dialog";
-import BaseModal from "@/components/UI/base-modal";
-import NoteViewLastUpdate from "@/components/note-view/note-view-last-update";
-import NoteViewContent from "@/components/note-view/note-view-content";
-import NoteViewTitleForm from "@/components/note-view/note-view-title-form";
-import NoteOptions from "@/components/note-card/note-card-options/note-options";
+import NoteView from "@/components/note-view/note-view";
 
 export default async function InterceptRoute({
   params,
@@ -13,33 +6,10 @@ export default async function InterceptRoute({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const note = await getNoteById(id);
 
   return (
     <>
-      {note ? (
-        <>
-          <CloseModalOnNotFound noteExists={!!note} />
-          <BaseModal>
-            <div className="w-full sm:w-150 bg-primary shadow-outside rounded-4xl pt-13 sm:pt-15 pb-4">
-              <div className="px-4 sm:px-8">
-                <NoteViewTitleForm title={note.title} noteId={note.id} />
-              </div>
-
-              <div className="px-4 sm:px-8 py-1 max-h-[calc(3/5*100vh)] overflow-y-scroll mt-5">
-                <NoteViewContent note={note} />
-              </div>
-
-              <div className="flex items-center justify-end gap-5 mt-2 px-4 sm:px-8">
-                <div className="w-full flex justify-start">
-                  <NoteViewLastUpdate note={note} />
-                </div>
-                <NoteOptions noteId={note.id} fixed />
-              </div>
-            </div>
-          </BaseModal>
-        </>
-      ) : null}
+      <NoteView noteId={id} modal />
     </>
   );
 }

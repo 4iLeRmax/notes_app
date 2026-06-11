@@ -1,7 +1,7 @@
 "use client";
 
 import { X } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { createPortal } from "react-dom";
 import { motion } from "motion/react";
@@ -34,7 +34,7 @@ const CloseModalOnNotFound = ({ noteExists }: { noteExists: boolean }) => {
 
   useEffect(() => {
     if (!noteExists) {
-      router.back();
+      redirect("/notes");
     }
   }, [noteExists, router]);
 
@@ -91,7 +91,7 @@ const DialogCloseButton = ({ handleClose }: { handleClose: () => void }) => {
     <>
       <button
         onClick={handleClose}
-        className="absolute top-4 right-8 bg-secondary shadow-outside-small rounded-full text-txt-secondary p-1"
+        className="absolute top-4 right-8 bg-primary shadow-outside-small rounded-full text-txt-secondary hover:text-custom-blue transition-colors p-1"
       >
         <X size={20} />
       </button>

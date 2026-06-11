@@ -1,34 +1,20 @@
 "use client";
 
-import React, {
-  Suspense,
-  useEffect,
-  useRef,
-  useState,
-  useTransition,
-} from "react";
-import {
-  createCopies,
-  deleteNotes,
-  toggleManyNoteTypes,
-  toggleNoteType,
-} from "@/lib/actions/note";
-import { ChevronRight, EllipsisVertical, X } from "lucide-react";
-import { deleteAllMarkedItems, removeAllMarks } from "@/lib/actions/note-item";
+import React, { useEffect, useRef, useState, useTransition } from "react";
+import { EllipsisVertical, X } from "lucide-react";
 import More from "@/components/UI/more";
-import useSelectedNotesStore from "@/lib/store/useSelectedNotesStore";
 import SelectNotesOptionsList from "./select-notes-options-list";
+import { useNotesStore } from "@/lib/store/useNotesStore";
 
 interface NoteMoreMenu {
   noteIds: string[];
   fixed?: boolean;
 }
 
-export default function SelectNotesOptions({ noteIds, fixed }: NoteMoreMenu) {
+function SelectNotesOptions({ noteIds, fixed }: NoteMoreMenu) {
   const [isOpen, setIsOpen] = useState(false);
   const [showLabel, setShowLabel] = useState(false);
-  const [isPending, startTransition] = useTransition();
-  const { removeAll } = useSelectedNotesStore();
+  const isPending = useNotesStore((s) => s.isPending);
 
   const createLabelRef = useRef<HTMLButtonElement>(null);
 
@@ -57,13 +43,16 @@ export default function SelectNotesOptions({ noteIds, fixed }: NoteMoreMenu) {
     <>
       <More
         btnChildren={
-          <EllipsisVertical size={25} className="m-1 text-txt-primary" />
+          <EllipsisVertical
+            size={25}
+            className="m-1 text-txt-primary hover:text-custom-blue"
+          />
         }
-        // isOpen={noteId === "1010e472-07d0-4f83-b4de-892e07f2b00d" || isOpen}
         isOpen={isOpen}
         handleOpen={toggleOpen}
         handleClose={handleClose}
         fixed={fixed}
+        bgSecondaryForBtn
       >
         <div className="w-[225px]">
           {/* {showLabel || noteId === "1010e472-07d0-4f83-b4de-892e07f2b00d" ? ( */}
@@ -78,14 +67,12 @@ export default function SelectNotesOptions({ noteIds, fixed }: NoteMoreMenu) {
               </div> */}
             </>
           ) : (
-            <SelectNotesOptionsList
-              noteIds={noteIds}
-              startTransition={startTransition}
-              removeAll={removeAll}
-            />
+            <SelectNotesOptionsList noteIds={noteIds} />
           )}
         </div>
       </More>
     </>
   );
 }
+
+export default React.memo(SelectNotesOptions);
