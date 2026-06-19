@@ -3,14 +3,12 @@ import Header from "@/components/header/header";
 import LabelHydrate from "@/components/hydrators/labels-hydrator/label-hydrate";
 import NoteHydrate from "@/components/hydrators/notes-hydrator/note-hydrate";
 import MobileHeader from "@/components/mobile-header/mobile-header";
-import React, { Suspense } from "react";
+import React from "react";
 
 export default function MainLayout({
   children,
-  modal,
 }: {
   children: React.ReactNode;
-  modal: React.ReactNode;
 }) {
   return (
     <>
@@ -27,7 +25,6 @@ export default function MainLayout({
 
         <main className="w-full">
           <div className="mt-16 sm:mt-5">{children}</div>
-          {modal}
         </main>
       </div>
     </>

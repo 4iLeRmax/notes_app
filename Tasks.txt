@@ -1,2 +1,3 @@
-??? Add color for each Note
-??? Filter for notes
+Add color for each Note
+ Filter for notes
+
