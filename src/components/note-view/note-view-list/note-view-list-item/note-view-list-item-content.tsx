@@ -41,7 +41,7 @@ export default function NoteViewListItemContent({
 
   return (
     <>
-      <div className="flex items-center gap-2 min-h-7 w-full min-w-0 py-2">
+      <div className="flex items-center gap-2 min-h-7 w-full min-w-0 py-3">
         {!isDone ? (
           <textarea
             name="text"
@@ -52,6 +52,7 @@ export default function NoteViewListItemContent({
                 e.target.value.slice(0, NOTE_LIMITS.TODO.maxCharsPerItem),
               )
             }
+            placeholder="Type something..."
             className="w-full overflow-hidden outline-none resize-none field-sizing-content break-all py-0"
           />
         ) : (
@@ -59,14 +60,6 @@ export default function NoteViewListItemContent({
             {content}
           </div>
         )}
-        {isPending ? (
-          <div className="">
-            <Loader2
-              size={20}
-              className="animate-spin shrink-0 text-txt-primary"
-            />
-          </div>
-        ) : null}
       </div>
     </>
   );

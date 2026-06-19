@@ -67,18 +67,12 @@ function MobileMenuModal({ menuIsOpen, handleClose }: MobileMenuModalProps) {
     <>
       <DialogOverlay handleClose={handleClose} />
       <motion.div
-        // layout
-        // initial={{ opacity: 0, height: 0 }}
-        // animate={{ opacity: 1, height: "calc(100vh*0.9)" }}
-        // exit={{ opacity: 0, height: 0 }}
-        // transition={{ duration: 1 }}
-        // className="fixed z-40 top-0 left-0 bg-primary w-full shadow-outside rounded-es-3xl rounded-ee-3xl px-3 pb-10"
         layout
         initial={{ opacity: 0, y: -300 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -300 }}
         transition={{ type: "tween" }}
-        className="fixed z-30 top-0 left-0 bg-primary w-full h-[90vh] origin-top shadow-outside rounded-es-3xl rounded-ee-3xl px-3 pb-10"
+        className="fixed z-30 top-0 left-0 bg-primary w-full origin-top shadow-outside rounded-es-3xl rounded-ee-3xl px-3 pb-20"
       >
         <div className="flex items-center justify-end gap-4 text-txt-primary py-3 mb-5">
           <SyncDataBtn iconSize={25} mobileVersion />

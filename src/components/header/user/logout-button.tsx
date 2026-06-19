@@ -13,7 +13,6 @@ export default function LogoutButton() {
     await SignOutAction();
     setNotes([]);
     setLabels([]);
-    window.location.href = "/sign-in";
   };
 
   return (

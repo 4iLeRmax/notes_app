@@ -18,7 +18,7 @@ function SelectNotesSection({}: SelectNotesSectionProps) {
           {selectedNoteIds.length}
         </div>
 
-        <SelectNotesOptions noteIds={selectedNoteIds} fixed />
+        <SelectNotesOptions noteIds={selectedNoteIds} />
         <button
           onClick={removeAll}
           className="bg-secondary w-[41px] h-[41px] shrink-0 flex items-center justify-center rounded-3xl text-txt-primary hover:text-custom-blue transition-colors text-xl font-bold select-none shadow-outside-small"

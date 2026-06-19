@@ -20,14 +20,16 @@ export default function NoteViewListDisplay({
   return (
     <>
       <div className="flex flex-col gap-4">
-        <NoteViewListGroup noteId={noteId} list={unmarkedList} />
-        {markedList.length > 0 ? (
-          <NoteViewListGroup
-            noteId={noteId}
-            list={markedList}
-            title="Completed:"
-          />
-        ) : null}
+        <div className="pl-4 pr-2 sm:pl-8 sm:pr-6">
+          <NoteViewListGroup noteId={noteId} list={unmarkedList} />
+          {markedList.length > 0 ? (
+            <NoteViewListGroup
+              noteId={noteId}
+              list={markedList}
+              title="Completed:"
+            />
+          ) : null}
+        </div>
       </div>
     </>
   );

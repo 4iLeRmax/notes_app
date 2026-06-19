@@ -31,7 +31,12 @@ export default function FormInput({
     <div className="relative w-full">
       <input
         ref={customRef}
-        {...(showPassword ? { type: "text" } : { type: "password" })}
+        // {...(showPassword ? { type: "text" } : { type: "password" })}
+        {...(isPassword
+          ? showPassword
+            ? { type: "text" }
+            : { type: "password" }
+          : {})}
         className={cn(
           "w-full shadow-inside bg-primary pl-4 py-3 rounded-3xl outline-none text-txt-secondary placeholder:text-txt-primary",
           className,

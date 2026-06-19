@@ -4,8 +4,8 @@ import React from "react";
 import CreateNoteListItem from "./create-note-list-item";
 import CreateNoteItemBtn from "./create-note-item-btn";
 import { AnimatePresence, motion } from "motion/react";
-import { TCreateNote } from "@/lib/zod-schemes/note-schemes/create-note.scheme";
 import { CreateLocalNote } from "./create-note";
+import cn from "@/lib/cn";
 
 interface CreateNoteListProps {
   content: CreateLocalNote["content"];
@@ -67,41 +67,44 @@ export default function CreateNoteList({
       ),
     }));
   };
+
   return (
     <>
-      <div className="flex flex-col py-2">
-        <div
-          className="flex flex-col gap-3 text-txt-primary overflow-y-scroll max-h-[50vh] px-4 md:px-8 py-2 outline-none"
-          tabIndex={0}
-          ref={listRef}
-        >
-          <AnimatePresence initial={false}>
-            {content.length > 0
-              ? content.map((item) => (
-                  <motion.div
-                    key={item.index}
-                    initial={{ opacity: 0, x: -20, height: 0 }}
-                    animate={{
-                      opacity: 1,
-                      x: 0,
-                      height: "auto",
-                    }}
-                    exit={{ opacity: 0, x: 20, height: 0 }}
-                    transition={{ duration: 0.25, ease: "easeInOut" }}
-                  >
-                    <CreateNoteListItem
-                      item={item}
-                      addNewItem={addNewItem}
-                      removeItem={removeItem}
-                      handleChangeItem={handleChangeItem}
-                      toggleItemStatus={toggleItemStatus}
-                      listRef={listRef}
-                    />
-                  </motion.div>
-                ))
-              : null}
-          </AnimatePresence>
-        </div>
+      <div className="flex flex-col">
+        {content.length > 0 ? (
+          <motion.div
+            layout
+            className={cn(
+              "flex flex-col text-txt-primary max-h-[calc(52px*5)] overflow-y-scroll outline-none",
+              "pl-4 pr-2 md:pl-8 md:pr-6 py-2",
+              "snap-y snap-mandatory",
+            )}
+            tabIndex={0}
+            ref={listRef}
+          >
+            <AnimatePresence>
+              {content.map((item) => (
+                <motion.div
+                  key={item.index}
+                  layout
+                  initial={{ opacity: 0, height: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, height: "auto", scale: 1 }}
+                  exit={{ opacity: 0, height: 0, scale: 0.8 }}
+                  className="snap-start"
+                >
+                  <CreateNoteListItem
+                    item={item}
+                    addNewItem={addNewItem}
+                    removeItem={removeItem}
+                    handleChangeItem={handleChangeItem}
+                    toggleItemStatus={toggleItemStatus}
+                    listRef={listRef}
+                  />
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </motion.div>
+        ) : null}
 
         <div className="px-4 md:px-8">
           <CreateNoteItemBtn

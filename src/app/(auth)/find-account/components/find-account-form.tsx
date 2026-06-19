@@ -3,13 +3,14 @@
 import ControlledCustomInput from "@/components/UI/formElements/controlled-custom-input";
 import FormButton from "@/components/UI/formElements/form-button";
 import { findAccountAction } from "@/lib/actions/auth";
+import { toast } from "@/lib/toast";
 import {
   FindAccountScheme,
   TFindAccount,
 } from "@/lib/zod-schemes/auth-schemes/find-account-scheme";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 export default function FindAccountForm() {
@@ -25,9 +26,14 @@ export default function FindAccountForm() {
       email: "",
     },
   });
+  const router = useRouter();
 
   const onSubmit: SubmitHandler<TFindAccount> = async (data) => {
     const res = await findAccountAction(data);
+    if (res?.success) {
+      toast.success("Account found!");
+      router.push("/send-email?email=" + data.email);
+    }
     if (res?.error) {
       setError("root", { message: res.error });
     }
@@ -68,16 +74,6 @@ export default function FindAccountForm() {
               ) : null}
             </div>
           </form>
-
-          {/* {accountExist ? (
-            <form
-              action={SendResetPasswordEmail.bind(null, "/reset-password")}
-              className="mt-6 flex flex-col items-center gap-4"
-            >
-              <input type="email" name="email" />
-              <FormButton>Send email</FormButton>
-            </form>
-          ) : null} */}
         </div>
       </div>
     </>

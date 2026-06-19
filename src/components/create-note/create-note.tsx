@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useTransition } from "react";
+import React, { Activity, useState, useTransition } from "react";
 import { motion, AnimatePresence } from "motion/react";
 
 import CreateNoteTextarea from "./create-note-textarea";
@@ -16,6 +16,7 @@ import { TCreateNote } from "@/lib/zod-schemes/note-schemes/create-note.scheme";
 import { authClient } from "@/lib/auth-client";
 import useViewModeStore, { ViewMode } from "@/lib/store/useViewModeStore";
 import cn from "@/lib/cn";
+import { CreateNoteSkeleton } from "../UI/skeletons";
 
 export type CreateLocalNote = Omit<TCreateNote, "content"> & {
   content: ({ index: number } & TCreateNote["content"][number])[];
@@ -28,7 +29,8 @@ export default function CreateNote() {
   const addNote = useNotesStore((s) => s.addNote);
   const isPending = useNotesStore((s) => s.isPending);
 
-  const session = authClient.useSession();
+  const { data: sessionData, isPending: sessionIsPending } =
+    authClient.useSession();
   const containerRef = React.useRef<HTMLDivElement>(null);
 
   const [note, setNote] = useState<CreateLocalNote>({
@@ -38,18 +40,18 @@ export default function CreateNote() {
     isPinned: false,
   });
 
-  if (!session.data) return null;
-  const userId = session.data.session.userId;
+  if (sessionIsPending) return <CreateNoteSkeleton />;
+
+  if (!sessionData) return null;
+  const userId = sessionData.session.userId;
 
   const closeForm = () => {
     setFormIsOpen(false);
-    setNote((n) => ({ ...n, type: "TEXT" }));
-    setNote((n) => ({ ...n, isPinned: false }));
+    setNote((n) => ({ ...n, type: "TEXT", isPinned: false }));
   };
 
   const clearForm = () => {
-    setNote((n) => ({ ...n, title: "" }));
-    setNote((n) => ({ ...n, content: [] }));
+    setNote((n) => ({ ...n, title: "", content: [] }));
   };
 
   const submit = () => {
@@ -105,7 +107,6 @@ export default function CreateNote() {
   return (
     <>
       <motion.div
-        layout
         ref={containerRef}
         tabIndex={-1}
         onFocus={handleFocus}
@@ -120,7 +121,7 @@ export default function CreateNote() {
           },
         )}
       >
-        <AnimatePresence mode="wait">
+        <AnimatePresence mode="sync">
           {formIsOpen ? (
             <motion.div
               key="header"
@@ -145,7 +146,7 @@ export default function CreateNote() {
         <div>
           <form onSubmit={handleSubmit} className="flex flex-col">
             <div className="flex flex-col text-txt-secondary">
-              <AnimatePresence mode="wait">
+              <AnimatePresence mode="sync">
                 {formIsOpen ? (
                   <motion.div
                     key="title-input"
@@ -170,16 +171,22 @@ export default function CreateNote() {
                     />
                   </motion.div>
                 ) : null}
-                A
               </AnimatePresence>
 
-              <AnimatePresence mode="wait">
+              <AnimatePresence mode="sync">
                 {note.type === "TEXT" ? (
                   <motion.div
                     key="textarea"
                     initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: "auto" }}
+                    animate={{
+                      opacity: 1,
+                      height: "auto",
+                    }}
                     exit={{ opacity: 0, height: 0 }}
+                    className={cn("flex overflow-hidden", {
+                      "px-4": !formIsOpen,
+                      "px-4 md:px-8": formIsOpen,
+                    })}
                   >
                     <CreateNoteTextarea
                       content={note.content}
@@ -193,6 +200,7 @@ export default function CreateNote() {
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: "auto" }}
                     exit={{ opacity: 0, height: 0 }}
+                    className="overflow-hidden"
                   >
                     <CreateNoteList content={note.content} setNote={setNote} />
                   </motion.div>
@@ -205,7 +213,7 @@ export default function CreateNote() {
                 formIsOpen={formIsOpen}
               />
             </div>
-            <AnimatePresence mode="wait">
+            <AnimatePresence mode="sync">
               {formIsOpen ? (
                 <motion.div
                   key="submit-btn"

@@ -20,7 +20,7 @@ export default function LabelListItem({
       <button
         onClick={() => handleToggleLabelToNote(label.id)}
         className={cn("flex items-center gap-2 px-4 py-2 cursor-pointer", {
-          "text-txt-primary hover:bg-custom-blue hover:text-primary":
+          "text-txt-primary hover:bg-custom-blue hover:text-primary ":
             !labelIsAdded,
           "bg-custom-blue text-primary": labelIsAdded,
         })}

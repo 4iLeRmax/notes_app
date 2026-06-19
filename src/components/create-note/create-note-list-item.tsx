@@ -1,8 +1,9 @@
-import { TCreateNote } from "@/lib/zod-schemes/note-schemes/create-note.scheme";
-import { Square, SquareCheck, X } from "lucide-react";
+import { CheckSquare, Square, SquareCheck, X } from "lucide-react";
 import React from "react";
-import { fi } from "zod/v4/locales";
 import { CreateLocalNote } from "./create-note";
+import { motion, AnimatePresence } from "motion/react";
+import CreateNoteListItemStatusBtn from "./create-note-list-item-status-btn";
+import CreateNoteListItemDeleteBtn from "./create-note-list-item-delete-btn";
 
 interface CreateNoteListItemProps {
   item: CreateLocalNote["content"][number];
@@ -78,34 +79,35 @@ export default function CreateNoteListItem({
     }
   };
 
+  const handleRemoveItem = () => {
+    removeItem(item.index);
+    if (listRef.current) listRef.current.focus();
+  };
+
   return (
     <>
-      <div
-        className="flex items-center gap-2 px-4 py-2 rounded-3xl shadow-outside-small bg-primary"
-        onKeyDown={handleKeyDown}
-      >
-        <button type="button" onClick={() => toggleItemStatus(item.index)}>
-          {item.isDone ? <SquareCheck size={20} /> : <Square size={20} />}
-        </button>
-        <textarea
-          value={item.content}
-          onChange={(e) => handleChangeItem(e.target.value, item.index)}
-          placeholder="Type something..."
-          className="w-full outline-none resize-none overflow-hidden field-sizing-content "
-          // autoFocus={autoFocus}
-        />
-        <button
-          // tabIndex={-1}
-          type="button"
-          // onMouseDown={(e) => e.preventDefault()}
-          onClick={() => {
-            removeItem(item.index);
-            if (listRef.current) listRef.current.focus();
-          }}
+      <div className="py-1.5">
+        <div
+          className="flex items-center gap-2 px-4 py-2 rounded-3xl shadow-outside-small bg-primary text-txt-primary"
+          onKeyDown={handleKeyDown}
         >
-          <X size={20} />
-        </button>
-        <div>{item.index}</div>
+          <CreateNoteListItemStatusBtn
+            isActive={item.isDone}
+            onClick={() => toggleItemStatus(item.index)}
+            iconSize={20}
+          />
+          <textarea
+            value={item.content}
+            onChange={(e) => handleChangeItem(e.target.value, item.index)}
+            placeholder="Type something..."
+            className="w-full outline-none resize-none overflow-hidden field-sizing-content "
+          />
+          <CreateNoteListItemDeleteBtn
+            onClick={handleRemoveItem}
+            iconSize={20}
+          />
+          <div>{item.index}</div>
+        </div>
       </div>
     </>
   );

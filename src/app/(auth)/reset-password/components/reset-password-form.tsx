@@ -2,6 +2,8 @@
 
 import ControlledCustomInput from "@/components/UI/formElements/controlled-custom-input";
 import FormButton from "@/components/UI/formElements/form-button";
+import PasswordUpdateSuccess from "@/components/UI/status-bar/password-update-success";
+import StatusBar from "@/components/UI/status-bar/status-bar";
 import { resetPassword } from "@/lib/actions/auth";
 import {
   ResetPasswordScheme,
@@ -9,6 +11,7 @@ import {
 } from "@/lib/zod-schemes/auth-schemes/reset-password-scheme";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSearchParams } from "next/navigation";
+import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 export default function ResetPasswordForm() {
@@ -25,22 +28,30 @@ export default function ResetPasswordForm() {
     },
   });
 
+  const [successfullyUpdatePassword, setSuccessfullyUpdatePassword] =
+    useState(false);
+
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
   const error = searchParams.get("error");
 
   const onSubmit: SubmitHandler<TResetPassword> = async (data) => {
-    if (!token)
-      if (error === "INVALID_TOKEN") {
+    if (!token) {
+      if (error === "INVALID_TOKEN")
         setError("root", { message: "This password reset link has expired" });
-      } else {
-        setError("root", { message: "Something went wrong" });
-      }
+      else setError("root", { message: "Something went wrong" });
+      return;
+    }
     const res = await resetPassword(data, token as string);
+    if (res?.success) {
+      setSuccessfullyUpdatePassword(true);
+    }
     if (res?.error) {
       setError("root", { message: res.error });
     }
   };
+
+  if (successfullyUpdatePassword) return <PasswordUpdateSuccess />;
 
   return (
     <>

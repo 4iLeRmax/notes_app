@@ -1,6 +1,6 @@
 "use client";
 
-import { DialogOverlay } from "@/components/UI/dialog";
+import { DialogOverlay, DialogPortal } from "@/components/UI/dialog";
 import cn from "@/lib/cn";
 import { useNotesStore } from "@/lib/store/useNotesStore";
 import { ChevronRight, ExternalLink, Tag, Tags } from "lucide-react";
@@ -22,12 +22,14 @@ function MobileMenuLabelList(
 
   if (!labels || labels.length < 1) return null;
 
+  const handleToggle = () => {
+    setListIsOpen((p) => !p);
+  };
+
   return (
     <>
       <button
-        onClick={() => {
-          setListIsOpen((p) => !p);
-        }}
+        onClick={handleToggle}
         className={cn(
           "flex items-center justify-between p-4 rounded-3xl bg-secondary transition-colors",
           {
@@ -52,37 +54,42 @@ function MobileMenuLabelList(
         <AnimatePresence mode="popLayout">
           {listIsOpen ? (
             <>
-              <div className="fixed z-50">
-                <DialogOverlay handleClose={() => setListIsOpen(false)} />
-                <motion.div
-                  initial={{ y: 150, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  exit={{ y: 150, opacity: 0 }}
-                  transition={{ type: "tween" }}
-                  className="fixed bg-secondary bottom-0 left-0 shadow-outside-small  rounded-ss-3xl rounded-se-3xl w-full pt-10 pb-4"
-                >
-                  <div
-                    className={cn(
-                      "w-full flex flex-col items-start gap-4",
-                      "pl-4 pr-2 py-1 overflow-y-scroll max-h-[60vh] snap-y snap-mandatory",
-                    )}
+              <DialogPortal>
+                <div className="fixed z-50">
+                  <DialogOverlay handleClose={() => setListIsOpen(false)} />
+                  <motion.div
+                    initial={{ y: 150, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    exit={{ y: 150, opacity: 0 }}
+                    transition={{ type: "tween" }}
+                    className="fixed bg-secondary bottom-0 left-0 shadow-outside-small  rounded-ss-3xl rounded-se-3xl w-full pt-10 pb-4"
                   >
-                    {labels.map((label) => (
-                      <Link
-                        href={`/labels/${label.id}`}
-                        key={label.id}
-                        className="flex items-center justify-between bg-secondary rounded-3xl shadow-outside-small w-full p-4 text-txt-primary"
-                      >
-                        <div className="flex items-center gap-2 w-full">
-                          <Tag size={20} />
-                          <span className="w-full truncate">{label.name}</span>
+                    <div
+                      className={cn(
+                        "w-full flex flex-col items-start",
+                        "pl-4 pr-2 py-1 overflow-y-scroll max-h-[60vh] snap-y snap-mandatory",
+                      )}
+                    >
+                      {labels.map((label) => (
+                        <div className="w-full snap-start py-2" key={label.id}>
+                          <Link
+                            href={`/labels/${label.id}`}
+                            className="flex items-center justify-between bg-primary rounded-3xl shadow-outside-small w-full p-4 text-txt-primary"
+                          >
+                            <div className="flex items-center gap-2 w-full">
+                              <Tag size={20} />
+                              <span className="w-full truncate">
+                                {label.name}
+                              </span>
+                            </div>
+                            <ExternalLink size={20} />
+                          </Link>
                         </div>
-                        <ExternalLink size={20} />
-                      </Link>
-                    ))}
-                  </div>
-                </motion.div>
-              </div>
+                      ))}
+                    </div>
+                  </motion.div>
+                </div>
+              </DialogPortal>
             </>
           ) : null}
         </AnimatePresence>

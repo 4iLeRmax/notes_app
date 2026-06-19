@@ -30,7 +30,7 @@ export default function AsideSection() {
 
   return (
     <>
-      <div className={cn("shrink-0 w-[73px] 2xl:hidden", {})}></div>
+      <div className={cn("shrink-0 w-[73px] 2xl:hidden h-screen", {})}></div>
       <motion.div
         animate={{ width: menuIsOpen ? "240px" : "73px" }}
         className={cn("shrink-0 hidden 2xl:flex", {
@@ -42,11 +42,10 @@ export default function AsideSection() {
       <motion.div
         initial={false}
         animate={{ width: menuIsOpen ? 240 : 73 }}
-        // transition={{ duration: 1 }}
         data-aside
         className={cn(
-          "fixed z-30 top-0 left-5 ",
-          "py-4 mt-5",
+          "fixed z-30 top-5 left-5 ",
+          "py-4",
           "bg-secondary shadow-outside rounded-4xl select-none outline-none",
         )}
       >

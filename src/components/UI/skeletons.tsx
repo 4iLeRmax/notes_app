@@ -17,6 +17,15 @@ const ThemeIconSkeleton = () => {
     <div className="w-[41px] h-[41px] rounded-full shadow-outside-small bg-secondary animate-pulse"></div>
   );
 };
+
+const CreateNoteSkeleton = () => {
+  return (
+    <>
+      <div className="w-full sm:max-w-120 h-20 rounded-4xl bg-secondary shadow-outside animate-pulse"></div>
+    </>
+  );
+};
+
 const NoteCardSkeleton = ({ height }: { height: number }) => {
   return (
     <div
@@ -68,7 +77,7 @@ const NoteViewSkeleton = () => {
         </div>
 
         <div className="flex items-center justify-end mt-10">
-          <div className="w-7 h-7 rounded-full shadow-outside-small bg-primary animate-pulse"></div>
+          <div className="w-8 h-8 rounded-full shadow-outside-small bg-primary animate-pulse"></div>
         </div>
       </div>
     </div>
@@ -79,6 +88,7 @@ export {
   UserIconSkeleton,
   LabelsIconSkeleton,
   ThemeIconSkeleton,
+  CreateNoteSkeleton,
   NotesDisplaySkeleton,
   NoteViewSkeleton,
   NotesGroupSkeleton,

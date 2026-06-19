@@ -21,7 +21,7 @@ import {
   ResetPasswordScheme,
   TResetPassword,
 } from "../zod-schemes/auth-schemes/reset-password-scheme";
-import { APIError } from "better-auth";
+import { APIError, success } from "better-auth";
 import sha256 from "../SHA256";
 import { EmailScheme } from "../zod-schemes/basic-schemes";
 
@@ -132,8 +132,7 @@ export const SignOutAction = async () => {
   } catch (err) {
     console.log("Error during sign out:", err);
   }
-  //
-  // redirect("/sign-in");
+  redirect("/sign-in");
 };
 
 export const signinActionWithGoogle = async () => {
@@ -166,7 +165,8 @@ export const findAccountAction = async (formData: TFindAccount) => {
     });
 
     if (!user) return { error: "An account with this email doesn't exist" };
-    redirect("/send-email?email=" + safeData.data.email);
+    return { success: true };
+    // redirect("/send-email?email=" + safeData.data.email);
   }
 };
 
@@ -262,7 +262,7 @@ export const resetPassword = async (
     }
   }
 
-  redirect("/sign-in");
+  return { success: true };
 };
 
 export const resendVerificationEmail = async (email: string) => {

@@ -1,31 +1,23 @@
 "use client";
 
-import Link from "next/link";
-
 import NoteOptions from "./note-card-options/note-options";
 import NoteCardLabels from "./note-card-labels";
 import NoteCardHeader from "./note-card-header";
 import NoteCardMain from "./note-card-main";
 import LastUpdate from "@/components/note-view/note-view-last-update";
 import SelectNote from "./select-note";
-import { useState } from "react";
-import BaseModal from "../UI/base-modal";
-import NoteViewBody from "../note-view/note-view-body";
-import BackButton from "../UI/back-button";
-import { ArrowLeft } from "lucide-react";
 
 interface NoteCardProps {
   note: Note;
+  handleOpen: () => void;
 }
 
-export default function NoteCard({ note }: NoteCardProps) {
-  const [isOpen, setIsOpen] = useState(false);
+export default function NoteCard({ note, handleOpen }: NoteCardProps) {
   return (
     <>
       <SelectNote note={note}>
         <div className="relative rounded-xl sm:rounded-3xl w-full select-none">
-          {/* <Link href={`/notes/${note.id}`}> */}
-          <div onClick={() => setIsOpen(true)}>
+          <div onClick={handleOpen} className="cursor-pointer">
             <div className="px-2 sm:px-4 pt-3">
               <NoteCardHeader
                 noteId={note.id}
@@ -54,23 +46,6 @@ export default function NoteCard({ note }: NoteCardProps) {
           </div>
         </div>
       </SelectNote>
-      {isOpen ? (
-        <BaseModal customClose={() => setIsOpen(false)}>
-          <NoteViewBody
-            note={note}
-            fixedOptions
-            scrollableContent
-            headerSlot={
-              <BackButton
-                onClick={() => setIsOpen(false)}
-                className="p-2 shadow-outside-small rounded-3xl bg-primary text-txt-secondary"
-              >
-                <ArrowLeft size={25} />
-              </BackButton>
-            }
-          />
-        </BaseModal>
-      ) : null}
     </>
   );
 }

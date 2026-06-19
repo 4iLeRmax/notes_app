@@ -41,7 +41,7 @@ export default function CreateLabel({
   );
 
   return (
-    <div className="px-2 py-2 mt-2">
+    <div className="px-4 py-8 xs:py-2 rounded-ss-3xl rounded-se-3xl shadow-outside-small xs:shadow-none bg-primary">
       <div className="flex flex-col gap-2">
         <FormInput
           // ref={customRef}
@@ -51,7 +51,7 @@ export default function CreateLabel({
           value={searchValue}
           onChange={handleChangeValue}
           placeholder="label..."
-          className="w-full shadow-inside px-4 py-2 rounded-2xl outline-none text-txt-primary"
+          className="w-full shadow-inside px-4 py-2 rounded-2xl outline-none text-txt-primary bg-secondary"
         />
         <CreateLabelBtn
           onClick={handleCreateLabel}

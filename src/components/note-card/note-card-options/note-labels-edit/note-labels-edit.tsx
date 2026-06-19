@@ -13,9 +13,9 @@ export default function NoteLabelsEdit({ noteId }: NoteCardLabelsModalProps) {
 
   return (
     <>
-      <div className="pt-2">
-        <div className="px-4 ">
-          <h1 className="text-txt-secondary font-bold">Add label</h1>
+      <div className="flex flex-col">
+        <div className="px-4 py-4 xs:py-0 xs:pt-2 rounded-es-3xl rounded-ee-3xl shadow-outside-small xs:shadow-none bg-primary">
+          <h1 className="text-txt-secondary font-bold ">Add label</h1>
         </div>
         <LabelList noteId={noteId} searchValue={searchValue} />
         <CreateLabel

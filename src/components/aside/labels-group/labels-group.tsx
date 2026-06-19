@@ -24,13 +24,11 @@ export default function LabelsGroup({ menuIsOpen }: LabelsGroupProps) {
   return (
     <>
       <motion.div animate={{ width: menuIsOpen ? 240 : 73 }}>
-        <div className="px-4">
-          <LabelsGroupToggleBtn
-            isOpen={isOpen}
-            toggleIsOpen={toggleIsOpen}
-            menuIsOpen={menuIsOpen}
-          />
-        </div>
+        <LabelsGroupToggleBtn
+          isOpen={isOpen}
+          toggleIsOpen={toggleIsOpen}
+          menuIsOpen={menuIsOpen}
+        />
         <AnimatePresence mode="wait">
           {isOpen ? (
             <LabelsGroupList labels={labels} menuIsOpen={menuIsOpen} />

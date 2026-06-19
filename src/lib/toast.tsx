@@ -1,6 +1,7 @@
 import { error } from "console";
 import { AlertCircle, CheckCircle, Info, XCircle } from "lucide-react";
 import { ExternalToast, toast as sonnerToast } from "sonner";
+import { vibrate } from "./haptics";
 
 type ToastCustomOptions<T> = {
   success: T;
@@ -49,12 +50,32 @@ export const toastCustomOptions: ToastCustomOptions<ExternalToast> = {
 };
 
 export const toast = {
-  success: (title: string, description?: string) =>
-    sonnerToast.success(title, { ...toastCustomOptions.success, description }),
-  error: (title: string, description?: string) =>
-    sonnerToast.success(title, { ...toastCustomOptions.error, description }),
-  warning: (title: string, description?: string) =>
-    sonnerToast.success(title, { ...toastCustomOptions.warning, description }),
-  info: (title: string, description?: string) =>
-    sonnerToast.success(title, { ...toastCustomOptions.info, description }),
+  success: (title: string, description?: string) => {
+    vibrate([10, 50, 10]);
+    return sonnerToast.success(title, {
+      ...toastCustomOptions.success,
+      description,
+    });
+  },
+  error: (title: string, description?: string) => {
+    vibrate([100, 50, 100]);
+
+    return sonnerToast.error(title, {
+      ...toastCustomOptions.error,
+      description,
+    });
+  },
+  warning: (title: string, description?: string) => {
+    vibrate([20, 100, 20]);
+
+    return sonnerToast.warning(title, {
+      ...toastCustomOptions.warning,
+      description,
+    });
+  },
+  info: (title: string, description?: string) => {
+    vibrate([20, 100, 20]);
+
+    return sonnerToast.info(title, { ...toastCustomOptions.info, description });
+  },
 };

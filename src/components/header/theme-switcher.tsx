@@ -16,10 +16,14 @@ export default function ThemeSwitcher({
 
   if (!value) return <ThemeIconSkeleton />;
 
+  const handelToggleTheme = () => {
+    value.toggleTheme();
+  };
+
   return (
     <>
       <button
-        onClick={value.toggleTheme}
+        onClick={handelToggleTheme}
         aria-label={`Switch to ${value.theme === "light" ? "dark" : "light"} theme`}
         className={cn(
           "p-2 rounded-3xl bg-secondary sm:bg-primary text-txt-primary hover:text-custom-blue transition-colors",

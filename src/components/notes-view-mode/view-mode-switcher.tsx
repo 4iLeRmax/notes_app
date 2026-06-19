@@ -1,6 +1,7 @@
 "use client";
 
 import cn from "@/lib/cn";
+import { vibrate } from "@/lib/haptics";
 import useViewModeStore, { ViewMode } from "@/lib/store/useViewModeStore";
 import { LayoutGrid, Rows3 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
@@ -13,10 +14,15 @@ export default function ViewModeSwitcher({
   const viewMode = useViewModeStore((s) => s.viewMode);
   const toggleViewMode = useViewModeStore((s) => s.toggleViewMode);
 
+  const handleToggle = () => {
+    vibrate(10);
+    toggleViewMode();
+  };
+
   return (
     <>
       <button
-        onClick={toggleViewMode}
+        onClick={handleToggle}
         className={cn(
           "w-[41px] h-[41px] flex items-center justify-center bg-secondary sm:bg-primary rounded-full shrink-0 transition-colors",
           {

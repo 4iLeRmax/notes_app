@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import NotesGroup from "./note-card/notes-group";
+import NotesGroup from "./note/notes-group";
 import { useNotesStore } from "@/lib/store/useNotesStore";
 import Link from "next/link";
 import { useShallow } from "zustand/react/shallow";

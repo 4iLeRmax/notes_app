@@ -1,6 +1,7 @@
 "use client";
 
 import {} from "@/lib/actions/note";
+import { vibrate } from "@/lib/haptics";
 import { useNotesStore } from "@/lib/store/useNotesStore";
 import useSelectedNotesStore from "@/lib/store/useSelectedNotesStore";
 import React from "react";
@@ -60,16 +61,9 @@ function SelectNotesOptionsList({ noteIds }: NoteOptionsListProps) {
             TODO/TEXT
           </button>
         </form>
-        {/*<button
-                className="w-full hover:bg-custom-blue text-txt-primary hover:text-primary px-4 py-2 flex justify-between items-center"
-                onClick={() => setShowLabel((p) => !p)}
-              >
-                <span>Add Label</span>
-                <ChevronRight size={20} />
-              </button>*/}
         <form action={() => addCopies(noteIds)}>
           <button
-            onClick={(e: any) => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
             className="w-full hover:bg-custom-blue text-txt-primary hover:text-primary px-4 py-2 flex justify-start"
           >
             Create copy
@@ -77,12 +71,13 @@ function SelectNotesOptionsList({ noteIds }: NoteOptionsListProps) {
         </form>
         <form
           action={async () => {
+            vibrate([20, 30, 20]);
             await removeNotes(noteIds);
             removeAll();
           }}
         >
           <button
-            onClick={(e: any) => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
             className="rounded-es-xl rounded-ee-xl w-full hover:bg-custom-blue text-txt-primary hover:text-primary px-4 py-2 flex justify-start"
           >
             Delete

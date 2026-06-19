@@ -1,6 +1,7 @@
 "use client";
 
 import cn from "@/lib/cn";
+import { vibrate } from "@/lib/haptics";
 import { useNotesStore } from "@/lib/store/useNotesStore";
 import { Pin, PinOff } from "lucide-react";
 
@@ -13,6 +14,7 @@ export default function PinButton({ noteId, isPinned }: PinButtonProps) {
   const togglePin = useNotesStore((s) => s.togglePin);
 
   const handleTogglePin = (e: React.FormEvent<HTMLFormElement>) => {
+    vibrate(10);
     e.preventDefault();
     togglePin(noteId);
   };
@@ -25,7 +27,7 @@ export default function PinButton({ noteId, isPinned }: PinButtonProps) {
       >
         <button
           className={cn(
-            "bg-primary p-1 rounded-full outline-none transition-colors",
+            "bg-primary p-1.5 rounded-full outline-none transition-colors",
             {
               "shadow-outside-small text-txt-secondary hover:text-custom-blue":
                 !isPinned,

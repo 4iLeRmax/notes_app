@@ -5,7 +5,7 @@ import { updateNoteTitle } from "@/lib/actions/note";
 import cn from "@/lib/cn";
 import { NOTE_LIMITS } from "@/lib/constants";
 import { useNotesStore } from "@/lib/store/useNotesStore";
-import { Loader2 } from "lucide-react";
+import { Loader2, X } from "lucide-react";
 import React, { useState } from "react";
 
 export default function NoteViewTitleForm({
@@ -15,7 +15,6 @@ export default function NoteViewTitleForm({
   title: string;
   noteId: string;
 }) {
-  const [focused, setFocused] = useState(false);
   const updateTitle = useNotesStore((s) => s.updateTitle);
 
   const { value, setValue, isPending } = useAutoSubmit<string>(
@@ -25,7 +24,7 @@ export default function NoteViewTitleForm({
 
   return (
     <>
-      <div className="flex items-center gap-4 relative">
+      <div className="flex items-center gap-4 relative mt-2 group/button">
         <input
           type="text"
           name="title"
@@ -33,27 +32,23 @@ export default function NoteViewTitleForm({
           onChange={(e) =>
             setValue(e.target.value.slice(0, NOTE_LIMITS.MAX_TITLE_CHARS))
           }
-          onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
           className={cn(
-            "text-xl w-full outline-none font-bold px-4 py-2 rounded-4xl pr-[52px] ",
-            {
-              "text-txt-secondary cursor-pointer":
-                !focused && defaultTitle === value,
-              "shadow-inside text-txt-primary cursor-text bg-primary":
-                focused || defaultTitle !== value,
-            },
+            "text-xl w-full outline-none font-bold px-4 py-2 rounded-4xl cursor-text",
+            "text-txt-secondary cursor-pointer",
+            "focus:shadow-inside focus:text-txt-primary focus:bg-secondary xs:focus:bg-primary focus:pr-12",
           )}
           placeholder="Title..."
         />
-        {isPending ? (
-          <div className="absolute right-4 top-1/2 -translate-y-1/2">
-            <Loader2
-              size={20}
-              className="animate-spin shrink-0 text-txt-primary"
-            />
-          </div>
-        ) : null}
+        <button
+          type="button"
+          className="absolute z-10 top-1.5 right-4 text-txt-primary p-1.5 hidden group-focus-within/button:flex"
+          onMouseDown={(e) => {
+            e.preventDefault();
+            setValue("");
+          }}
+        >
+          <X size={20} />
+        </button>
       </div>
     </>
   );

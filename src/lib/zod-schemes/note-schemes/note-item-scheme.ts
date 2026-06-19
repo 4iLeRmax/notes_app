@@ -1,11 +1,12 @@
 import { NOTE_LIMITS } from "@/lib/constants";
 import z from "zod";
+import { NoteItemPositionScheme } from "../basic-schemes";
 
 export const NoteItemScheme = z.object({
   id: z.uuid(),
   content: z.string().trim(),
   isDone: z.boolean(),
-  position: z.number().int().nonnegative(),
+  position: NoteItemPositionScheme,
   noteId: z.uuid(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),

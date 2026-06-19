@@ -13,26 +13,28 @@ export default function CreateNoteItemBtn({
   valueLength,
   listRef,
 }: CreateNoteItemBtnProps) {
+  const handelCreateItem = () => {
+    addNewItem();
+    requestAnimationFrame(() => {
+      const last = listRef.current?.lastElementChild;
+      if (!last) return;
+      const textarea = last.querySelector("textarea");
+      if (!textarea) return;
+      textarea.focus();
+    });
+  };
+
   return (
     <>
       <div
-        className={cn("flex", {
-          "ml-5 mt-5": valueLength > 0,
+        className={cn("flex ml-5 mt-6", {
+          // "ml-5 mt-5": valueLength > 0,
         })}
       >
         <button
           type="button"
           className="flex items-center gap-1 text-txt-secondary"
-          onClick={() => {
-            addNewItem();
-            requestAnimationFrame(() => {
-              const last = listRef.current?.lastElementChild;
-              if (!last) return;
-              const textarea = last.querySelector("textarea");
-              if (!textarea) return;
-              textarea.focus();
-            });
-          }}
+          onClick={handelCreateItem}
         >
           <Plus size={20} />
           <span>{valueLength < 1 ? "Create first item" : "Create item"}</span>

@@ -1,16 +1,11 @@
 "use client";
 
 import cn from "@/lib/cn";
+import { vibrate } from "@/lib/haptics";
 import useSelectedNotesStore from "@/lib/store/useSelectedNotesStore";
 import { Check } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import React, { useState, memo, useEffect } from "react";
-
-const ChildrenWrapper = memo(({ children }: { children: React.ReactNode }) => (
-  <>{children}</>
-));
-
-ChildrenWrapper.displayName = "ChildrenWrapper";
 
 export default function SelectNote({
   children,
@@ -23,7 +18,7 @@ export default function SelectNote({
 
   // const selectedNoteIds = useSelectedNotesStore((s) => s.selectedNoteIds);
   const toggleSelectedNote = useSelectedNotesStore((s) => s.toggleSelectedNote);
-  const removeAll = useSelectedNotesStore((s) => s.removeAll);
+  // const removeAll = useSelectedNotesStore((s) => s.removeAll);
 
   const isSelected = useSelectedNotesStore((s) =>
     s.selectedNoteIds.includes(note.id),
@@ -46,7 +41,7 @@ export default function SelectNote({
     if (mouseTimer) clearTimeout(mouseTimer);
     mouseTimer = window.setTimeout(() => {
       toggleSelectedNote(note.id);
-      navigator.vibrate?.(200);
+      vibrate(100);
     }, LONG_PRESS_DURATION);
   };
 
@@ -138,7 +133,7 @@ export default function SelectNote({
           />
         ) : null}
 
-        <>{children}</>
+        {children}
       </div>
     </>
   );

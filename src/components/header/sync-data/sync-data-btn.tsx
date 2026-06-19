@@ -33,15 +33,21 @@ export default function SyncDataBtn({
     const { data } = await refetch();
     if (data) {
       setNotes(data);
+
       setTempIcon(true);
-      setTimeout(() => setTempIcon(false), 2000);
+      setTimeout(() => {
+        setTempIcon(false);
+      }, 2000);
     }
   };
 
   useEffect(() => {
     if (!isPending) {
       setTempIcon(true);
-      setTimeout(() => setTempIcon(false), 2000);
+
+      setTimeout(() => {
+        setTempIcon(false);
+      }, 2000);
     }
   }, [isPending]);
 

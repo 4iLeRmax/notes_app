@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { X } from "lucide-react";
 import { useNotesStore } from "@/lib/store/useNotesStore";
 import cn from "@/lib/cn";
+import { vibrate } from "@/lib/haptics";
 
 interface NoteCardLabelItemProps {
   label: Label;
@@ -18,12 +19,15 @@ export default function NoteCardLabelItem({
   const toggleNoteLabel = useNotesStore((s) => s.toggleNoteLabel);
 
   const handleLink = (e: React.MouseEvent) => {
+    e.stopPropagation();
     e.preventDefault();
     window.location.href = `/labels/${label.id}`;
   };
 
-  const handleRemoveLabel = async (e: React.FormEvent) => {
+  const handleRemoveLabel = async (e: React.MouseEvent) => {
+    e.stopPropagation();
     e.preventDefault();
+    vibrate(10);
     await toggleNoteLabel(noteId, label.id);
   };
 
@@ -42,16 +46,15 @@ export default function NoteCardLabelItem({
         >
           {label.name}
         </span>
-        <form onSubmit={handleRemoveLabel} className="flex items-center">
-          {showButton ? (
-            <button
-              className="p-1 outline-none text-txt-secondary"
-              onClick={(e: React.MouseEvent) => e.stopPropagation()}
-            >
-              <X size={12} />
-            </button>
-          ) : null}
-        </form>
+        {showButton ? (
+          <button
+            type="button"
+            className="p-1 outline-none text-txt-secondary"
+            onClick={handleRemoveLabel}
+          >
+            <X size={12} />
+          </button>
+        ) : null}
       </div>
     </>
   );

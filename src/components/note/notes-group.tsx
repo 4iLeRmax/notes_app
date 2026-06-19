@@ -1,8 +1,8 @@
 "use client";
 
+import Note from "./note";
 import ViewModeLayout from "../notes-view-mode/wrappers/view-mode-layout";
 import ViewModeNoteCard from "../notes-view-mode/wrappers/view-mode-note-card";
-import NoteCard from "./note-card";
 
 interface NotesGroupProps {
   label: string;
@@ -22,7 +22,7 @@ export default function NotesGroup({ notes, label }: NotesGroupProps) {
           {notes.map((note) => (
             <ViewModeNoteCard key={note.id}>
               <div className="break-inside-avoid w-full">
-                <NoteCard note={note} />
+                <Note note={note} />
               </div>
             </ViewModeNoteCard>
           ))}

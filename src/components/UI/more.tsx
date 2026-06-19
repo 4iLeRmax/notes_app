@@ -4,15 +4,16 @@ import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { DialogOverlay, DialogPortal, RootDialog } from "./dialog";
 import { motion, AnimatePresence } from "motion/react";
 import cn from "@/lib/cn";
+import { EllipsisVertical, X } from "lucide-react";
 
 interface MoreProps {
   children: React.ReactNode;
-  btnChildren: React.ReactNode;
+  iconSize?: number;
   isOpen: boolean;
   handleOpen: () => void;
   handleClose: () => void;
   fixed?: boolean;
-  bgSecondaryForBtn?: boolean;
+  customClassName?: string;
 }
 
 const calcPosition = (rect: DOMRect, fixed: boolean, modalHeight: number) => {
@@ -36,12 +37,12 @@ const calcPosition = (rect: DOMRect, fixed: boolean, modalHeight: number) => {
 
 export default function More({
   children,
-  btnChildren,
+  iconSize = 20,
   isOpen,
   handleOpen,
   handleClose,
   fixed = false,
-  bgSecondaryForBtn,
+  customClassName,
 }: MoreProps) {
   const [position, setPosition] = useState({ top: 0, bottom: 0, right: 0 });
 
@@ -50,10 +51,10 @@ export default function More({
   const mobileModalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    window.addEventListener("resize", handleClose);
-    return () => {
-      window.removeEventListener("resize", handleClose);
-    };
+    // window.addEventListener("resize", handleClose);
+    // return () => {
+    //   window.removeEventListener("resize", handleClose);
+    // };
   }, [handleClose]);
 
   useLayoutEffect(() => {
@@ -79,19 +80,21 @@ export default function More({
   return (
     <>
       <button
+        data-more-btn
         type="button"
         ref={buttonRef}
         onBlur={handleBlur}
-        className={cn("p-1 outline-none rounded-full transition-colors", {
-          "shadow-outside-small text-txt-secondary hover:text-custom-blue":
-            !isOpen,
-          "shadow-inside text-custom-blue": isOpen,
-          "bg-primary": !bgSecondaryForBtn,
-          "bg-secondary": bgSecondaryForBtn,
-        })}
+        className={
+          customClassName ??
+          cn("p-1.5 outline-none rounded-full transition-colors", {
+            "shadow-outside-small text-txt-secondary hover:text-custom-blue":
+              !isOpen,
+            "shadow-inside text-custom-blue": isOpen,
+          })
+        }
         onClick={handleOpen}
       >
-        {btnChildren}
+        {isOpen ? <X size={iconSize} /> : <EllipsisVertical size={iconSize} />}
       </button>
       <AnimatePresence mode="wait">
         {isOpen ? (
@@ -105,7 +108,7 @@ export default function More({
                 animate={{ opacity: 1, scaleY: 1 }}
                 exit={{ opacity: 0.5, scaleY: 0 }}
                 className={cn(
-                  "hidden xs:flex bg-primary shadow-outside-small overflow-hidden rounded-xl sm:rounded-3xl xs:w-[200px] md:w-[184px] lg:w-[218px]",
+                  "hidden xs:flex bg-primary shadow-outside-small overflow-hidden rounded-xl sm:rounded-3xl xs:w-[200px] sm:w-[218px] md:w-[182px] lg:w-[218px]",
                   {
                     "absolute z-20 ": !fixed,
                     "fixed z-50": fixed,
@@ -127,6 +130,7 @@ export default function More({
               >
                 {children}
               </motion.div>
+
               <div className="flex xs:hidden fixed z-50">
                 <DialogOverlay handleClose={handleClose} />
                 <motion.div
@@ -135,7 +139,7 @@ export default function More({
                   animate={{ y: 0, opacity: 1 }}
                   exit={{ y: 150, opacity: 0 }}
                   transition={{ type: "tween" }}
-                  className="fixed bg-secondary bottom-0 left-0 shadow-outside-small overflow-hidden rounded-ss-3xl rounded-se-3xl w-full py-4"
+                  className="fixed bg-secondary bottom-0 left-0 shadow-outside-small overflow-hidden rounded-ss-3xl rounded-se-3xl w-full"
                 >
                   {children}
                 </motion.div>

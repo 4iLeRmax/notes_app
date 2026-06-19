@@ -21,9 +21,14 @@ import {
   updateNoteItem,
 } from "../actions/note-item";
 import { LABEL_LIMITS, NOTE_LIMITS } from "../constants";
-import { NoteActionErrors, TOAST_ERRORS } from "../actions/errors";
+import {
+  NoteActionErrors,
+  TOAST_ERRORS,
+  TOAST_USER_FRIENDLY_ERRORS,
+} from "../actions/errors";
 import {
   LabelNameScheme,
+  NoteItemPositionScheme,
   NoteTitleScheme,
   UserIdScheme,
 } from "../zod-schemes/basic-schemes";
@@ -34,6 +39,7 @@ import {
   updateLabel,
 } from "../actions/label";
 import { toast } from "../toast";
+import { NoteItemScheme } from "../zod-schemes/note-schemes/note-item-scheme";
 
 interface NotesState {
   notes: Note[];
@@ -91,13 +97,19 @@ export const useNotesStore = create<NotesState>((set, get) => ({
 
   addNote: async (data, userId) => {
     const notesCount = get().notes.length;
-    if (notesCount >= NOTE_LIMITS.MAX_NOTES) return;
+    if (notesCount >= NOTE_LIMITS.MAX_NOTES) {
+      toast.error(TOAST_USER_FRIENDLY_ERRORS.NOTE_LIMIT_EXCEEDED);
+      return;
+    }
 
     const noteId = crypto.randomUUID();
 
     const { data: safeData, success: validData } =
       CreateNoteScheme.safeParse(data);
-    if (!validData) return;
+    if (!validData) {
+      toast.error(TOAST_USER_FRIENDLY_ERRORS.INVALID_NOTE_DATA);
+      return;
+    }
 
     const optimisticNote: Note = {
       ...safeData,
@@ -116,8 +128,6 @@ export const useNotesStore = create<NotesState>((set, get) => ({
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-
-    console.log(optimisticNote);
 
     set((state) => ({
       notes: [optimisticNote, ...state.notes],
@@ -149,7 +159,10 @@ export const useNotesStore = create<NotesState>((set, get) => ({
 
     const { data: safeTitle, success: validTitle } =
       NoteTitleScheme.safeParse(newTitle);
-    if (!validTitle) return;
+    if (!validTitle) {
+      toast.error(TOAST_USER_FRIENDLY_ERRORS.INVALID_TITLE);
+      return;
+    }
 
     set((state) => ({
       notes: state.notes.map((note) =>
@@ -236,7 +249,22 @@ export const useNotesStore = create<NotesState>((set, get) => ({
   addNoteItem: async (noteId, createAtPosition) => {
     const prevNote = get().notes.find((note) => note.id === noteId);
     if (!prevNote) return;
-    if (prevNote.content.length >= NOTE_LIMITS[prevNote.type].maxItems) return;
+    if (prevNote.content.length >= NOTE_LIMITS[prevNote.type].maxItems) {
+      toast.error(TOAST_USER_FRIENDLY_ERRORS.NOTE_ITEM_LIMIT);
+      return;
+    }
+
+    let safePosition = createAtPosition;
+
+    if (createAtPosition !== undefined) {
+      const { data, success: validPosition } =
+        NoteItemPositionScheme.safeParse(createAtPosition);
+      if (!validPosition) {
+        toast.error(TOAST_USER_FRIENDLY_ERRORS.INVALID_NOTE_ITEM_DATA);
+        return;
+      }
+      safePosition = data;
+    }
 
     const sortedContent = [...prevNote.content].sort(
       (a, b) => a.position - b.position,
@@ -244,16 +272,17 @@ export const useNotesStore = create<NotesState>((set, get) => ({
 
     const noteItemId = crypto.randomUUID();
     const itemPosition =
-      sortedContent.length > 0
+      safePosition ??
+      (sortedContent.length > 0
         ? sortedContent[sortedContent.length - 1].position + 1
-        : 0;
+        : 0);
 
     const optimisticNoteItem: NoteItem = {
       id: noteItemId,
       noteId,
       content: "",
       isDone: false,
-      position: createAtPosition ?? itemPosition,
+      position: itemPosition,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -405,15 +434,20 @@ export const useNotesStore = create<NotesState>((set, get) => ({
     const prevItem = prevNote.content.find((item) => item.id === noteItemId);
     if (!prevItem) return;
 
-    if (newContent.length > NOTE_LIMITS.TODO.maxCharsPerItem) return;
+    if (newContent.length > NOTE_LIMITS.TODO.maxCharsPerItem) {
+      toast.error(TOAST_USER_FRIENDLY_ERRORS.INVALID_NOTE_ITEM_CONTENT);
+      return;
+    }
     if (
       prevNote.content.reduce((sum, item) => sum + item.content.length, 0) -
         (prevNote.content.find((item) => item.id === noteItemId)?.content
           .length ?? 0) +
         newContent.length >
       NOTE_LIMITS.TODO.totalChars
-    )
+    ) {
+      toast.error(TOAST_USER_FRIENDLY_ERRORS.NOTE_TOTAL_CHARS_LIMIT);
       return;
+    }
 
     set((state) => ({
       notes: state.notes.map((note) =>
@@ -473,19 +507,26 @@ export const useNotesStore = create<NotesState>((set, get) => ({
         updatedAt: new Date(),
       }));
 
-    if (newContentItems.length > NOTE_LIMITS.TEXT.maxItems) return;
+    if (newContentItems.length > NOTE_LIMITS.TEXT.maxItems) {
+      toast.error(TOAST_USER_FRIENDLY_ERRORS.NOTE_ITEM_LIMIT);
+      return;
+    }
     if (
       newContentItems.some(
         (item) => item.content.length > NOTE_LIMITS.TEXT.maxCharsPerItem,
       )
-    )
+    ) {
+      toast.error(TOAST_USER_FRIENDLY_ERRORS.NOTE_TOTAL_CHARS_LIMIT);
       return;
+    }
 
     if (
       newContentItems.reduce((sum, item) => sum + item.content.length, 0) >
       NOTE_LIMITS.TEXT.totalChars
-    )
+    ) {
+      toast.error(TOAST_USER_FRIENDLY_ERRORS.NOTE_TOTAL_CHARS_LIMIT);
       return;
+    }
 
     set((state) => ({
       notes: state.notes.map((note) =>
@@ -518,7 +559,7 @@ export const useNotesStore = create<NotesState>((set, get) => ({
     const notesToUpdate = prevNotes.filter((note) => noteIds.includes(note.id));
     if (notesToUpdate.length === 0) return;
 
-    const unconvertable = notesToUpdate.filter((note) => {
+    const nonConvertible = notesToUpdate.filter((note) => {
       const totalChars = note.content.reduce(
         (sum, item) => sum + item.content.length,
         0,
@@ -530,7 +571,7 @@ export const useNotesStore = create<NotesState>((set, get) => ({
       return totalChars > NOTE_LIMITS.TODO.totalChars || anyItemTooLong;
     });
 
-    if (unconvertable.length > 0) return;
+    if (nonConvertible.length > 0) return;
 
     const firstNoteType = prevNotes.find(
       (note) => note.id === noteIds[0],
@@ -575,7 +616,10 @@ export const useNotesStore = create<NotesState>((set, get) => ({
   addCopies: async (noteIds) => {
     const prevNotes = get().notes;
 
-    if (prevNotes.length + noteIds.length > NOTE_LIMITS.MAX_NOTES) return;
+    if (prevNotes.length + noteIds.length > NOTE_LIMITS.MAX_NOTES) {
+      toast.error(TOAST_USER_FRIENDLY_ERRORS.NOTE_LIMIT_EXCEEDED);
+      return;
+    }
 
     const copies = prevNotes
       .filter((note) => noteIds.includes(note.id))
@@ -744,7 +788,8 @@ export const useNotesStore = create<NotesState>((set, get) => ({
   //Labels
   setLabels: (labels) => set({ labels, isHydratedLabel: true }),
   addLabel: async (labelName, userId) => {
-    const labelsCount = get().labels.length;
+    const labels = get().labels;
+    const labelsCount = labels.length;
 
     const { data: safeUserId, success: validUserId } =
       UserIdScheme.safeParse(userId);
@@ -752,9 +797,26 @@ export const useNotesStore = create<NotesState>((set, get) => ({
 
     const { data: safeLabelName, success: validLabelName } =
       LabelNameScheme.safeParse(labelName);
-    if (!validLabelName) return;
+    if (!validLabelName) {
+      toast.error(TOAST_USER_FRIENDLY_ERRORS.INVALID_LABEL_DATA);
+      return;
+    }
 
-    if (labelsCount >= LABEL_LIMITS.MAX_LABELS) return;
+    if (labelsCount >= LABEL_LIMITS.MAX_LABELS) {
+      toast.error(TOAST_USER_FRIENDLY_ERRORS.INVALID_LABEL_DATA);
+      return;
+    }
+
+    const isDuplicate = labels.some(
+      (label) =>
+        label.name.toLowerCase() === safeLabelName.toLowerCase() &&
+        label.userId === userId,
+    );
+
+    if (isDuplicate) {
+      toast.error(TOAST_USER_FRIENDLY_ERRORS.LABEL_DUPLICATE);
+      return;
+    }
 
     const optimisticLabel: Label = {
       id: crypto.randomUUID(),
@@ -823,7 +885,10 @@ export const useNotesStore = create<NotesState>((set, get) => ({
 
     const { data: safeLabelName, success: validLabelName } =
       LabelNameScheme.safeParse(labelName);
-    if (!validLabelName) return;
+    if (!validLabelName) {
+      toast.error(TOAST_USER_FRIENDLY_ERRORS.INVALID_LABEL_DATA);
+      return;
+    }
 
     set((state) => ({
       notes: state.notes.map((note) => ({
@@ -876,7 +941,10 @@ export const useNotesStore = create<NotesState>((set, get) => ({
       }));
     } else {
       // add label
-      if (prevNote.labels.length >= LABEL_LIMITS.MAX_LABELS_PER_NOTE) return;
+      if (prevNote.labels.length >= LABEL_LIMITS.MAX_LABELS_PER_NOTE) {
+        toast.error(TOAST_USER_FRIENDLY_ERRORS.NOTE_LABELS_LIMIT_REACHED);
+        return;
+      }
       set((state) => ({
         notes: state.notes.map((note) =>
           note.id === noteId

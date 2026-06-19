@@ -27,18 +27,39 @@ export default function CreateNoteTextarea({
   };
 
   return (
-    <motion.div
-      className={cn("w-full flex", {
-        "px-4": !formIsOpen,
-        "px-4 md:px-8": formIsOpen,
-      })}
-      animate={{
-        width: "100%",
-        maxHeight: formIsOpen ? "552px" : "48px",
-      }}
-      // transition={{ delay: 0.3 }}
-    >
+    // <motion.div
+    //   className={cn("w-full flex", {
+    //     "px-4": !formIsOpen,
+    //     "px-4 md:px-8": formIsOpen,
+    //   })}
+    //   animate={{
+    //     width: "100%",
+    //     maxHeight: formIsOpen ? "552px" : "48px",
+    //   }}
+    // >
+    //   <motion.textarea
+    //     value={contentToText}
+    //     onChange={(e) => textToObj(e.target.value)}
+    //     placeholder="Type something..."
+    //     className={cn(
+    //       "outline-none resize-none overflow-hidden field-sizing-content bg-primary",
+    //       "placeholder:text-txt-primary shadow-inside px-4 py-3 rounded-3xl text-txt-primary w-full",
+    //     )}
+    //     animate={{
+    //       width: "100%",
+    //       // minHeight: formIsOpen ? "144px" : "48px",
+    //       maxHeight: formIsOpen ? "552px" : "48px",
+    //     }}
+    //   />
+    // {!formIsOpen ? <div className="w-[52px] shrink-0"></div> : null}
+    // </motion.div>
+
+    <>
       <motion.textarea
+        animate={{
+          // minHeight: formIsOpen ? "144px" : "48px",
+          maxHeight: formIsOpen ? "552px" : "48px",
+        }}
         value={contentToText}
         onChange={(e) => textToObj(e.target.value)}
         placeholder="Type something..."
@@ -46,14 +67,11 @@ export default function CreateNoteTextarea({
           "outline-none resize-none overflow-hidden field-sizing-content bg-primary",
           "placeholder:text-txt-primary shadow-inside px-4 py-3 rounded-3xl text-txt-primary w-full",
         )}
-        animate={{
-          width: "100%",
-          minHeight: formIsOpen ? "144px" : "48px",
-          maxHeight: formIsOpen ? "552px" : "48px",
-        }}
-        // transition={{ duration: 2 }}
       />
-      {!formIsOpen ? <div className="w-[52px] shrink-0"></div> : null}
-    </motion.div>
+      <motion.div
+        animate={{ width: formIsOpen ? "0" : "52px" }}
+        className="shrink-0"
+      ></motion.div>
+    </>
   );
 }

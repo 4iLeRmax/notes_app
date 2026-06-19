@@ -16,10 +16,10 @@ export default function NoteViewCreateItemBtn({
 }: NoteViewCreateItemBtnProps) {
   return (
     <>
-      <div className="ml-5 mt-5">
+      <div className="px-4 sm:px-8">
         <button
           onClick={handleCreateItem}
-          className="flex items-center gap-1 text-txt-secondary"
+          className="flex items-center gap-1 text-txt-secondary ml-5 mt-5"
         >
           <Plus size={20} />
           <span>{listLength === 0 ? "Create first item" : "Create item"}</span>

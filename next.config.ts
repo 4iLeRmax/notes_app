@@ -9,15 +9,15 @@ const nextConfig: NextConfig = {
       allowedOrigins: ["localhost:3000", "*.devtunnels.ms"],
     },
   },
-  async redirects() {
-    return [
-      {
-        source: "/labels",
-        destination: "/",
-        permanent: true,
-      },
-    ];
-  },
+  // async redirects() {
+  //   return [
+  //     {
+  //       source: "/labels",
+  //       destination: "/",
+  //       permanent: true,
+  //     },
+  //   ];
+  // },
 };
 
 export default nextConfig;

@@ -115,7 +115,3 @@ html.dark .shadow-button {
   background: var(--color-custom-blue);
   color: var(--color-primary);
 }
-
-.overflow {
-  max-height: calc(4 / 6 * 100vh);
-}

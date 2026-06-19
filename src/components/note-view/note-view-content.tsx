@@ -2,7 +2,6 @@
 
 import React from "react";
 import NoteViewList from "./note-view-list/note-view-list";
-import NoteCardLabels from "../note-card/note-card-labels";
 import NoteViewTextarea from "./note-view-textarea";
 
 interface NoteViewContentProps {
@@ -17,7 +16,7 @@ export default function NoteViewContent({ note }: NoteViewContentProps) {
 
   return (
     <>
-      <div className="text-txt-primary">
+      <div className="text-txt-primary py-4 w-screen xs:w-full">
         {note.type === "TEXT" ? (
           <NoteViewTextarea
             list={noteWithSortedContent.content}
@@ -26,13 +25,6 @@ export default function NoteViewContent({ note }: NoteViewContentProps) {
         ) : (
           <NoteViewList list={noteWithSortedContent.content} noteId={note.id} />
         )}
-      </div>
-      <div className="mt-5">
-        <NoteCardLabels
-          noteId={note.id}
-          noteLabels={note.labels}
-          maxLength={10}
-        />
       </div>
     </>
   );

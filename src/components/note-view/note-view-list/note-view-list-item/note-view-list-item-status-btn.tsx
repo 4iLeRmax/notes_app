@@ -1,56 +1,58 @@
 "use client";
 
 import cn from "@/lib/cn";
+import { vibrate } from "@/lib/haptics";
 import { useNotesStore } from "@/lib/store/useNotesStore";
-import { Check, Circle, CircleCheck } from "lucide-react";
-import { motion, AnimatePresence, scale } from "motion/react";
-import { useState } from "react";
+import { CheckSquare, Square } from "lucide-react";
 
 interface NoteViewListItemStatusBtnProps {
   noteId: string;
   listItemId: string;
   isDone: boolean;
-  size?: number;
+  iconSize?: number;
 }
 
 export default function NoteViewListItemStatusBtn({
   noteId,
   listItemId,
   isDone,
-  size = 36,
+  iconSize = 20,
 }: NoteViewListItemStatusBtnProps) {
   const toggleItemStatus = useNotesStore((s) => s.toggleItemStatus);
-  const [hovered, setHovered] = useState(false);
+
+  const handleToggle = async () => {
+    vibrate(10);
+    await toggleItemStatus(noteId, listItemId);
+  };
 
   return (
     <>
-      <div
-        className="flex items-center pl-4"
-        onMouseOver={() => (!hovered ? setHovered(true) : null)}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-      >
+      <div className="flex items-center">
         <button
-          onClick={() => toggleItemStatus(noteId, listItemId)}
+          onClick={handleToggle}
           className={cn(
-            "rounded-full w-7 h-7 bg-primary flex items-center justify-center",
+            "rounded-full p-1.5 flex items-center justify-center bg-primary",
+            "group-focus-within:bg-secondary group-hover:bg-secondary group/button",
             {
               "shadow-outside-small": !isDone,
               "shadow-inside": isDone,
             },
           )}
         >
-          <AnimatePresence mode="wait">
-            {(isDone && !hovered) || (!isDone && hovered) ? (
-              <motion.div
-                initial={{ opacity: 0, scale: 0 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0 }}
-              >
-                <Check size={20} className="text-custom-blue" />
-              </motion.div>
-            ) : null}
-          </AnimatePresence>
+          <CheckSquare
+            size={iconSize}
+            className={cn("text-custom-blue", {
+              "block group-hover/button:hidden": isDone,
+              "hidden group-hover/button:block": !isDone,
+            })}
+          />
+          <Square
+            size={iconSize}
+            className={cn("text-custom-blue", {
+              "block group-hover/button:hidden": !isDone,
+              "hidden group-hover/button:block": isDone,
+            })}
+          />
         </button>
       </div>
     </>

@@ -12,7 +12,7 @@ export default function ToggleLabelItemBtn({
 }: ToggleLabelItemBtnProps) {
   return (
     <>
-      <div className="p-1">
+      <div className="p-1.5">
         {labelIsAdded ? <SquareCheck size={15} /> : <Square size={15} />}
       </div>
     </>

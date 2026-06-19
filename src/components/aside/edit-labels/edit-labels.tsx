@@ -22,7 +22,7 @@ export default function EditLabels({ menuIsOpen }: EditLabelsProps) {
 
   return (
     <>
-      <AnimatePresence mode="popLayout">
+      <AnimatePresence>
         {modalIsOpen ? (
           <EditLabelsModal handleClose={() => setModalIsOpen(false)} />
         ) : null}

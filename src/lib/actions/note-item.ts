@@ -8,6 +8,7 @@ import z from "zod";
 import { TODONoteItemScheme } from "../zod-schemes/note-schemes/note-item-scheme";
 import { NOTE_LIMITS } from "../constants";
 import decrypt from "../encryption/decrypt";
+import { NoteItemPositionScheme } from "../zod-schemes/basic-schemes";
 
 export const createNoteItem = async (newNoteItem: NoteItem) => {
   console.log("createNoteItem");
@@ -242,7 +243,7 @@ export const deleteAllMarkedItems = async (
     .array(
       z.object({
         id: z.uuid(),
-        position: z.number().int().nonnegative(),
+        position: NoteItemPositionScheme,
       }),
     )
     .safeParse(remainingItems);

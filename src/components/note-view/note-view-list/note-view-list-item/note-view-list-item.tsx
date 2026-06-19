@@ -21,8 +21,6 @@ export default function NoteViewListItem({
   prevItemId,
   nextItemId,
 }: NoteViewListItemProps) {
-  const [hovered, setHovered] = useState(false);
-  const [focused, setFocused] = useState(false);
   const elementRef = useRef<HTMLDivElement>(null);
 
   const addNoteItem = useNotesStore((s) => s.addNoteItem);
@@ -71,48 +69,42 @@ export default function NoteViewListItem({
 
   return (
     <>
-      <motion.div
-        tabIndex={0}
-        ref={elementRef}
-        initial={{ opacity: 0, x: -20, height: 0 }}
-        animate={{
-          opacity: 1,
-          x: 0,
-          height: "auto",
-        }}
-        exit={{ opacity: 0, x: 20, height: 0 }}
-        onMouseOver={() => (!hovered ? setHovered(true) : null)}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-        onFocus={() => setFocused(true)}
-        onBlur={() => setFocused(false)}
-        onKeyDown={(e) => handleKeyDown(e)}
-        className={cn("relative rounded-4xl w-full transition-colors ", {
-          "hover:bg-primary hover:shadow-outside-small": !focused,
-          "bg-primary shadow-outside-small": focused,
-        })}
-      >
-        <div className="w-full min-w-0 flex items-center gap-2">
-          <NoteViewListItemStatusBtn
-            noteId={noteId}
-            listItemId={listItem.id}
-            isDone={listItem.isDone}
-            size={32}
-          />
+      <div className="w-full py-1 snap-start">
+        <motion.div
+          tabIndex={0}
+          ref={elementRef}
+          initial={{ opacity: 0, height: 0, scale: 0.8 }}
+          animate={{ opacity: 1, height: "auto", scale: 1 }}
+          exit={{ opacity: 0, height: 0, scale: 0.8 }}
+          onKeyDown={(e) => handleKeyDown(e)}
+          className={cn(
+            "relative rounded-4xl w-full transition-colors outline-none group",
+            "hover:bg-primary hover:shadow-outside-small",
+            "focus-within:bg-primary focus-within:shadow-outside-small",
+          )}
+        >
+          <div className="w-full min-w-0 flex items-center gap-2 px-4 ">
+            <NoteViewListItemStatusBtn
+              noteId={noteId}
+              listItemId={listItem.id}
+              isDone={listItem.isDone}
+              iconSize={20}
+            />
 
-          <NoteViewListItemContent
-            noteId={noteId}
-            listItemId={listItem.id}
-            content={listItem.content}
-            isDone={listItem.isDone}
-          />
-          <NoteViewListItemDeleteBtn
-            noteId={noteId}
-            listItemId={listItem.id}
-            hovered={hovered}
-          />
-        </div>
-      </motion.div>
+            <NoteViewListItemContent
+              noteId={noteId}
+              listItemId={listItem.id}
+              content={listItem.content}
+              isDone={listItem.isDone}
+            />
+            <NoteViewListItemDeleteBtn
+              noteId={noteId}
+              listItemId={listItem.id}
+              iconSize={20}
+            />
+          </div>
+        </motion.div>
+      </div>
     </>
   );
 }

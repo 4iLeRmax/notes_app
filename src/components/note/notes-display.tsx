@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { Check, CheckCircle, NotebookPen, Search } from "lucide-react";
+import { NotebookPen, Search } from "lucide-react";
 import NotesGroup from "./notes-group";
 import { useNotesStore } from "@/lib/store/useNotesStore";
 import useSelectedNotesStore from "@/lib/store/useSelectedNotesStore";
@@ -23,17 +23,19 @@ export default function NotesDisplay({ query }: NotesDisplayProps) {
     const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
 
+      if (target.closest("[data-more-btn]")) return;
       if (target.closest("[data-note-card]")) return;
       if (target.closest("[data-note-card-button]")) return;
       if (target.closest("[data-header]")) return;
       if (target.closest("[data-aside]")) return;
+      if (target.closest("[data-more-btn]")) return;
       if (!hasAnySelected) return;
 
       removeAll();
     };
 
-    document.addEventListener("click", handleClickOutside);
-    return () => document.removeEventListener("click", handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [removeAll, hasAnySelected]);
 
   const filteredNotes = notes.filter(

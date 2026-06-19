@@ -15,6 +15,8 @@ import {
 import React from "react";
 import NoteOptionsListItem from "./note-options-list-item";
 import { useNotesStore } from "@/lib/store/useNotesStore";
+import { toast } from "@/lib/toast";
+import { vibrate } from "@/lib/haptics";
 
 interface NoteOptionsListProps {
   noteId: string;
@@ -45,11 +47,12 @@ export default function NoteOptionsList({
       currentNote.content.map((item) => item.content).join("\n"),
     );
     handleClose();
+    toast.success("Successfully copied to clipboard");
   };
 
   return (
     <>
-      <div className="flex flex-col items-start gap-2 xs:gap-0">
+      <div className="flex flex-col items-start gap-2 xs:gap-0 py-4 xs:py-0">
         <NoteOptionsListItem
           onClick={() => toggleNoteTypes([noteId])}
           icon={
@@ -101,7 +104,10 @@ export default function NoteOptionsList({
           </>
         ) : null}
         <NoteOptionsListItem
-          onClick={() => removeNotes([noteId])}
+          onClick={() => {
+            vibrate([20, 30, 20]);
+            removeNotes([noteId]);
+          }}
           icon={<Trash size={20} className="flex xs:hidden" />}
         >
           Delete

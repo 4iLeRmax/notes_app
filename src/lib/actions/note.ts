@@ -232,7 +232,7 @@ export const toggleManyNoteTypes = async (
       },
     });
 
-    const unconvertable = notes.filter((note) => {
+    const nonConvertible = notes.filter((note) => {
       const totalChars = note.content.reduce(
         (sum, item) => sum + decrypt(item.content).length,
         0,
@@ -244,7 +244,7 @@ export const toggleManyNoteTypes = async (
 
       return totalChars > NOTE_LIMITS.TODO.totalChars || anyItemTooLong;
     });
-    if (unconvertable.length > 0)
+    if (nonConvertible.length > 0)
       throw new Error(NoteActionErrors.NOTES_EXCEED_TODO_LIMITS);
   }
 

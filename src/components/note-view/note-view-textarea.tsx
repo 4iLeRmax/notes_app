@@ -17,7 +17,6 @@ export default function NoteViewTextarea({
   list,
   noteId,
 }: NoteViewTextareaProps) {
-  const [focused, setFocused] = useState(false);
   const updateNoteContent = useNotesStore((s) => s.updateNoteContent);
 
   const { value, setValue, isPending } = useAutoSubmit(
@@ -28,13 +27,11 @@ export default function NoteViewTextarea({
 
   return (
     <>
-      <div className="relative flex">
+      <div className="pl-4 pr-2 sm:pl-8 sm:pr-6">
         <textarea
           className={cn(
             "w-full outline-none resize-none field-sizing-content break-all rounded-3xl p-4",
-            {
-              "shadow-inside bg-secondary": focused,
-            },
+            "xs:focus:shadow-inside xs:focus:bg-primary",
           )}
           name="text"
           id="myTextArea"
@@ -42,20 +39,10 @@ export default function NoteViewTextarea({
           onChange={(e) =>
             setValue(e.target.value.slice(0, NOTE_LIMITS.TEXT.totalChars))
           }
-          onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
           placeholder="Type something..."
         ></textarea>
-        {isPending ? (
-          <div className="absolute right-4 bottom-4">
-            <Loader2
-              size={24}
-              className="animate-spin shrink-0 text-txt-primary"
-            />
-          </div>
-        ) : null}
       </div>
-      <div className="mt-2 flex items-center justify-end text-sm">
+      <div className="mt-5 flex items-center justify-end text-sm px-4 sm:px-8">
         <div className="flex items-center gap-1">
           <span>{value.length}</span>
           <span>/</span>

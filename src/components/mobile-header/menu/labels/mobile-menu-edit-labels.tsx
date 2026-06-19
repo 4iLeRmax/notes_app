@@ -3,18 +3,23 @@
 import EditLabelsModal from "@/components/aside/edit-labels/edit-labels-modal";
 import cn from "@/lib/cn";
 import { ChevronRight, Edit } from "lucide-react";
+import { AnimatePresence } from "motion/react";
 import React, { useState } from "react";
 
 export default function MobileMenuEditLabels() {
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
-  const toggleModalOpen = () => setModalIsOpen((p) => !p);
+  const toggleModalOpen = () => {
+    setModalIsOpen((p) => !p);
+  };
 
   return (
     <>
-      {modalIsOpen ? (
-        <EditLabelsModal handleClose={() => setModalIsOpen(false)} />
-      ) : null}
+      <AnimatePresence mode="wait">
+        {modalIsOpen ? (
+          <EditLabelsModal handleClose={() => setModalIsOpen(false)} />
+        ) : null}
+      </AnimatePresence>
       <div>
         <button
           onClick={toggleModalOpen}

@@ -3,6 +3,7 @@
 import cn from "@/lib/cn";
 import LabelListItem from "./label-list-item";
 import { useNotesStore } from "@/lib/store/useNotesStore";
+import { vibrate } from "@/lib/haptics";
 
 interface LabelListProps {
   noteId: string;
@@ -24,6 +25,7 @@ export default function LabelList({ noteId, searchValue }: LabelListProps) {
     );
 
   const handleToggleLabelToNote = async (labelId: string) => {
+    vibrate(10);
     await toggleNoteLabel(noteId, labelId);
   };
 
@@ -36,7 +38,11 @@ export default function LabelList({ noteId, searchValue }: LabelListProps) {
 
   return (
     <>
-      <div className={cn("flex flex-col max-h-30 overflow-y-scroll", {})}>
+      <div
+        className={cn(
+          "flex flex-col max-h-[50vh] xs:max-h-30 overflow-y-scroll snap-y snap-mandatory",
+        )}
+      >
         {sortedLabels.map((label) => (
           <LabelListItem
             key={label.id}
