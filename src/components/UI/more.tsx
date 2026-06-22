@@ -8,12 +8,11 @@ import { EllipsisVertical, X } from "lucide-react";
 
 interface MoreProps {
   children: React.ReactNode;
-  iconSize?: number;
   isOpen: boolean;
   handleOpen: () => void;
   handleClose: () => void;
   fixed?: boolean;
-  customClassName?: string;
+  buttonContent: React.ReactNode;
 }
 
 const calcPosition = (rect: DOMRect, fixed: boolean, modalHeight: number) => {
@@ -37,12 +36,11 @@ const calcPosition = (rect: DOMRect, fixed: boolean, modalHeight: number) => {
 
 export default function More({
   children,
-  iconSize = 20,
   isOpen,
   handleOpen,
   handleClose,
   fixed = false,
-  customClassName,
+  buttonContent,
 }: MoreProps) {
   const [position, setPosition] = useState({ top: 0, bottom: 0, right: 0 });
 
@@ -84,17 +82,9 @@ export default function More({
         type="button"
         ref={buttonRef}
         onBlur={handleBlur}
-        className={
-          customClassName ??
-          cn("p-1.5 outline-none rounded-full transition-colors", {
-            "shadow-outside-small text-txt-secondary hover:text-custom-blue":
-              !isOpen,
-            "shadow-inside text-custom-blue": isOpen,
-          })
-        }
         onClick={handleOpen}
       >
-        {isOpen ? <X size={iconSize} /> : <EllipsisVertical size={iconSize} />}
+        {buttonContent}
       </button>
       <AnimatePresence mode="wait">
         {isOpen ? (
@@ -109,6 +99,7 @@ export default function More({
                 exit={{ opacity: 0.5, scaleY: 0 }}
                 className={cn(
                   "hidden xs:flex bg-primary shadow-outside-small overflow-hidden rounded-xl sm:rounded-3xl xs:w-[200px] sm:w-[218px] md:w-[182px] lg:w-[218px]",
+                  // "hidden xs:flex bg-primary shadow-outside-small overflow-hidden rounded-xl sm:rounded-3xl w-auto",
                   {
                     "absolute z-20 ": !fixed,
                     "fixed z-50": fixed,

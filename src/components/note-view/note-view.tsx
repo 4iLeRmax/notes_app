@@ -19,7 +19,7 @@ interface NoteViewProps {
 export default function NoteView({ note, handleBack }: NoteViewProps) {
   return (
     <>
-      <div className="w-full md:w-150 h-dvh xs:h-auto bg-secondary shadow-outside-small rounded-none xs:rounded-4xl flex flex-col xs:pt-12">
+      <div className="w-full xs:w-[calc(90vw)] sm:w-150 h-dvh xs:h-auto bg-secondary shadow-outside-small rounded-none xs:rounded-4xl flex flex-col xs:pt-12">
         <div className="flex items-center gap-2 xs:gap-4 py-4 xs:py-0 px-4 sm:px-8 shrink-0 shadow-outside-small xs:shadow-none rounded-es-3xl rounded-ee-3xl bg-primary xs:bg-transparent">
           <BackButton
             onClick={() => {
@@ -44,6 +44,7 @@ export default function NoteView({ note, handleBack }: NoteViewProps) {
             noteId={note.id}
             noteLabels={note.labels}
             maxLength={LABEL_LIMITS.MAX_LABELS_PER_NOTE}
+            surface="secondary"
           />
           <div className="flex items-center justify-between gap-4">
             <NoteViewLastUpdate note={note} />

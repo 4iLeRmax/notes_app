@@ -6,6 +6,12 @@ import NotesGroup from "./notes-group";
 import { useNotesStore } from "@/lib/store/useNotesStore";
 import useSelectedNotesStore from "@/lib/store/useSelectedNotesStore";
 import { NotesDisplaySkeleton } from "../UI/skeletons";
+import NotesFilter from "./notes-filter/notes-filter";
+import useNoteFilterStore, {
+  SortDirections,
+  SortTypes,
+} from "@/lib/store/useNoteFilterStore";
+import sortNotes from "@/lib/sort-notes";
 
 interface NotesDisplayProps {
   query: string;
@@ -18,12 +24,12 @@ export default function NotesDisplay({ query }: NotesDisplayProps) {
     (s) => s.selectedNoteIds.length > 0,
   );
   const isHydratedNote = useNotesStore((s) => s.isHydratedNote);
+  const { sortType, sortDirection } = useNoteFilterStore((s) => s.filter);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
 
-      if (target.closest("[data-more-btn]")) return;
       if (target.closest("[data-note-card]")) return;
       if (target.closest("[data-note-card-button]")) return;
       if (target.closest("[data-header]")) return;
@@ -38,7 +44,7 @@ export default function NotesDisplay({ query }: NotesDisplayProps) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [removeAll, hasAnySelected]);
 
-  const filteredNotes = notes.filter(
+  const searchResultOfNotes = notes.filter(
     (note) =>
       note.title.toLowerCase().includes(query.toLowerCase()) ||
       note.content.some((item) =>
@@ -46,8 +52,10 @@ export default function NotesDisplay({ query }: NotesDisplayProps) {
       ),
   );
 
-  const pinnedNotes = notes.filter((note) => note.isPinned);
-  const regularNotes = notes.filter((note) => !note.isPinned);
+  const sortedNotes = sortNotes[sortType](searchResultOfNotes, sortDirection);
+
+  const pinnedNotes = sortedNotes.filter((note) => note.isPinned);
+  const regularNotes = sortedNotes.filter((note) => !note.isPinned);
 
   if (!isHydratedNote) return <NotesDisplaySkeleton />;
 
@@ -61,7 +69,7 @@ export default function NotesDisplay({ query }: NotesDisplayProps) {
       </div>
     );
 
-  if (query.length > 0 && filteredNotes.length === 0)
+  if (query.length > 0 && searchResultOfNotes.length === 0)
     return (
       <div className="w-full h-[calc(100vh-100px)] flex items-center justify-center">
         <div className="flex items-center gap-2 text-2xl text-txt-primary">
@@ -74,9 +82,15 @@ export default function NotesDisplay({ query }: NotesDisplayProps) {
   return (
     <>
       <div className="flex flex-col items-center justify-center mt-10 gap-10">
+        <div className="w-full flex justify-center">
+          <div className="flex justify-end w-full lg:w-[calc((250px*3)+(20px*2))] xl:w-[calc((250px*4)+(20px*3))] 3xl:w-[calc((250px*5)+(20px*4))]!">
+            <NotesFilter />
+          </div>
+        </div>
+
         {query.length > 0 ? (
           <NotesGroup
-            notes={filteredNotes}
+            notes={sortedNotes}
             label={`Result of search "${query}"`}
           />
         ) : (

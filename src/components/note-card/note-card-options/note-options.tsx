@@ -44,23 +44,25 @@ export default function NoteOptions({ noteId, fixed }: NoteOptionsProps) {
   return (
     <>
       <More
-        iconSize={20}
         isOpen={isOpen}
         handleOpen={toggleOpen}
         handleClose={handleClose}
         fixed={fixed}
-        customClassName={cn(
-          "p-1.5 outline-none rounded-full transition-colors",
-          {
-            "shadow-outside-small text-txt-secondary hover:text-custom-blue":
-              !isOpen,
-            "shadow-inside text-custom-blue": isOpen,
-            "bg-primary": !fixed,
-            "bg-secondary xs:bg-primary": fixed,
-          },
-        )}
+        buttonContent={
+          <div
+            className={cn("p-1.5 outline-none rounded-full transition-colors", {
+              "shadow-outside-small text-txt-secondary hover:text-custom-blue":
+                !isOpen,
+              "shadow-inside text-custom-blue": isOpen,
+              "bg-primary": !fixed,
+              "bg-secondary xs:bg-primary": fixed,
+            })}
+          >
+            {isOpen ? <X size={20} /> : <EllipsisVertical size={20} />}
+          </div>
+        }
       >
-        <div className="w-full">
+        <div className="w-full py-4 xs:py-0">
           {showLabel ? (
             <NoteLabelsEdit noteId={noteId} />
           ) : (

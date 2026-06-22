@@ -9,11 +9,13 @@ import { vibrate } from "@/lib/haptics";
 interface NoteCardLabelItemProps {
   label: Label;
   noteId: string;
+  surface?: "primary" | "secondary";
 }
 
 export default function NoteCardLabelItem({
   label,
   noteId,
+  surface = "primary",
 }: NoteCardLabelItemProps) {
   const [showButton, setShowButton] = useState(false);
   const toggleNoteLabel = useNotesStore((s) => s.toggleNoteLabel);
@@ -37,7 +39,13 @@ export default function NoteCardLabelItem({
         onClick={handleLink}
         onMouseEnter={() => setShowButton(true)}
         onMouseLeave={() => setShowButton(false)}
-        className="bg-primary relative flex items-center min-w-12 max-w-full shadow-inside text-sm py-1 rounded-3xl cursor-pointer text-txt-primary"
+        className={cn(
+          "relative flex items-center min-w-12 max-w-full shadow-inside text-sm py-1 rounded-3xl cursor-pointer text-txt-primary",
+          {
+            "bg-primary ": surface === "primary",
+            "bg-secondary xs:bg-primary": surface === "secondary",
+          },
+        )}
       >
         <span
           className={cn("truncate pl-2 w-full", {

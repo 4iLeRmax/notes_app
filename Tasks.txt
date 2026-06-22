@@ -1,3 +1,5 @@
-Add color for each Note
- Filter for notes
+(BUG) When note is open and delete it link stays the same (/notes?noteId=...)
+Search bar behavior
 
+Add color for each Note
+Add internationalization (i18)

@@ -6,12 +6,14 @@ interface NoteCardLabelsProps {
   noteId: string;
   noteLabels: Label[];
   maxLength?: number;
+  surface?: "primary" | "secondary";
 }
 
 export default function NoteCardLabels({
   noteId,
   noteLabels,
   maxLength,
+  surface,
 }: NoteCardLabelsProps) {
   if (noteLabels.length === 0) return null;
 
@@ -24,7 +26,12 @@ export default function NoteCardLabels({
           ? noteLabels.slice(0, maxLength)
           : noteLabels
         ).map((label) => (
-          <NoteCardLabelItem noteId={noteId} label={label} key={label.id} />
+          <NoteCardLabelItem
+            noteId={noteId}
+            label={label}
+            key={label.id}
+            surface={surface}
+          />
         ))}
         {noteLabels.length > maxLength ? (
           <span>+{noteLabels.length - maxLength}</span>

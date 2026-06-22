@@ -27,7 +27,6 @@ const useSelectedNotesStore = create<SelectedNotesStore>((set) => ({
     });
   },
   removeAll: () => {
-    // console.log("removeAll");
     set({ selectedNoteIds: [] });
   },
 }));

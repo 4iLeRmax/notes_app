@@ -34,19 +34,24 @@ function SelectNotesOptions({ noteIds }: NoteMoreMenu) {
   return (
     <>
       <More
-        iconSize={25}
         isOpen={isOpen}
         handleOpen={toggleOpen}
         handleClose={handleClose}
         fixed
-        customClassName={cn(
-          " p-2 outline-none rounded-full transition-colors bg-secondary",
-          {
-            "shadow-outside-small text-txt-primary hover:text-custom-blue":
-              !isOpen,
-            "shadow-inside text-custom-blue": isOpen,
-          },
-        )}
+        buttonContent={
+          <div
+            className={cn(
+              " p-2 outline-none rounded-full transition-colors bg-secondary",
+              {
+                "shadow-outside-small text-txt-primary hover:text-custom-blue":
+                  !isOpen,
+                "shadow-inside text-custom-blue": isOpen,
+              },
+            )}
+          >
+            {isOpen ? <X size={25} /> : <EllipsisVertical size={25} />}
+          </div>
+        }
       >
         <div className="w-full py-4 xs:py-0">
           <SelectNotesOptionsList noteIds={noteIds} />
