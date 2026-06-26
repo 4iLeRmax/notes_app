@@ -7,7 +7,7 @@
   /* --bg-secondary: #f8f9fd; */
   /* --bg-secondary: #c9c9c9; */
 
-  --txt-primary: #959593;
+  --txt-primary: #959595;
   --txt-secondary: #363636;
 
   --txt-contrast: #052659;
@@ -27,8 +27,10 @@
 }
 
 html.dark {
+  /* --bg-primary: #1f1f1f;
+  --bg-secondary: #151515; */
   --bg-primary: #1f1f1f;
-  --bg-secondary: #151515;
+  --bg-secondary: #181818;
 
   --txt-primary: #d1cfc0;
   --txt-secondary: #9e9c91;
@@ -42,6 +44,12 @@ html.dark {
   --s-shadow-outside: rgba(255, 255, 255, 0.1) 0px 0px 5px;
   --s-shadow-outside-small: rgba(255, 255, 255, 0.1) 0px 0px 5px;
   --s-shadow-inside: rgba(255, 255, 255, 0.1) 0px 0px 5px;
+  /* --s-shadow-outside: inset 0 0 0 0.5px #959595;
+  --s-shadow-outside-small: inset 0 0 0 0.5px #959595;
+  --s-shadow-inside: inset 0 0 0 0.5px #959595; */
+  /* --s-shadow-outside: 0;
+  --s-shadow-outside-small: 0;
+  --s-shadow-inside: 0; */
 }
 
 @theme inline {
@@ -89,6 +97,10 @@ button {
 
 html.dark .shadow-button {
   box-shadow: rgba(0, 0, 0, 0.6) 6px 6px 8px;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
 }
 
 ::-webkit-scrollbar {

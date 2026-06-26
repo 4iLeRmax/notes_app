@@ -3,7 +3,7 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import prisma from "./prisma";
 import { nextCookies } from "better-auth/next-js";
 import { Resend } from "resend";
-import { ResetPasswordEmail } from "@/components/emails/reset-password-email";
+import ResetPasswordEmail from "@/components/emails/reset-password-email";
 import sha256 from "./SHA256";
 import VerifyEmailEmail from "@/components/emails/verify-email-email";
 
@@ -30,7 +30,7 @@ export const auth = betterAuth({
     },
     sendResetPassword: async ({ user, url, token }, request) => {
       await resend.emails.send({
-        from: "onboarding@resend.dev",
+        from: "security@zlatin.it.com",
         to: user.email,
         subject: "Reset your password",
         html: ResetPasswordEmail({ user, url }),
@@ -41,7 +41,7 @@ export const auth = betterAuth({
   emailVerification: {
     sendVerificationEmail: async ({ user, url, token }, request) => {
       await resend.emails.send({
-        from: "onboarding@resend.dev",
+        from: "security@zlatin.it.com",
         to: user.email,
         subject: "Verify your email address",
         html: VerifyEmailEmail({ user, url }),

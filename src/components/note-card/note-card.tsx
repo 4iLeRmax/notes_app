@@ -1,11 +1,11 @@
 "use client";
 
-import NoteOptions from "./note-card-options/note-options";
 import NoteCardLabels from "./note-card-labels";
 import NoteCardHeader from "./note-card-header";
 import NoteCardMain from "./note-card-main";
-import LastUpdate from "@/components/note-view/note-view-last-update";
+import LastNoteUpdate from "@/components/note/last-note-update";
 import SelectNote from "./select-note";
+import NoteOptions from "./note-card-options/note-options";
 
 interface NoteCardProps {
   note: Note;
@@ -17,7 +17,7 @@ export default function NoteCard({ note, handleOpen }: NoteCardProps) {
     <>
       <SelectNote note={note}>
         <div className="relative rounded-xl sm:rounded-3xl w-full select-none">
-          <div onClick={handleOpen} className="cursor-pointer">
+          <div onClick={handleOpen} className="cursor-pointer ">
             <div className="px-2 sm:px-4 pt-3">
               <NoteCardHeader
                 noteId={note.id}
@@ -37,11 +37,11 @@ export default function NoteCard({ note, handleOpen }: NoteCardProps) {
               />
             </div>
             <div className="px-4 pb-3">
-              <LastUpdate note={note} />
+              <LastNoteUpdate note={note} />
             </div>
           </div>
 
-          <div className="absolute bottom-0 right-0 pb-3 px-2 sm:px-4">
+          <div className="flex absolute bottom-0 right-0 pb-3 px-2 sm:px-4">
             <NoteOptions noteId={note.id} />
           </div>
         </div>

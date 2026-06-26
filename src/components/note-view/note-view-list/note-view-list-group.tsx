@@ -18,7 +18,9 @@ export default function NoteViewListGroup({
   return (
     <>
       <div className="flex flex-col gap-2">
-        {title ? <h1 className="px-2 text-txt-primary">{title}</h1> : null}
+        {title ? (
+          <h1 className="px-2 text-txt-primary select-none">{title}</h1>
+        ) : null}
         {/* <div className="flex flex-col items-center gap-2"> */}
         <div className="flex flex-col items-center">
           <AnimatePresenceWrapper mode="popLayout">

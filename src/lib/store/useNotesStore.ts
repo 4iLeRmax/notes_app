@@ -5,6 +5,7 @@ import {
   deleteNotes,
   toggleManyNoteTypes,
   togglePinStatus,
+  updateColor,
   updateNoteText,
   updateNoteTitle,
 } from "@/lib/actions/note";
@@ -28,6 +29,7 @@ import {
 } from "../actions/errors";
 import {
   LabelNameScheme,
+  NoteColorScheme,
   NoteItemPositionScheme,
   NoteTitleScheme,
   UserIdScheme,
@@ -71,6 +73,9 @@ interface NotesState {
   removeNotes: (noteIds: string[]) => Promise<void>;
   toggleNoteTypes: (noteIds: string[]) => Promise<void>;
   addCopies: (noteIds: string[]) => Promise<void>;
+  //=========================================================
+  addColor: (noteId: string, newColor: string | null) => Promise<void>;
+  //=========================================================
   togglePin: (noteId: string) => Promise<void>;
   unmarkedAllItems: (noteId: string) => Promise<void>;
   deleteMarkedItems: (noteId: string) => Promise<void>;
@@ -659,6 +664,35 @@ export const useNotesStore = create<NotesState>((set, get) => ({
       set({ isPending: false });
     }
   },
+  //=========================================================
+  addColor: async (noteId, newColor) => {
+    const prevNote = get().notes.find((note) => note.id === noteId);
+    if (!prevNote) return;
+    const prevColor = prevNote.color;
+
+    const { data: safeColor, success: validColor } =
+      NoteColorScheme.safeParse(newColor);
+    if (!validColor) return;
+
+    set((state) => ({
+      notes: state.notes.map((note) =>
+        note.id === noteId ? { ...note, color: safeColor } : note,
+      ),
+    }));
+
+    try {
+      await updateColor(noteId, safeColor);
+    } catch {
+      set((state) => ({
+        notes: state.notes.map((note) =>
+          note.id === noteId ? { ...note, color: prevColor } : note,
+        ),
+      }));
+    } finally {
+      set({ isPending: false });
+    }
+  },
+  //=========================================================
   togglePin: async (noteId) => {
     const prevNote = get().notes.find((note) => note.id === noteId);
     if (!prevNote) return;

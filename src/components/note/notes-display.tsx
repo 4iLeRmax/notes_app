@@ -6,12 +6,11 @@ import NotesGroup from "./notes-group";
 import { useNotesStore } from "@/lib/store/useNotesStore";
 import useSelectedNotesStore from "@/lib/store/useSelectedNotesStore";
 import { NotesDisplaySkeleton } from "../UI/skeletons";
-import NotesFilter from "./notes-filter/notes-filter";
-import useNoteFilterStore, {
-  SortDirections,
-  SortTypes,
-} from "@/lib/store/useNoteFilterStore";
+import NotesSort from "./notes-sort/notes-sort";
+import useNoteSortStore from "@/lib/store/useNoteSortStore";
 import sortNotes from "@/lib/sort-notes";
+import NotesSortLayout from "./notes-sort/notes-sort-layout";
+import { useClickOutsideDeselected } from "@/hooks/useClickOutsideDeselected";
 
 interface NotesDisplayProps {
   query: string;
@@ -19,30 +18,10 @@ interface NotesDisplayProps {
 
 export default function NotesDisplay({ query }: NotesDisplayProps) {
   const notes = useNotesStore((s) => s.notes);
-  const removeAll = useSelectedNotesStore((s) => s.removeAll);
-  const hasAnySelected = useSelectedNotesStore(
-    (s) => s.selectedNoteIds.length > 0,
-  );
   const isHydratedNote = useNotesStore((s) => s.isHydratedNote);
-  const { sortType, sortDirection } = useNoteFilterStore((s) => s.filter);
+  const { sortType, sortDirection } = useNoteSortStore((s) => s.sort);
 
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-
-      if (target.closest("[data-note-card]")) return;
-      if (target.closest("[data-note-card-button]")) return;
-      if (target.closest("[data-header]")) return;
-      if (target.closest("[data-aside]")) return;
-      if (target.closest("[data-more-btn]")) return;
-      if (!hasAnySelected) return;
-
-      removeAll();
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [removeAll, hasAnySelected]);
+  useClickOutsideDeselected();
 
   const searchResultOfNotes = notes.filter(
     (note) =>
@@ -81,27 +60,27 @@ export default function NotesDisplay({ query }: NotesDisplayProps) {
 
   return (
     <>
-      <div className="flex flex-col items-center justify-center mt-10 gap-10">
-        <div className="w-full flex justify-center">
-          <div className="flex justify-end w-full lg:w-[calc((250px*3)+(20px*2))] xl:w-[calc((250px*4)+(20px*3))] 3xl:w-[calc((250px*5)+(20px*4))]!">
-            <NotesFilter />
-          </div>
-        </div>
+      <div className="flex flex-col items-center justify-center mt-10 gap-4">
+        <NotesSortLayout position="right">
+          <NotesSort />
+        </NotesSortLayout>
 
-        {query.length > 0 ? (
-          <NotesGroup
-            notes={sortedNotes}
-            label={`Result of search "${query}"`}
-          />
-        ) : (
-          <>
-            <NotesGroup notes={pinnedNotes} label="Pinned notes" />
+        <div className="w-full flex flex-col items-center gap-10">
+          {query.length > 0 ? (
             <NotesGroup
-              notes={regularNotes}
-              label={pinnedNotes.length > 0 ? "Other notes" : ""}
+              notes={sortedNotes}
+              label={`Result of search "${query}"`}
             />
-          </>
-        )}
+          ) : (
+            <>
+              <NotesGroup notes={pinnedNotes} label="Pinned notes" />
+              <NotesGroup
+                notes={regularNotes}
+                label={pinnedNotes.length > 0 ? "Other notes" : "Notes"}
+              />
+            </>
+          )}
+        </div>
       </div>
     </>
   );

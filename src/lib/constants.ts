@@ -19,3 +19,34 @@ export const LABEL_LIMITS = {
   MAX_LABEL_NAME_CHARS: 50,
   MAX_LABELS_PER_NOTE: 10,
 } as const;
+
+// export const noteCardColors = [
+//   null,
+//   "#5a7fff",
+//   "#4fd566",
+//   "#ffce1b",
+//   "#ff4544",
+// ];
+export const noteCardColors = [
+  null,
+  // "#8FB78F",
+  // "#CBE6C7",
+  // "#B4CCCF",
+  // "#28536B",
+  // "#F3A5BC",
+  // "#FFC49B",
+
+  "#dbc1e8",
+  "#a2c0e2",
+  "#f6e289",
+  "#252d44",
+  "#fbb18a",
+  "#f77053",
+  "#a9af95",
+  "#ea5f86",
+  "#48b4a7",
+  "#f8a1c4",
+  "#6b515e",
+  "#b89a66",
+  "#829c17",
+];

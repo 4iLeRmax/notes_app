@@ -82,25 +82,28 @@ export default function SelectNote({
 
   return (
     <>
-      <div
+      <motion.div
+        animate={{
+          paddingTop: note.color !== null ? "10px" : "0px",
+          background: note.color !== null ? note.color : "",
+        }}
         data-note-card
         tabIndex={1}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        // onMouseDown={mouseDown}
-        // onMouseUp={mouseUp}
         onTouchStart={touchStart}
         onTouchEnd={touchEnd}
         onTouchCancel={touchCancel}
         onTouchMove={touchMove}
         className={cn(
-          "relative rounded-xl sm:rounded-3xl bg-secondary w-full note-card",
+          "relative rounded-2xl rounded-ss-xl rounded-se-xl sm:rounded-4xl sm:rounded-ss-3xl sm:rounded-se-3xl w-full note-card",
           {
-            "shadow-outside-small": !isSelected && !isHovered,
-            "shadow-outside-small sm:shadow-inside ": isHovered,
-            "shadow-inside ": isSelected,
+            // "pt-2.5": note.color !== null,
+            "shadow-outside-small sm:hover:shadow-inside": !isSelected,
+            "sm:shadow-inside": isHovered || isSelected,
           },
         )}
+        // style={{ background: note.color !== null ? note.color : "" }}
       >
         <AnimatePresence mode="wait">
           {isSelected || isHovered ? (
@@ -133,8 +136,14 @@ export default function SelectNote({
           />
         ) : null}
 
-        {children}
-      </div>
+        <div
+          className={cn("bg-secondary rounded-xl sm:rounded-3xl", {
+            "sm:shadow-inside": isHovered,
+          })}
+        >
+          {children}
+        </div>
+      </motion.div>
     </>
   );
 }

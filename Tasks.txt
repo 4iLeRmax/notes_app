@@ -1,5 +1,6 @@
-(BUG) When note is open and delete it link stays the same (/notes?noteId=...)
-Search bar behavior
+back button for Forgot Passowrd
 
-Add color for each Note
+error toast when can't transform text to todo type
+success toast for create copy
+
 Add internationalization (i18)

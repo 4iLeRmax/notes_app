@@ -54,10 +54,8 @@ export default function EditLabelsModal({ handleClose }: EditLabelsModalProps) {
                   vibrate(10);
                   handleClose();
                 }}
-                className="flex xs:hidden p-2 shadow-outside-small rounded-3xl bg-secondary text-txt-secondary"
-              >
-                <ArrowLeft size={25} />
-              </BackButton>
+                iconSize={25}
+              />
               <h2 className="flex items-center gap-1 text-lg font-bold text-txt-secondary">
                 <span>Edit Labels</span>
                 {labels.length > 0 ? <span>({labels.length})</span> : null}

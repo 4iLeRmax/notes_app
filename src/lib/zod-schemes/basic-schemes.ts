@@ -31,6 +31,8 @@ const NoteTitleScheme = z
 
 const NoteTypeScheme = z.enum(["TEXT", "TODO"]);
 
+const NoteColorScheme = z.string().length(7).includes("#").nullable();
+
 const NoteItemPositionScheme = z.number().int().nonnegative();
 
 const LabelNameScheme = z
@@ -48,6 +50,7 @@ export {
   PasswordScheme,
   NoteTitleScheme,
   NoteTypeScheme,
+  NoteColorScheme,
   NoteItemPositionScheme,
   LabelNameScheme,
   UserIdScheme,

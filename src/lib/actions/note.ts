@@ -2,7 +2,11 @@
 
 import prisma from "../prisma";
 import { getSession } from "./auth";
-import { NoteTitleScheme, NoteTypeScheme } from "../zod-schemes/basic-schemes";
+import {
+  NoteColorScheme,
+  NoteTitleScheme,
+  NoteTypeScheme,
+} from "../zod-schemes/basic-schemes";
 import { revalidatePath } from "next/cache";
 import { cache } from "react";
 import encrypt from "../encryption/encrypt";
@@ -423,3 +427,24 @@ export const createCopies = async (copies: Note[]) => {
 
   // revalidatePath("/notes");
 }; //+
+
+export const updateColor = async (noteId: string, newColor: string | null) => {
+  const session = await getSession();
+  if (!session) throw new Error(NoteActionErrors.UNAUTHORIZED);
+
+  const { data: safeNoteId, success: validNoteId } = z.uuid().safeParse(noteId);
+  if (!validNoteId) throw new Error(NoteActionErrors.INVALID_NOTE_ID);
+
+  const { data: safeColor, success: validColor } =
+    NoteColorScheme.safeParse(newColor);
+  if (!validColor) throw new Error(NoteActionErrors.INVALID_NOTE_DATA);
+
+  await prisma.note.update({
+    where: {
+      id: safeNoteId,
+    },
+    data: {
+      color: safeColor,
+    },
+  });
+};

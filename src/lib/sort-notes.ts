@@ -1,4 +1,4 @@
-import { SortDirections, SortTypes } from "./store/useNoteFilterStore";
+import { SortDirections, SortTypes } from "./store/useNoteSortStore";
 
 const sortNotes: Record<
   SortTypes,

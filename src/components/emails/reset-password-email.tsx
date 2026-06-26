@@ -5,8 +5,8 @@ interface ResetPasswordProps {
   url: string;
 }
 
-export const ResetPasswordEmail = ({ user, url }: ResetPasswordProps) => `
-  <div style="min-height:100vh;background:#f5f3ef;display:flex;align-items:flex-start;justify-content:center;padding:40px 16px;font-family:'DM Sans',sans-serif;">
+export default function ResetPasswordEmail({ user, url }: ResetPasswordProps) {
+  return `<div style="min-height:100vh;background:#f5f3ef;display:flex;align-items:flex-start;justify-content:center;padding:40px 16px;font-family:'DM Sans',sans-serif;">
     <div style="width:100%;max-width:620px;">
 
       <!-- Meta bar -->
@@ -19,7 +19,7 @@ export const ResetPasswordEmail = ({ user, url }: ResetPasswordProps) => `
         </div>
         <div style="flex:1;min-width:0;">
           <p style="font-size:13px;font-weight:500;color:#292524;margin:0;">
-            Note <span style="font-weight:400;color:#78716c;">· security@note.com</span>
+           Morphic Notes <span style="font-weight:400;color:#78716c;">· security@zlatin.it.com</span>
           </p>
           <p style="font-size:12px;color:#a8a29e;margin:0;">To: ${user.email}</p>
         </div>
@@ -34,7 +34,7 @@ export const ResetPasswordEmail = ({ user, url }: ResetPasswordProps) => `
           <!-- Logo -->
           <div style="display:inline-flex;align-items:center;gap:8px;margin-bottom:32px;">
             <span style="width:8px;height:8px;border-radius:50%;background:#c8b89a;display:inline-block;"></span>
-            <span style="font-size:14px;color:#e8e0d4;letter-spacing:0.12em;font-family:'Playfair Display',serif;">NOTE</span>
+            <span style="font-size:14px;color:#e8e0d4;letter-spacing:0.12em;font-family:'Playfair Display',serif;">MORPHIC NOTES</span>
             <span style="width:8px;height:8px;border-radius:50%;background:#c8b89a;display:inline-block;"></span>
           </div>
 
@@ -58,7 +58,7 @@ export const ResetPasswordEmail = ({ user, url }: ResetPasswordProps) => `
         <div style="padding:32px 40px 40px;">
           <p style="font-size:14px;color:#78716c;line-height:1.6;margin:0 0 16px;">Hi ${user.name},</p>
           <p style="font-size:14px;color:#78716c;line-height:1.7;margin:0 0 32px;">
-            We received a request to reset the password for your Note account.
+            We received a request to reset the password for your Morphic Notes account.
             Click the button below to choose a new password. This link is valid for the next
             <strong style="color:#44403c;font-weight:500;">${30} minutes</strong>.
           </p>
@@ -98,7 +98,7 @@ export const ResetPasswordEmail = ({ user, url }: ResetPasswordProps) => `
 
         <!-- Footer -->
         <div style="padding:16px 40px;border-top:1px solid #f5f5f4;display:flex;align-items:center;justify-content:space-between;">
-          <span style="font-size:11px;color:#a8a29e;">© ${new Date().getFullYear()} Note, Inc.</span>
+          <span style="font-size:11px;color:#a8a29e;">© ${new Date().getFullYear()} Morphic Notes, Inc.</span>
           <div style="display:flex;gap:16px;">
             <a href="#" style="font-size:11px;color:#a8a29e;text-decoration:none;">Privacy</a>
             <a href="#" style="font-size:11px;color:#a8a29e;text-decoration:none;">Terms</a>
@@ -110,3 +110,4 @@ export const ResetPasswordEmail = ({ user, url }: ResetPasswordProps) => `
     </div>
   </div>
   `;
+}

@@ -10,9 +10,11 @@ function Search() {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  const { searchValue, handleSearch, clearSearch } = useSearchQuery();
+
   useEffect(() => {
     const handleScroll = () => {
-      if (isOpen) setIsOpen(false);
+      if (isOpen && searchValue.length === 0) setIsOpen(false);
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -20,9 +22,7 @@ function Search() {
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, [isOpen]);
-
-  const { searchValue, handleSearch, clearSearch } = useSearchQuery();
+  }, [isOpen, searchValue]);
 
   const toggleOpen = () => {
     if (isOpen) clearSearch();

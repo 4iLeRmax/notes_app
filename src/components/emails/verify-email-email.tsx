@@ -19,7 +19,7 @@ export default function VerifyEmailEmail({ user, url }: VerifyEmailEmailProps) {
         </div>
         <div style="flex:1;min-width:0;">
           <p style="font-size:13px;font-weight:500;color:#292524;margin:0;font-family:'DM Sans',sans-serif;">
-            Note <span style="font-weight:400;color:#78716c;">· hello@note.com</span>
+            Morphic Notes <span style="font-weight:400;color:#78716c;">· security@zlatin.it.com</span>
           </p>
           <p style="font-size:12px;color:#a8a29e;margin:0;font-family:'DM Sans',sans-serif;">To: ${user.email}</p>
         </div>
@@ -34,7 +34,7 @@ export default function VerifyEmailEmail({ user, url }: VerifyEmailEmailProps) {
           <!-- Logo -->
           <div style="display:inline-flex;align-items:center;gap:8px;margin-bottom:32px;">
             <span style="width:8px;height:8px;border-radius:50%;background:#c8b89a;display:inline-block;"></span>
-            <span style="font-size:14px;color:#e8e0d4;letter-spacing:0.12em;font-family:'Playfair Display',serif;">NOTE</span>
+            <span style="font-size:14px;color:#e8e0d4;letter-spacing:0.12em;font-family:'Playfair Display',serif;">MORPHIC NOTES</span>
             <span style="width:8px;height:8px;border-radius:50%;background:#c8b89a;display:inline-block;"></span>
           </div>
  
@@ -56,7 +56,7 @@ export default function VerifyEmailEmail({ user, url }: VerifyEmailEmailProps) {
         <div style="padding:32px 40px 40px;">
           <p style="font-size:14px;color:#78716c;line-height:1.6;margin:0 0 16px;font-family:'DM Sans',sans-serif;">Hi ${user.name},</p>
           <p style="font-size:14px;color:#78716c;line-height:1.7;margin:0 0 32px;font-family:'DM Sans',sans-serif;">
-            Thanks for signing up for Note. Before you get started, we need to confirm
+            Thanks for signing up for Morphic Notes. Before you get started, we need to confirm
             this is really you. Click the button below to verify your email address.
             This link is valid for the next
             <strong style="color:#44403c;font-weight:500;">${24} hours</strong>.
@@ -97,7 +97,7 @@ export default function VerifyEmailEmail({ user, url }: VerifyEmailEmailProps) {
  
         <!-- Footer -->
         <div style="padding:16px 40px;border-top:1px solid #f5f5f4;display:flex;align-items:center;justify-content:space-between;">
-          <span style="font-size:11px;color:#a8a29e;font-family:'DM Sans',sans-serif;">© ${new Date().getFullYear()} Note, Inc.</span>
+          <span style="font-size:11px;color:#a8a29e;font-family:'DM Sans',sans-serif;">© ${new Date().getFullYear()} Morphic Notes, Inc.</span>
           <div style="display:flex;gap:16px;">
             <a href="#" style="font-size:11px;color:#a8a29e;text-decoration:none;font-family:'DM Sans',sans-serif;">Privacy</a>
             <a href="#" style="font-size:11px;color:#a8a29e;text-decoration:none;font-family:'DM Sans',sans-serif;">Terms</a>

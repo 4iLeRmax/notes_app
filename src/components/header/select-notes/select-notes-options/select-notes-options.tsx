@@ -53,7 +53,10 @@ function SelectNotesOptions({ noteIds }: NoteMoreMenu) {
           </div>
         }
       >
-        <div className="w-full py-4 xs:py-0">
+        <div
+          className="w-full overflow-hidden rounded-ss-4xl rounded-se-4xl xs:rounded-3xl bg-secondary xs:bg-primary shadow-outside-small"
+          data-select-options
+        >
           <SelectNotesOptionsList noteIds={noteIds} />
         </div>
       </More>

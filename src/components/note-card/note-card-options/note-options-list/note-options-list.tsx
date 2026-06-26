@@ -1,6 +1,7 @@
-import { createCopies, deleteNotes } from "@/lib/actions/note";
-import { deleteAllMarkedItems, removeAllMarks } from "@/lib/actions/note-item";
+"use client";
+
 import {
+  ArrowRight,
   ChevronRight,
   Copy,
   Files,
@@ -17,6 +18,7 @@ import NoteOptionsListItem from "./note-options-list-item";
 import { useNotesStore } from "@/lib/store/useNotesStore";
 import { toast } from "@/lib/toast";
 import { vibrate } from "@/lib/haptics";
+import NoteColors from "./note-colors/note-colors";
 
 interface NoteOptionsListProps {
   noteId: string;
@@ -32,7 +34,8 @@ export default function NoteOptionsList({
   const currentNote = useNotesStore((s) =>
     s.notes.find((n) => n.id === noteId),
   );
-  const noteType = currentNote?.type;
+  if (!currentNote) return null;
+  const noteType = currentNote.type;
 
   const toggleNoteTypes = useNotesStore((s) => s.toggleNoteTypes);
   const addCopies = useNotesStore((s) => s.addCopies);
@@ -52,9 +55,12 @@ export default function NoteOptionsList({
 
   return (
     <>
-      <div className="flex flex-col items-start gap-2 xs:gap-0">
+      <div className="flex flex-col items-start gap-2 xs:gap-0 py-4 xs:py-0">
         <NoteOptionsListItem
-          onClick={() => toggleNoteTypes([noteId])}
+          onClick={() => {
+            // console.log("todo/text");
+            toggleNoteTypes([noteId]);
+          }}
           icon={
             noteType === "TEXT" ? (
               <ListTodo size={20} className="flex xs:hidden" />
@@ -65,6 +71,7 @@ export default function NoteOptionsList({
         >
           {noteType === "TEXT" ? "List" : "Text"}
         </NoteOptionsListItem>
+
         <NoteOptionsListItem onClick={toggleShowLabel}>
           <div className="w-full flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -74,6 +81,9 @@ export default function NoteOptionsList({
             <ChevronRight size={20} />
           </div>
         </NoteOptionsListItem>
+
+        <NoteColors noteId={noteId} />
+
         <NoteOptionsListItem
           onClick={() => addCopies([noteId])}
           icon={<Files size={20} className="flex xs:hidden" />}
@@ -107,6 +117,7 @@ export default function NoteOptionsList({
           onClick={() => {
             vibrate([20, 30, 20]);
             removeNotes([noteId]);
+            // closeNote();
           }}
           icon={<Trash size={20} className="flex xs:hidden" />}
         >

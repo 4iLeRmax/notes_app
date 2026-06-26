@@ -16,7 +16,7 @@ export default function NoteViewCreateItemBtn({
 }: NoteViewCreateItemBtnProps) {
   return (
     <>
-      <div className="px-4 sm:px-8">
+      <div className="px-4 sm:px-8 select-none">
         <button
           onClick={handleCreateItem}
           className="flex items-center gap-1 text-txt-secondary ml-5 mt-5"

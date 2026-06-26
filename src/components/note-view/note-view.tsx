@@ -1,14 +1,14 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import NoteOptions from "../note-card/note-card-options/note-options";
-import NoteViewLastUpdate from "./note-view-last-update";
+import LastNoteUpdate from "../note/last-note-update";
 import NoteViewContent from "./note-view-content";
 import NoteViewTitleForm from "./note-view-title-form";
 import NoteCardLabels from "../note-card/note-card-labels";
 import { LABEL_LIMITS } from "@/lib/constants";
 import BackButton from "../UI/back-button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Undo2 } from "lucide-react";
 import { vibrate } from "@/lib/haptics";
 
 interface NoteViewProps {
@@ -17,6 +17,12 @@ interface NoteViewProps {
 }
 
 export default function NoteView({ note, handleBack }: NoteViewProps) {
+  // useEffect(() => {
+  //   return () => {
+  //     console.log("umount 2");
+  //   };
+  // }, []);
+
   return (
     <>
       <div className="w-full xs:w-[calc(90vw)] sm:w-150 h-dvh xs:h-auto bg-secondary shadow-outside-small rounded-none xs:rounded-4xl flex flex-col xs:pt-12">
@@ -26,10 +32,9 @@ export default function NoteView({ note, handleBack }: NoteViewProps) {
               vibrate(10);
               handleBack();
             }}
-            className="flex xs:hidden p-2 shadow-outside-small rounded-3xl bg-secondary text-txt-secondary"
-          >
-            <ArrowLeft size={25} />
-          </BackButton>
+            iconSize={25}
+          />
+
           <div className="w-full">
             <NoteViewTitleForm title={note.title} noteId={note.id} />
           </div>
@@ -47,7 +52,7 @@ export default function NoteView({ note, handleBack }: NoteViewProps) {
             surface="secondary"
           />
           <div className="flex items-center justify-between gap-4">
-            <NoteViewLastUpdate note={note} />
+            <LastNoteUpdate note={note} />
             <NoteOptions noteId={note.id} fixed />
           </div>
         </div>

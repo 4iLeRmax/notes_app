@@ -16,33 +16,33 @@ export enum SortDirections {
 }
 
 export const sortTypesName: Record<SortTypes, string> = {
-  createdAt: "By creation date",
-  updatedAt: "By update date",
-  name: "By name",
+  createdAt: "Created Date",
+  updatedAt: "Last Update",
+  name: "Name",
 };
 
-interface NoteFilterStore {
-  filter: {
+interface NoteSortStore {
+  sort: {
     sortType: SortTypes;
     sortDirection: SortDirections;
   };
-  toggleFilter: (newSortType: SortTypes) => void;
+  toggleSortTypeAndDirection: (newSortType: SortTypes) => void;
 }
 
-const useNoteFilterStore = create<NoteFilterStore>()(
+const useNoteSortStore = create<NoteSortStore>()(
   persist(
     (set) => ({
-      filter: {
+      sort: {
         sortType: SortTypes.createdAt,
         sortDirection: SortDirections.desc,
       },
-      toggleFilter: (newSortType) => {
+      toggleSortTypeAndDirection: (newSortType) => {
         set((state) => {
-          const { sortType, sortDirection } = state.filter;
+          const { sortType, sortDirection } = state.sort;
 
           if (sortType === newSortType) {
             return {
-              filter: {
+              sort: {
                 sortType,
                 sortDirection:
                   sortDirection === SortDirections.asc
@@ -52,7 +52,7 @@ const useNoteFilterStore = create<NoteFilterStore>()(
             };
           } else {
             return {
-              filter: {
+              sort: {
                 sortType: newSortType,
                 sortDirection: SortDirections.desc,
               },
@@ -68,4 +68,4 @@ const useNoteFilterStore = create<NoteFilterStore>()(
   ),
 );
 
-export default useNoteFilterStore;
+export default useNoteSortStore;

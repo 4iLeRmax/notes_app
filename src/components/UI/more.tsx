@@ -98,7 +98,8 @@ export default function More({
                 animate={{ opacity: 1, scaleY: 1 }}
                 exit={{ opacity: 0.5, scaleY: 0 }}
                 className={cn(
-                  "hidden xs:flex bg-primary shadow-outside-small overflow-hidden rounded-xl sm:rounded-3xl xs:w-[200px] sm:w-[218px] md:w-[182px] lg:w-[218px]",
+                  // "hidden xs:flex bg-primary shadow-outside-small overflow-hidden rounded-xl sm:rounded-3xl xs:w-[200px] sm:w-[218px] md:w-[182px] lg:w-[218px]",
+                  "hidden xs:flex  xs:w-[200px] sm:w-[218px] md:w-[182px] lg:w-[218px]",
                   // "hidden xs:flex bg-primary shadow-outside-small overflow-hidden rounded-xl sm:rounded-3xl w-auto",
                   {
                     "absolute z-20 ": !fixed,
@@ -130,7 +131,8 @@ export default function More({
                   animate={{ y: 0, opacity: 1 }}
                   exit={{ y: 150, opacity: 0 }}
                   transition={{ type: "tween" }}
-                  className="fixed bg-secondary bottom-0 left-0 shadow-outside-small overflow-hidden rounded-ss-3xl rounded-se-3xl w-full"
+                  // className="fixed bg-secondary bottom-0 left-0 shadow-outside-small overflow-hidden rounded-ss-4xl rounded-se-4xl w-full"
+                  className="fixed bottom-0 left-0 w-full"
                 >
                   {children}
                 </motion.div>

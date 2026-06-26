@@ -1,6 +1,10 @@
 import z from "zod";
 import { LabelScheme } from "./label-scheme";
-import { NoteTitleScheme, NoteTypeScheme } from "../basic-schemes";
+import {
+  NoteColorScheme,
+  NoteTitleScheme,
+  NoteTypeScheme,
+} from "../basic-schemes";
 import {
   NoteItemScheme,
   TEXTNoteItemScheme,
@@ -13,7 +17,7 @@ export const NoteScheme = z.object({
   title: NoteTitleScheme,
   type: NoteTypeScheme,
   isPinned: z.boolean(),
-  color: z.string().nullable(),
+  color: NoteColorScheme,
   userId: z.string().trim().min(1),
   content: z
     .array(NoteItemScheme)
