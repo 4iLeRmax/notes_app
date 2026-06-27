@@ -25,8 +25,8 @@ export default function SignInFrom() {
   } = useForm({
     resolver: zodResolver(SignInScheme),
     defaultValues: {
-      email: "test@gmail.com",
-      password: "Qwerty123456",
+      email: "",
+      password: "",
     },
   });
 

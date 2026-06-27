@@ -34,8 +34,7 @@ export default function NoteOptionsList({
   const currentNote = useNotesStore((s) =>
     s.notes.find((n) => n.id === noteId),
   );
-  if (!currentNote) return null;
-  const noteType = currentNote.type;
+  const noteType = currentNote?.type;
 
   const toggleNoteTypes = useNotesStore((s) => s.toggleNoteTypes);
   const addCopies = useNotesStore((s) => s.addCopies);
@@ -43,7 +42,7 @@ export default function NoteOptionsList({
   const unmarkedAllItems = useNotesStore((s) => s.unmarkedAllItems);
   const deleteMarkedItems = useNotesStore((s) => s.deleteMarkedItems);
 
-  if (!currentNote) return null;
+  if (!currentNote || !noteType) return null;
 
   const handleCopyContent = () => {
     navigator.clipboard.writeText(

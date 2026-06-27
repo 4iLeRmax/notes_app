@@ -404,6 +404,7 @@ export const createCopies = async (copies: Note[]) => {
             title: encrypt(note.title),
             userId: session.session.userId,
             isPinned: note.isPinned,
+            color: note.color,
             type: note.type,
             content: {
               createMany: {

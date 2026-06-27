@@ -576,7 +576,13 @@ export const useNotesStore = create<NotesState>((set, get) => ({
       return totalChars > NOTE_LIMITS.TODO.totalChars || anyItemTooLong;
     });
 
-    if (nonConvertible.length > 0) return;
+    if (nonConvertible.length > 0) {
+      toast.warning(
+        "Cannot convert notes",
+        "One or more notes could not be converted to the selected type.",
+      );
+      return;
+    }
 
     const firstNoteType = prevNotes.find(
       (note) => note.id === noteIds[0],
@@ -651,6 +657,10 @@ export const useNotesStore = create<NotesState>((set, get) => ({
 
     try {
       await createCopies(copies);
+      toast.success(
+        "Notes duplicated",
+        `${copies.length} note${copies.length > 1 ? "s" : ""} copied successfully.`,
+      );
     } catch {
       set((state) => ({
         notes: state.notes.filter((note) => !copiesIds.includes(note.id)),
@@ -678,6 +688,7 @@ export const useNotesStore = create<NotesState>((set, get) => ({
       notes: state.notes.map((note) =>
         note.id === noteId ? { ...note, color: safeColor } : note,
       ),
+      isPending: true,
     }));
 
     try {
@@ -687,6 +698,7 @@ export const useNotesStore = create<NotesState>((set, get) => ({
         notes: state.notes.map((note) =>
           note.id === noteId ? { ...note, color: prevColor } : note,
         ),
+        isPending: false,
       }));
     } finally {
       set({ isPending: false });
