@@ -58,14 +58,15 @@ export default function FindAccountForm() {
               />
             </div>
 
-            <div className="mt-10">
-              {errors.root ? (
-                <div className="mb-2 flex items-center justify-center">
-                  <Link href="/sign-up" className="text-txt-primary text-sm">
-                    Create an account
-                  </Link>
-                </div>
-              ) : null}
+            <div className="mt-8">
+              <div className="mb-2 flex items-center justify-between">
+                <Link href="/sign-in" className="text-txt-primary text-sm">
+                  Return to sign in
+                </Link>
+                <Link href="/sign-up" className="text-txt-primary text-sm">
+                  Create an account
+                </Link>
+              </div>
               <FormButton isLoading={isSubmitting}>Find Account</FormButton>
               {errors.root ? (
                 <span className="text-custom-red text-xs flex justify-center mt-2">

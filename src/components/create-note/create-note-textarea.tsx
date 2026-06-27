@@ -56,15 +56,17 @@ export default function CreateNoteTextarea({
 
     <>
       <motion.textarea
-        animate={{
-          // minHeight: formIsOpen ? "144px" : "48px",
-          maxHeight: formIsOpen ? "552px" : "48px",
-        }}
+        animate={
+          {
+            // maxHeight: formIsOpen ? "552px" : "48px",
+            // padding: formIsOpen ? "12px 16px" : "8.5px 16px",
+          }
+        }
         value={contentToText}
         onChange={(e) => textToObj(e.target.value)}
         placeholder="Type something..."
         className={cn(
-          "outline-none resize-none overflow-hidden field-sizing-content bg-primary",
+          "outline-none resize-none overflow-hidden field-sizing-content bg-primary min-h-12 max-h-60",
           "placeholder:text-txt-primary shadow-inside px-4 py-3 rounded-3xl text-txt-primary w-full",
         )}
       />

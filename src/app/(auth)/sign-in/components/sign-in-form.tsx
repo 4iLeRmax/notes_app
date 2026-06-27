@@ -87,11 +87,8 @@ export default function SignInFrom() {
                 isPassword
               />
             </div>
-            {/* <div className="flex flex-col items-center gap-4">
-              <FormInput type="email" name="email" placeholder="Email..." />
-              <FormInput isPassword name="password" placeholder="Password..." />
-            </div> */}
-            <div className="mt-10">
+
+            <div className="mt-8">
               <div className="mb-2 flex items-center justify-between">
                 <Link href="/sign-up" className="text-txt-primary text-sm">
                   Create an account
@@ -107,43 +104,45 @@ export default function SignInFrom() {
                 </span>
               ) : null}
             </div>
-            <div>
-              <div className="flex items-center justify-center gap-3 mt-8">
-                <div className="bg-txt-primary w-full flex h-px"></div>
-                <p className="text-txt-primary shrink-0 text-sm">
-                  or continue with
-                </p>
-                <div className="bg-txt-primary w-full flex h-px"></div>
-              </div>
-              <div className="flex items-center justify-center mt-2 gap-3">
-                <button
-                  type="button"
-                  // onClick={signinActionWithGoogle}
-                  onClick={handleSignInWithGoogle}
-                  className="hover:opacity-80 transition-opacity"
-                >
-                  <Image
-                    src={"google.svg"}
-                    width={40}
-                    height={40}
-                    alt="Sign in with Google"
-                  />
-                </button>
-                <button
-                  type="button"
-                  onClick={handleSignInWithFacebook}
-                  className="hover:opacity-80 transition-opacity"
-                >
-                  <Image
-                    src={"facebook.svg"}
-                    width={40}
-                    height={40}
-                    alt="Sign in with Facebook"
-                  />
-                </button>
-              </div>
-            </div>
           </form>
+
+          <div>
+            <div className="flex items-center justify-center gap-3 mt-8">
+              <div className="bg-txt-primary w-full flex h-px"></div>
+              <p className="text-txt-primary shrink-0 text-sm">
+                or continue with
+              </p>
+              <div className="bg-txt-primary w-full flex h-px"></div>
+            </div>
+
+            <div className="flex items-center justify-center mt-2 gap-3">
+              <button
+                type="button"
+                // onClick={signinActionWithGoogle}
+                onClick={handleSignInWithGoogle}
+                className="hover:opacity-80 transition-opacity"
+              >
+                <Image
+                  src={"google.svg"}
+                  width={40}
+                  height={40}
+                  alt="Sign in with Google"
+                />
+              </button>
+              <button
+                type="button"
+                onClick={handleSignInWithFacebook}
+                className="hover:opacity-80 transition-opacity"
+              >
+                <Image
+                  src={"facebook.svg"}
+                  width={40}
+                  height={40}
+                  alt="Sign in with Facebook"
+                />
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </>

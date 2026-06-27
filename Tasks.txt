@@ -1,6 +1,0 @@
-back button for Forgot Passowrd
-
-error toast when can't transform text to todo type
-success toast for create copy
-
-Add internationalization (i18)

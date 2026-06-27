@@ -70,7 +70,6 @@ export default function SignUpForm() {
   return (
     <>
       <div className="bg-secondary shadow-outside px-8 xs:px-16 py-8 rounded-4xl w-120">
-        {/* <div className="bg-secondary px-16 py-8 rounded-secondary w-120"> */}
         <h1 className="text-center text-txt-primary text-2xl font-bold">
           Sign Up
         </h1>
@@ -114,21 +113,24 @@ export default function SignUpForm() {
                 isPassword
               />
             </div>
-            <div className="mt-10">
+
+            <div className="mt-8">
+              <Link
+                href="/sign-in"
+                className="text-txt-primary text-sm flex items-center justify-center mb-2"
+              >
+                Already have an account
+              </Link>
+
               <FormButton isLoading={isSubmitting}>Sign Up</FormButton>
               {errors.root ? (
                 <span className="text-custom-red text-xs flex justify-center mt-2">
                   {errors.root.message}
                 </span>
               ) : null}
-              <Link
-                href="/sign-in"
-                className="text-txt-primary text-sm flex items-center justify-center mt-2"
-              >
-                Already have an account
-              </Link>
             </div>
           </form>
+
           <div>
             <div className="flex items-center justify-center gap-3 mt-8">
               <div className="bg-txt-primary w-full flex h-px"></div>
@@ -137,6 +139,7 @@ export default function SignUpForm() {
               </p>
               <div className="bg-txt-primary w-full flex h-px"></div>
             </div>
+
             <div className="flex items-center justify-center mt-2 gap-3">
               <button
                 type="button"
