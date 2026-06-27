@@ -83,7 +83,7 @@ export default function NoteViewListItem({
             "focus-within:bg-primary focus-within:shadow-outside-small",
           )}
         >
-          <div className="w-full min-w-0 flex items-center gap-2 px-4 ">
+          <div className="w-full min-w-0 flex items-center px-4 ">
             <NoteViewListItemStatusBtn
               noteId={noteId}
               listItemId={listItem.id}

@@ -41,7 +41,7 @@ export default function NoteViewListItemContent({
 
   return (
     <>
-      <div className="flex items-center gap-2 min-h-7 w-full min-w-0 py-3">
+      <div className="flex items-center gap-2 min-h-7 w-full min-w-0">
         {!isDone ? (
           <textarea
             name="text"
@@ -53,10 +53,10 @@ export default function NoteViewListItemContent({
               )
             }
             placeholder="Type something..."
-            className="w-full overflow-hidden outline-none resize-none field-sizing-content break-all py-0"
+            className="w-full overflow-hidden outline-none resize-none field-sizing-content break-all px-2 py-3"
           />
         ) : (
-          <div className="w-full overflow-hidden line-through break-all py-0">
+          <div className="w-full overflow-hidden line-through break-all px-2 py-3">
             {content}
           </div>
         )}

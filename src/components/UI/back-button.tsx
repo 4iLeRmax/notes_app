@@ -1,6 +1,6 @@
 "use client";
 
-import { Undo2 } from "lucide-react";
+import { ArrowLeft, Undo2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React from "react";
 
@@ -22,7 +22,7 @@ export default function BackButton({
         {...props}
         className="flex xs:hidden p-2 shadow-outside-small rounded-3xl bg-secondary text-txt-secondary"
       >
-        <Undo2 size={iconSize} />
+        <ArrowLeft size={iconSize} />
       </button>
     </>
   );
