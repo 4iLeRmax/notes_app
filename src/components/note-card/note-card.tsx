@@ -12,6 +12,8 @@ interface NoteCardProps {
   handleOpen: () => void;
 }
 
+// asdasdasd
+
 export default function NoteCard({ note, handleOpen }: NoteCardProps) {
   return (
     <>
