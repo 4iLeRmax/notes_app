@@ -19,6 +19,7 @@ function Header() {
             data-header="true"
             className="flex items-start justify-end gap-4"
           >
+            <div className="text-txt-primary">EN</div>
             <SyncDataBtn iconSize={25} />
             <ConditionalSearch />
             <User />
