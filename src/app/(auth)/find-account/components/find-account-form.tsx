@@ -18,7 +18,6 @@ export default function FindAccountForm() {
     control,
     handleSubmit,
     setError,
-    getValues,
     formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(FindAccountScheme),

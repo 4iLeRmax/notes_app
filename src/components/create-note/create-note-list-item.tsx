@@ -79,11 +79,6 @@ export default function CreateNoteListItem({
     }
   };
 
-  const handleRemoveItem = () => {
-    removeItem(item.index);
-    if (listRef.current) listRef.current.focus();
-  };
-
   return (
     <>
       <div className="py-1.5">
@@ -103,7 +98,7 @@ export default function CreateNoteListItem({
             className="w-full outline-none resize-none overflow-hidden field-sizing-content "
           />
           <CreateNoteListItemDeleteBtn
-            onClick={handleRemoveItem}
+            onClick={() => removeItem(item.index)}
             iconSize={20}
           />
           <div>{item.index}</div>

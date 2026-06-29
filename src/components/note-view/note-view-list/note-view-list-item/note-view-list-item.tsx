@@ -71,6 +71,7 @@ export default function NoteViewListItem({
     <>
       <div className="w-full py-1 snap-start">
         <motion.div
+          // drag="y"
           tabIndex={0}
           ref={elementRef}
           initial={{ opacity: 0, height: 0, scale: 0.8 }}
@@ -102,6 +103,7 @@ export default function NoteViewListItem({
               listItemId={listItem.id}
               iconSize={20}
             />
+            <div>{listItem.position}</div>
           </div>
         </motion.div>
       </div>

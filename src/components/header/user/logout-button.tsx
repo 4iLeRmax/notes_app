@@ -4,15 +4,19 @@ import { SignOutAction } from "@/lib/actions/auth";
 import cn from "@/lib/cn";
 import { useNotesStore } from "@/lib/store/useNotesStore";
 import { LogOut } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function LogoutButton() {
   const setNotes = useNotesStore((s) => s.setNotes);
   const setLabels = useNotesStore((s) => s.setLabels);
 
+  const router = useRouter();
+
   const logout = async () => {
-    await SignOutAction();
     setNotes([]);
     setLabels([]);
+
+    await SignOutAction();
   };
 
   return (

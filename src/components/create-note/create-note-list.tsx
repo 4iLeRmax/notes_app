@@ -49,6 +49,8 @@ export default function CreateNoteList({
 
   const removeItem = (itemIndex: number) => {
     const isLast = content.length === 1;
+    if (isLast && listRef.current) listRef.current.focus();
+
     setNote((n) => ({
       ...n,
       content: n.content
@@ -56,7 +58,6 @@ export default function CreateNoteList({
         .sort((a, b) => a.index - b.index)
         .map((item, i) => ({ ...item, index: i })),
     }));
-    if (isLast) listRef.current?.focus();
   };
 
   const toggleItemStatus = (itemIndex: number) => {
@@ -71,13 +72,17 @@ export default function CreateNoteList({
   return (
     <>
       <div className="flex flex-col">
-        {content.length > 0 ? (
+        {content.length > 0 || true ? (
           <motion.div
             layout
             className={cn(
               "flex flex-col text-txt-primary max-h-[calc(52px*5)] overflow-y-scroll outline-none",
-              "pl-4 pr-2 md:pl-8 md:pr-6 py-2",
+              "pl-4 pr-2 md:pl-8 md:pr-6",
               "snap-y snap-mandatory",
+              {
+                "py-2": content.length > 0,
+                "py-0": content.length === 0,
+              },
             )}
             tabIndex={0}
             ref={listRef}
