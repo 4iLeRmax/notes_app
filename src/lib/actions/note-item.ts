@@ -4,11 +4,11 @@ import prisma from "../prisma";
 import encrypt from "../encryption/encrypt";
 import { getSession } from "./auth";
 import { NoteActionErrors, NoteItemActionErrors } from "./errors";
-import z from "zod";
 import { TODONoteItemScheme } from "../zod-schemes/note-schemes/note-item-scheme";
 import { NOTE_LIMITS } from "../constants";
 import decrypt from "../encryption/decrypt";
 import { NoteItemPositionScheme } from "../zod-schemes/basic-schemes";
+import z from "zod";
 
 export const createNoteItem = async (newNoteItem: NoteItem) => {
   console.log("createNoteItem");
@@ -273,3 +273,41 @@ export const deleteAllMarkedItems = async (
     throw new Error(NoteItemActionErrors.DELETE_ALL_MARKED_ITEMS_FAILED);
   }
 }; //+
+
+export const updateNoteItemsPositions = async (
+  noteId: string,
+  itemsToUpdate: { id: string; position: number }[],
+) => {
+  console.log("updateNoteItemsPositions");
+  const session = await getSession();
+  if (!session) throw new Error(NoteItemActionErrors.UNAUTHORIZED);
+
+  const { data: safeNoteId, success: validNoteId } = z.uuid().safeParse(noteId);
+  if (!validNoteId) throw new Error(NoteActionErrors.INVALID_NOTE_ID);
+
+  const { data: safeItemsToUpdate, success: validItemsToUpdate } = z
+    .array(z.object({ id: z.uuid(), position: NoteItemPositionScheme }))
+    .safeParse(itemsToUpdate);
+  if (!validItemsToUpdate)
+    throw new Error(NoteItemActionErrors.INVALID_NOTE_ITEM_DATA);
+
+  const note = await prisma.note.findUnique({
+    where: { id: safeNoteId, userId: session.user.id },
+    select: { id: true },
+  });
+
+  if (!note) throw new Error(NoteActionErrors.NOTE_NOT_FOUND);
+
+  try {
+    await prisma.$transaction(
+      safeItemsToUpdate.map((item) =>
+        prisma.noteItem.update({
+          where: { id: item.id },
+          data: { position: item.position },
+        }),
+      ),
+    );
+  } catch {
+    throw new Error(NoteItemActionErrors.UPDATE_NOTE_ITEMS_POSITIONS_FAILED);
+  }
+};

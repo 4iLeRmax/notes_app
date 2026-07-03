@@ -10,6 +10,9 @@ import { LABEL_LIMITS } from "@/lib/constants";
 import BackButton from "../UI/back-button";
 import { ArrowLeft, Undo2 } from "lucide-react";
 import { vibrate } from "@/lib/haptics";
+import { motion } from "motion/react";
+import NoteViewListDisplay from "./note-view-list/note-view-list-display";
+import NoteViewList from "./note-view-list/note-view-list";
 
 interface NoteViewProps {
   note: Note;
@@ -17,15 +20,13 @@ interface NoteViewProps {
 }
 
 export default function NoteView({ note, handleBack }: NoteViewProps) {
-  // useEffect(() => {
-  //   return () => {
-  //     console.log("umount 2");
-  //   };
-  // }, []);
-
   return (
     <>
-      <div className="w-full xs:w-[calc(90vw)] sm:w-150 h-dvh xs:h-auto bg-secondary shadow-outside-small rounded-none xs:rounded-4xl flex flex-col xs:pt-12">
+      <motion.div
+        layout
+        // className="w-full xs:w-[calc(90vw)] sm:w-150 h-dvh xs:h-auto bg-secondary shadow-outside-small rounded-none xs:rounded-4xl flex flex-col xs:pt-12"
+        className="w-full xs:w-[calc(90vw)] sm:w-150 h-dvh xs:h-auto xs:max-h-[calc(80vh)] bg-secondary shadow-outside-small rounded-none xs:rounded-4xl flex flex-col xs:pt-12"
+      >
         <div className="flex items-center gap-2 xs:gap-4 py-4 xs:py-0 px-4 sm:px-8 shrink-0 shadow-outside-small xs:shadow-none rounded-es-3xl rounded-ee-3xl bg-primary xs:bg-transparent">
           <BackButton
             onClick={() => {
@@ -40,9 +41,13 @@ export default function NoteView({ note, handleBack }: NoteViewProps) {
           </div>
         </div>
 
-        <div className="flex-1 xs:flex-auto xs:h-full xs:max-h-[calc(100vh*1/2)] overflow-y-scroll snap-y snap-mandatory">
+        <motion.div
+          layoutScroll
+          // className="flex-1 xs:flex-auto xs:h-full xs:max-h-[calc(100vh*1/2)] overflow-y-scroll"
+          className="flex-1 xs:flex-auto xs:h-full overflow-y-scroll"
+        >
           <NoteViewContent note={note} />
-        </div>
+        </motion.div>
 
         <div className="pt-5 px-4 sm:px-8 flex flex-col gap-2 pb-4 shrink-0 shadow-outside-small xs:shadow-none rounded-ss-3xl rounded-se-3xl bg-primary xs:bg-transparent">
           <NoteCardLabels
@@ -56,7 +61,7 @@ export default function NoteView({ note, handleBack }: NoteViewProps) {
             <NoteOptions noteId={note.id} fixed />
           </div>
         </div>
-      </div>
+      </motion.div>
     </>
   );
 }

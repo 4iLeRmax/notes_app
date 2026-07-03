@@ -1,18 +1,27 @@
-import { CheckSquare, Square, SquareCheck, X } from "lucide-react";
-import React from "react";
+import {
+  CheckSquare,
+  GripVertical,
+  Square,
+  SquareCheck,
+  X,
+} from "lucide-react";
+import React, { useEffect, useRef, useState } from "react";
 import { CreateLocalNote } from "./create-note";
 import { motion, AnimatePresence } from "motion/react";
 import CreateNoteListItemStatusBtn from "./create-note-list-item-status-btn";
 import CreateNoteListItemDeleteBtn from "./create-note-list-item-delete-btn";
+import { flushSync } from "react-dom";
 
 interface CreateNoteListItemProps {
   item: CreateLocalNote["content"][number];
+  handleChangeItem: (targetValue: string, itemId: string) => void;
   addNewItem: (createAtPosition?: number) => void;
-  removeItem: (rowId: number) => void;
-  toggleItemStatus: (rowId: number) => void;
-  handleChangeItem: (targetValue: string, rowId: number) => void;
-  autoFocus?: boolean;
+  removeItem: (itemId: string) => void;
+  toggleItemStatus: (itemId: string) => void;
   listRef: React.RefObject<HTMLDivElement | null>;
+
+  pendingFocusId: string | null; // NEW
+  clearPendingFocusId: () => void; // NEW
 }
 
 export default function CreateNoteListItem({
@@ -22,11 +31,26 @@ export default function CreateNoteListItem({
   toggleItemStatus,
   handleChangeItem,
   listRef,
+
+  pendingFocusId, // NEW
+  clearPendingFocusId, // NEW
 }: CreateNoteListItemProps) {
+  const textareaRef = useRef<HTMLTextAreaElement>(null); // NEW
+
+  useEffect(() => {
+    // NEW
+    if (pendingFocusId === item.id) {
+      textareaRef.current?.focus();
+      clearPendingFocusId();
+    }
+  }, [pendingFocusId, item.id, clearPendingFocusId]);
+
   const handleKeyDown = async (e: React.KeyboardEvent) => {
     if (!listRef.current) return;
     const currentTextarea =
-      listRef.current.children[item.index].querySelector("textarea");
+      listRef.current.children[0].children[item.position].querySelector(
+        "textarea",
+      );
     if (!currentTextarea) return;
 
     const { selectionStart, value } = currentTextarea;
@@ -34,7 +58,8 @@ export default function CreateNoteListItem({
     const isAtEnd = selectionStart === value.length;
 
     if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
-      const prevElement = listRef.current.children[item.index - 1];
+      const prevElement =
+        listRef.current.children[0].children[item.position - 1];
       if (!prevElement) return;
       const prevTextarea = prevElement.querySelector("textarea");
       if (prevTextarea && isAtStart) {
@@ -43,7 +68,8 @@ export default function CreateNoteListItem({
       }
     }
     if (e.key === "ArrowRight" || e.key === "ArrowDown") {
-      const nextElement = listRef.current.children[item.index + 1];
+      const nextElement =
+        listRef.current.children[0].children[item.position + 1];
       if (!nextElement) return;
       const nextTextarea = nextElement.querySelector("textarea");
       if (nextTextarea && isAtEnd) {
@@ -55,26 +81,19 @@ export default function CreateNoteListItem({
     if (e.key === "Enter") {
       if (currentTextarea && isAtEnd) {
         e.preventDefault();
-        addNewItem(item.index + 1);
-
-        requestAnimationFrame(() => {
-          const nextElement = listRef.current?.children[item.index + 1];
-          if (nextElement) {
-            const nextTextarea = nextElement.querySelector("textarea");
-            if (nextTextarea) nextTextarea.focus();
-          }
-        });
+        addNewItem(item.position + 1);
       }
     }
     if (e.key === "Backspace") {
       if (currentTextarea && isAtStart && value.length === 0) {
         e.preventDefault();
-        const prevElement = listRef.current.children[item.index - 1];
+        const prevElement =
+          listRef.current.children[0].children[item.position - 1];
         if (prevElement) {
           const prevTextarea = prevElement.querySelector("textarea");
           if (prevTextarea) prevTextarea.focus();
         }
-        removeItem(item.index);
+        removeItem(item.id);
       }
     }
   };
@@ -86,22 +105,31 @@ export default function CreateNoteListItem({
           className="flex items-center gap-2 px-4 py-2 rounded-3xl shadow-outside-small bg-primary text-txt-primary"
           onKeyDown={handleKeyDown}
         >
+          <button
+            type="button"
+            // onPointerDown={(e) => controls.start(e)}
+            className="touch-none"
+          >
+            <GripVertical size={20} />
+          </button>
           <CreateNoteListItemStatusBtn
             isActive={item.isDone}
-            onClick={() => toggleItemStatus(item.index)}
+            onClick={() => toggleItemStatus(item.id)}
             iconSize={20}
           />
           <textarea
+            id={item.id}
+            ref={textareaRef} // NEW
             value={item.content}
-            onChange={(e) => handleChangeItem(e.target.value, item.index)}
+            onChange={(e) => handleChangeItem(e.target.value, item.id)}
             placeholder="Type something..."
             className="w-full outline-none resize-none overflow-hidden field-sizing-content "
           />
           <CreateNoteListItemDeleteBtn
-            onClick={() => removeItem(item.index)}
+            onClick={() => removeItem(item.id)}
             iconSize={20}
           />
-          <div>{item.index}</div>
+          <div>{item.position}</div>
         </div>
       </div>
     </>

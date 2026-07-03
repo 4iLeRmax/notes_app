@@ -11,6 +11,7 @@ import useNoteSortStore from "@/lib/store/useNoteSortStore";
 import sortNotes from "@/lib/sort-notes";
 import NotesSortLayout from "./notes-sort/notes-sort-layout";
 import { useClickOutsideDeselected } from "@/hooks/useClickOutsideDeselected";
+import NoteView from "../note-view/note-view";
 
 interface NotesDisplayProps {
   query: string;
@@ -18,6 +19,9 @@ interface NotesDisplayProps {
 
 export default function NotesDisplay({ query }: NotesDisplayProps) {
   const notes = useNotesStore((s) => s.notes);
+
+  const currentNote = notes[0];
+
   const isHydratedNote = useNotesStore((s) => s.isHydratedNote);
   const { sortType, sortDirection } = useNoteSortStore((s) => s.sort);
 
@@ -60,6 +64,7 @@ export default function NotesDisplay({ query }: NotesDisplayProps) {
 
   return (
     <>
+      {/* <NoteView note={currentNote} handleBack={() => {}} /> */}
       <div className="flex flex-col items-center justify-center mt-10 gap-4">
         <NotesSortLayout position="right">
           <NotesSort />

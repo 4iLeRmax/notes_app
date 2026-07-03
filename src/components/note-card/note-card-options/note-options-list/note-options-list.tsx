@@ -46,8 +46,12 @@ export default function NoteOptionsList({
 
   const handleCopyContent = () => {
     navigator.clipboard.writeText(
-      currentNote.content.map((item) => item.content).join("\n"),
+      currentNote.content
+        .sort((a, b) => a.position - b.position)
+        .map((item) => item.content)
+        .join("\n"),
     );
+
     handleClose();
     toast.success("Successfully copied to clipboard");
   };

@@ -430,6 +430,7 @@ export const createCopies = async (copies: Note[]) => {
 }; //+
 
 export const updateColor = async (noteId: string, newColor: string | null) => {
+  console.log("updateColor");
   const session = await getSession();
   if (!session) throw new Error(NoteActionErrors.UNAUTHORIZED);
 
@@ -440,12 +441,16 @@ export const updateColor = async (noteId: string, newColor: string | null) => {
     NoteColorScheme.safeParse(newColor);
   if (!validColor) throw new Error(NoteActionErrors.INVALID_NOTE_DATA);
 
-  await prisma.note.update({
-    where: {
-      id: safeNoteId,
-    },
-    data: {
-      color: safeColor,
-    },
-  });
+  try {
+    await prisma.note.update({
+      where: {
+        id: safeNoteId,
+      },
+      data: {
+        color: safeColor,
+      },
+    });
+  } catch {
+    throw new Error(NoteActionErrors.UPDATE_NOTE_COLOR_FAILED);
+  }
 };

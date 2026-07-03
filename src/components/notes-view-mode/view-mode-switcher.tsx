@@ -32,13 +32,13 @@ export default function ViewModeSwitcher({
           },
         )}
       >
-        <AnimatePresence mode="wait">
+        <AnimatePresence mode="popLayout">
           {viewMode === ViewMode.GRID ? (
             <motion.div
               key="rows"
-              initial={{ opacity: 0, scale: 0.8 }}
+              initial={{ opacity: 0, scale: 0 }}
               animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.8 }}
+              exit={{ opacity: 0, scale: 0 }}
               transition={{ duration: 0.2 }}
             >
               <Rows3 size={iconSize} />
@@ -46,9 +46,9 @@ export default function ViewModeSwitcher({
           ) : (
             <motion.div
               key="grid"
-              initial={{ opacity: 0, scale: 0.8 }}
+              initial={{ opacity: 0, scale: 0 }}
               animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.8 }}
+              exit={{ opacity: 0, scale: 0 }}
               transition={{ duration: 0.2 }}
             >
               <LayoutGrid size={iconSize} />
