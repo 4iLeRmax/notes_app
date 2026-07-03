@@ -36,7 +36,7 @@ export default function NoteCardList({ noteContent }: NoteCardListProps) {
     <>
       <div className="flex flex-col gap-2 text-txt-primary">
         {activeItems.map((item) => (
-          <div key={item.id} className="flex items-center gap-2">
+          <div key={`card-${item.id}`} className="flex items-center gap-2">
             <div>
               <Square size={20} />
             </div>
@@ -52,12 +52,15 @@ export default function NoteCardList({ noteContent }: NoteCardListProps) {
         <div className="mt-4 text-txt-primary">
           <h3 className="text-sm mb-1">Completed:</h3>
           {completedItems.map((item) => (
-            <div key={item.id} className="flex items-center gap-2">
+            <div key={`card-${item.id}`} className="flex items-center gap-2">
               <div>
                 <SquareCheck size={20} />
               </div>
               <span className="line-through break-all">
-                {item.content.slice(0, 100)}
+                {item.content.slice(
+                  0,
+                  NOTE_CARD_LIMITS.TODO.MAX_CHARS_PER_ITEM,
+                )}
               </span>
             </div>
           ))}

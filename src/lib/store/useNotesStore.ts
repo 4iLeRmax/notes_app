@@ -20,6 +20,7 @@ import {
   removeAllMarks,
   toggleNoteItemStatus,
   updateNoteItem,
+  updateNoteItemsPositions,
 } from "../actions/note-item";
 import { LABEL_LIMITS, NOTE_LIMITS } from "../constants";
 import {
@@ -42,6 +43,7 @@ import {
 } from "../actions/label";
 import { toast } from "../toast";
 import { NoteItemScheme } from "../zod-schemes/note-schemes/note-item-scheme";
+import z from "zod";
 
 interface NotesState {
   notes: Note[];
@@ -69,13 +71,15 @@ interface NotesState {
     newContent: string,
   ) => Promise<void>;
   updateNoteContent: (noteId: string, newContent: string) => Promise<void>;
+  updateItemsPositions: (
+    noteId: string,
+    reorderedList: NoteItem[],
+  ) => Promise<void>;
 
   removeNotes: (noteIds: string[]) => Promise<void>;
   toggleNoteTypes: (noteIds: string[]) => Promise<void>;
   addCopies: (noteIds: string[]) => Promise<void>;
-  //=========================================================
   addColor: (noteId: string, newColor: string | null) => Promise<void>;
-  //=========================================================
   togglePin: (noteId: string) => Promise<void>;
   unmarkedAllItems: (noteId: string) => Promise<void>;
   deleteMarkedItems: (noteId: string) => Promise<void>;
@@ -557,7 +561,47 @@ export const useNotesStore = create<NotesState>((set, get) => ({
       set({ isPending: false });
     }
   },
+  updateItemsPositions: async (noteId, reorderedList) => {
+    const prevNote = get().notes.find((n) => n.id === noteId);
+    if (!prevNote) return;
 
+    const { data: safeList, success: validList } = z
+      .array(NoteItemScheme)
+      .safeParse(reorderedList);
+    if (!validList) {
+      toast.error(TOAST_USER_FRIENDLY_ERRORS.INVALID_NOTE_DATA);
+      return;
+    }
+
+    set((state) => ({
+      notes: [
+        ...state.notes.map((note) =>
+          note.id === noteId ? { ...note, content: safeList } : note,
+        ),
+      ],
+      isPending: true,
+    }));
+
+    const lightWeightItems = safeList.map((item) => ({
+      id: item.id,
+      position: item.position,
+    }));
+
+    try {
+      await updateNoteItemsPositions(noteId, lightWeightItems);
+    } catch {
+      set((state) => ({
+        notes: [
+          ...state.notes.map((note) =>
+            note.id === noteId ? { ...note, content: prevNote.content } : note,
+          ),
+        ],
+        isPending: false,
+      }));
+    } finally {
+      set({ isPending: false });
+    }
+  },
   // Note Options
   toggleNoteTypes: async (noteIds) => {
     const prevNotes = get().notes;
@@ -674,7 +718,6 @@ export const useNotesStore = create<NotesState>((set, get) => ({
       set({ isPending: false });
     }
   },
-  //=========================================================
   addColor: async (noteId, newColor) => {
     const prevNote = get().notes.find((note) => note.id === noteId);
     if (!prevNote) return;
@@ -704,7 +747,6 @@ export const useNotesStore = create<NotesState>((set, get) => ({
       set({ isPending: false });
     }
   },
-  //=========================================================
   togglePin: async (noteId) => {
     const prevNote = get().notes.find((note) => note.id === noteId);
     if (!prevNote) return;

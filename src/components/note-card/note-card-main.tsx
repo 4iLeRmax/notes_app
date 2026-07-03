@@ -21,10 +21,10 @@ export default function NoteCardMain({
 
   return (
     <>
-      {noteType === "TODO" ? (
-        <NoteCardList noteContent={sortedNoteContent} />
-      ) : (
+      {noteType === "TEXT" ? (
         <NoteCardText noteContent={sortedNoteContent} />
+      ) : (
+        <NoteCardList noteContent={sortedNoteContent} />
       )}
     </>
   );

@@ -5,14 +5,16 @@ import React, { useEffect, useRef, useState } from "react";
 import NoteViewListItemStatusBtn from "./note-view-list-item-status-btn";
 import NoteViewListItemDeleteBtn from "./note-view-list-item-delete-btn";
 import NoteViewListItemContent from "./note-view-list-item-content";
-import { motion } from "motion/react";
+import { Reorder, useDragControls } from "motion/react";
 import { useNotesStore } from "@/lib/store/useNotesStore";
+import { GripVertical } from "lucide-react";
 
 interface NoteViewListItemProps {
   noteId: string;
   listItem: NoteItem;
   prevItemId: string | null;
   nextItemId: string | null;
+  handleDragEnd?: () => Promise<void>;
 }
 
 export default function NoteViewListItem({
@@ -20,6 +22,7 @@ export default function NoteViewListItem({
   listItem,
   prevItemId,
   nextItemId,
+  handleDragEnd,
 }: NoteViewListItemProps) {
   const elementRef = useRef<HTMLDivElement>(null);
 
@@ -67,16 +70,23 @@ export default function NoteViewListItem({
     }
   };
 
+  const controls = useDragControls();
+
   return (
     <>
-      <div className="w-full py-1 snap-start">
-        <motion.div
-          // drag="y"
+      <Reorder.Item
+        key={`note-view-${listItem.id}`}
+        value={listItem}
+        dragListener={false}
+        dragControls={controls}
+        onDragEnd={handleDragEnd}
+        dragElastic={0.1}
+        className="w-full"
+        as="div"
+      >
+        <div
           tabIndex={0}
           ref={elementRef}
-          initial={{ opacity: 0, height: 0, scale: 0.8 }}
-          animate={{ opacity: 1, height: "auto", scale: 1 }}
-          exit={{ opacity: 0, height: 0, scale: 0.8 }}
           onKeyDown={(e) => handleKeyDown(e)}
           className={cn(
             "relative rounded-4xl w-full transition-colors outline-none group",
@@ -84,7 +94,18 @@ export default function NoteViewListItem({
             "focus-within:bg-primary focus-within:shadow-outside-small",
           )}
         >
+          {/* {listItem.content} */}
           <div className="w-full min-w-0 flex items-center px-4 ">
+            {listItem.isDone ? (
+              <div className="w-7 h-5 shrink-0"></div>
+            ) : (
+              <button
+                onPointerDown={(e) => controls.start(e)}
+                className="mr-2 touch-none"
+              >
+                <GripVertical size={20} />
+              </button>
+            )}
             <NoteViewListItemStatusBtn
               noteId={noteId}
               listItemId={listItem.id}
@@ -105,8 +126,8 @@ export default function NoteViewListItem({
             />
             <div>{listItem.position}</div>
           </div>
-        </motion.div>
-      </div>
+        </div>
+      </Reorder.Item>
     </>
   );
 }

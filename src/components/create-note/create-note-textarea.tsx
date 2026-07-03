@@ -2,9 +2,10 @@
 
 import cn from "@/lib/cn";
 import React from "react";
-import { motion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import { TCreateNote } from "@/lib/zod-schemes/note-schemes/create-note.scheme";
 import { CreateLocalNote } from "./create-note";
+import { Plus } from "lucide-react";
 
 interface CreateNoteTextareaProps {
   content: CreateLocalNote["content"];
@@ -19,43 +20,21 @@ export default function CreateNoteTextarea({
 }: CreateNoteTextareaProps) {
   const contentToText = content.map((el) => el.content).join("\n");
   const textToObj = (text: string) => {
-    const content = text
+    const content: CreateLocalNote["content"] = text
       .split("\n")
-      .map((el, i) => ({ content: el, isDone: false, index: i }));
+      .map((el, i) => ({
+        id: crypto.randomUUID(),
+        content: el,
+        isDone: false,
+        position: i,
+      }));
 
     setNote((n) => ({ ...n, content }));
   };
 
   return (
-    // <motion.div
-    //   className={cn("w-full flex", {
-    //     "px-4": !formIsOpen,
-    //     "px-4 md:px-8": formIsOpen,
-    //   })}
-    //   animate={{
-    //     width: "100%",
-    //     maxHeight: formIsOpen ? "552px" : "48px",
-    //   }}
-    // >
-    //   <motion.textarea
-    //     value={contentToText}
-    //     onChange={(e) => textToObj(e.target.value)}
-    //     placeholder="Type something..."
-    //     className={cn(
-    //       "outline-none resize-none overflow-hidden field-sizing-content bg-primary",
-    //       "placeholder:text-txt-primary shadow-inside px-4 py-3 rounded-3xl text-txt-primary w-full",
-    //     )}
-    //     animate={{
-    //       width: "100%",
-    //       // minHeight: formIsOpen ? "144px" : "48px",
-    //       maxHeight: formIsOpen ? "552px" : "48px",
-    //     }}
-    //   />
-    // {!formIsOpen ? <div className="w-[52px] shrink-0"></div> : null}
-    // </motion.div>
-
     <>
-      <motion.textarea
+      {/* <motion.textarea
         animate={
           {
             // maxHeight: formIsOpen ? "552px" : "48px",
@@ -73,7 +52,16 @@ export default function CreateNoteTextarea({
       <motion.div
         animate={{ width: formIsOpen ? "0" : "52px" }}
         className="shrink-0"
-      ></motion.div>
+      ></motion.div> */}
+      <textarea
+        value={contentToText}
+        onChange={(e) => textToObj(e.target.value)}
+        placeholder="Type something..."
+        className={cn(
+          "outline-none resize-none overflow-hidden field-sizing-content bg-primary min-h-12 max-h-60",
+          "placeholder:text-txt-primary shadow-inside px-4 py-3 rounded-3xl text-txt-primary w-full",
+        )}
+      />
     </>
   );
 }

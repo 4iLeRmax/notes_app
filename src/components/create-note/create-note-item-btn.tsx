@@ -5,23 +5,14 @@ import React from "react";
 interface CreateNoteItemBtnProps {
   addNewItem: (createAtPosition?: number) => void;
   valueLength: number;
-  listRef: React.RefObject<HTMLDivElement | null>;
 }
 
 export default function CreateNoteItemBtn({
   addNewItem,
   valueLength,
-  listRef,
 }: CreateNoteItemBtnProps) {
   const handelCreateItem = () => {
     addNewItem();
-    requestAnimationFrame(() => {
-      const last = listRef.current?.lastElementChild;
-      if (!last) return;
-      const textarea = last.querySelector("textarea");
-      if (!textarea) return;
-      textarea.focus();
-    });
   };
 
   return (

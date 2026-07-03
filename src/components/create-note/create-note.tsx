@@ -19,7 +19,10 @@ import cn from "@/lib/cn";
 import { CreateNoteSkeleton } from "../UI/skeletons";
 
 export type CreateLocalNote = Omit<TCreateNote, "content"> & {
-  content: ({ index: number } & TCreateNote["content"][number])[];
+  content: ({
+    id: string;
+    position: number;
+  } & TCreateNote["content"][number])[];
 };
 
 export default function CreateNote() {
@@ -112,6 +115,7 @@ export default function CreateNote() {
         onFocus={handleFocus}
         onBlur={handleBlur}
         animate={{ padding: formIsOpen ? "32px 0" : "16px 0" }}
+        // animate={{ padding: formIsOpen ? "32px 0" : "12.5px 0" }}
         // className="bg-secondary relative w-full sm:max-w-150 rounded-4xl shadow-outside-small outline-none select-none"
         className={cn(
           "bg-secondary relative w-full rounded-4xl shadow-outside-small outline-none select-none",
@@ -121,7 +125,7 @@ export default function CreateNote() {
           },
         )}
       >
-        <AnimatePresence mode="sync">
+        <AnimatePresence mode="sync" initial={false}>
           {formIsOpen ? (
             <motion.div
               key="header"
@@ -133,12 +137,20 @@ export default function CreateNote() {
               <h1 className="text-txt-secondary font-bold text-xl">
                 Create note
               </h1>
-              <CreateNotePinButton
-                isPinned={note.isPinned}
-                togglePin={() =>
-                  setNote((n) => ({ ...n, isPinned: !n.isPinned }))
-                }
-              />
+              <div className="flex items-center gap-4">
+                <ToggleNoteTypeButton
+                  noteType={note.type}
+                  toggleNoteType={toggleNoteType}
+                  formIsOpen={formIsOpen}
+                />
+
+                <CreateNotePinButton
+                  isPinned={note.isPinned}
+                  togglePin={() =>
+                    setNote((n) => ({ ...n, isPinned: !n.isPinned }))
+                  }
+                />
+              </div>
             </motion.div>
           ) : null}
         </AnimatePresence>
@@ -146,7 +158,7 @@ export default function CreateNote() {
         <div>
           <form onSubmit={handleSubmit} className="flex flex-col">
             <div className="flex flex-col text-txt-secondary">
-              <AnimatePresence mode="sync">
+              <AnimatePresence mode="sync" initial={false}>
                 {formIsOpen ? (
                   <motion.div
                     key="title-input"
@@ -173,7 +185,7 @@ export default function CreateNote() {
                 ) : null}
               </AnimatePresence>
 
-              <AnimatePresence mode="sync">
+              <AnimatePresence mode="sync" initial={false}>
                 {note.type === "TEXT" ? (
                   <motion.div
                     key="textarea"
@@ -183,7 +195,7 @@ export default function CreateNote() {
                       height: "auto",
                     }}
                     exit={{ opacity: 0, height: 0 }}
-                    className={cn("flex overflow-hidden", {
+                    className={cn("flex items-center gap-2 overflow-hidden", {
                       "px-4": !formIsOpen,
                       "px-4 md:px-8": formIsOpen,
                     })}
@@ -193,6 +205,16 @@ export default function CreateNote() {
                       setNote={setNote}
                       formIsOpen={formIsOpen}
                     />
+                    {!formIsOpen ? (
+                      <button
+                        className={cn(
+                          "p-2 rounded-full bg-primary shrink-0",
+                          "shadow-outside-small text-txt-primary hover:text-custom-blue",
+                        )}
+                      >
+                        <Plus size={20} />
+                      </button>
+                    ) : null}
                   </motion.div>
                 ) : (
                   <motion.div
@@ -206,14 +228,8 @@ export default function CreateNote() {
                   </motion.div>
                 )}
               </AnimatePresence>
-
-              <ToggleNoteTypeButton
-                noteType={note.type}
-                toggleNoteType={toggleNoteType}
-                formIsOpen={formIsOpen}
-              />
             </div>
-            <AnimatePresence mode="sync">
+            <AnimatePresence mode="sync" initial={false}>
               {formIsOpen ? (
                 <motion.div
                   key="submit-btn"

@@ -3,6 +3,7 @@
 import React from "react";
 import NoteViewList from "./note-view-list/note-view-list";
 import NoteViewTextarea from "./note-view-textarea";
+import { motion } from "motion/react";
 
 interface NoteViewContentProps {
   note: Note;
