@@ -43,10 +43,7 @@ export default function CreateNote() {
     isPinned: false,
   });
 
-  if (sessionIsPending) return <CreateNoteSkeleton />;
-
-  if (!sessionData) return null;
-  const userId = sessionData.session.userId;
+  // if (sessionIsPending) return <CreateNoteSkeleton />;
 
   const closeForm = () => {
     setFormIsOpen(false);
@@ -58,6 +55,7 @@ export default function CreateNote() {
   };
 
   const submit = () => {
+    if (!sessionData) return;
     if (!note.title && !note.content.some((el) => el.content.length > 0))
       return;
     addNote(
@@ -68,7 +66,7 @@ export default function CreateNote() {
           isDone: item.isDone,
         })),
       },
-      userId,
+      sessionData.session.userId,
     );
   };
 
@@ -112,11 +110,12 @@ export default function CreateNote() {
       <motion.div
         ref={containerRef}
         tabIndex={-1}
+        initial={false}
+        animate={{
+          padding: formIsOpen ? "32px 0" : "12.5px 0",
+        }}
         onFocus={handleFocus}
         onBlur={handleBlur}
-        animate={{ padding: formIsOpen ? "32px 0" : "16px 0" }}
-        // animate={{ padding: formIsOpen ? "32px 0" : "12.5px 0" }}
-        // className="bg-secondary relative w-full sm:max-w-150 rounded-4xl shadow-outside-small outline-none select-none"
         className={cn(
           "bg-secondary relative w-full rounded-4xl shadow-outside-small outline-none select-none",
           {
@@ -130,7 +129,7 @@ export default function CreateNote() {
             <motion.div
               key="header"
               initial={{ opacity: 0, height: 0, marginBottom: 0 }}
-              animate={{ opacity: 1, height: "auto", marginBottom: "16px" }}
+              animate={{ opacity: 1, height: "36px", marginBottom: "16px" }}
               exit={{ opacity: 0, height: 0, marginBottom: 0 }}
               className="flex items-center justify-between px-4 md:px-8"
             >
@@ -165,7 +164,7 @@ export default function CreateNote() {
                     initial={{ opacity: 0, height: 0, marginBottom: 0 }}
                     animate={{
                       opacity: 1,
-                      height: "auto",
+                      height: "48px",
                       marginBottom: "16px",
                     }}
                     exit={{ opacity: 0, height: 0, marginBottom: 0 }}
@@ -195,7 +194,7 @@ export default function CreateNote() {
                       height: "auto",
                     }}
                     exit={{ opacity: 0, height: 0 }}
-                    className={cn("flex items-center gap-2 overflow-hidden", {
+                    className={cn("flex items-center gap-2", {
                       "px-4": !formIsOpen,
                       "px-4 md:px-8": formIsOpen,
                     })}
@@ -207,6 +206,7 @@ export default function CreateNote() {
                     />
                     {!formIsOpen ? (
                       <button
+                        onMouseDown={() => containerRef.current?.focus()}
                         className={cn(
                           "p-2 rounded-full bg-primary shrink-0",
                           "shadow-outside-small text-txt-primary hover:text-custom-blue",
@@ -234,7 +234,7 @@ export default function CreateNote() {
                 <motion.div
                   key="submit-btn"
                   initial={{ opacity: 0, height: 0, marginTop: 0 }}
-                  animate={{ opacity: 1, height: "auto", marginTop: "16px" }}
+                  animate={{ opacity: 1, height: "48px", marginTop: "16px" }}
                   exit={{ opacity: 0, height: 0, marginTop: 0 }}
                   className="px-4 md:px-8"
                 >

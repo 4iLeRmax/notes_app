@@ -2,7 +2,7 @@
 
 import React from "react";
 import { motion } from "motion/react";
-import { noteCardColors } from "@/lib/constants";
+import { NOTE_CARD_COLORS } from "@/lib/constants";
 import cn from "@/lib/cn";
 import { useNotesStore } from "@/lib/store/useNotesStore";
 import { DropletOff } from "lucide-react";
@@ -35,11 +35,11 @@ export default function NoteColorsModal({
             Note Color
           </h1>
           <div className="w-full flex items-center overflow-x-scroll scrollbar-none snap-x snap-mandatory pb-6">
-            {noteCardColors.map((color) => (
+            {NOTE_CARD_COLORS.map((color) => (
               <div key={color} className="snap-start pl-4 last:pr-4">
                 <button
                   className={cn(
-                    "w-10 h-10 rounded-full border-3 flex items-center justify-center shrink-0 ",
+                    "w-10 h-10 rounded-full border-2 flex items-center justify-center shrink-0 ",
                     {
                       "border-txt-secondary": color === null,
                       "border-transparent":
@@ -80,7 +80,7 @@ export default function NoteColorsModal({
       >
         <div className="bg-primary shadow-outside-small rounded-3xl py-4">
           <div className="flex flex-col items-center overflow-y-scroll h-[calc(44px*6)] snap-y snap-mandatory scrollbar-thin pl-2 pr-1 ">
-            {noteCardColors.map((color) => (
+            {NOTE_CARD_COLORS.map((color) => (
               <div key={color} className="py-2 snap-start">
                 <button
                   key={color}

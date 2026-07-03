@@ -82,11 +82,7 @@ export default function SelectNote({
 
   return (
     <>
-      <motion.div
-        animate={{
-          paddingTop: note.color !== null ? "10px" : "0px",
-          background: note.color !== null ? note.color : "",
-        }}
+      <div
         data-note-card
         tabIndex={1}
         onMouseEnter={() => setIsHovered(true)}
@@ -95,35 +91,19 @@ export default function SelectNote({
         onTouchEnd={touchEnd}
         onTouchCancel={touchCancel}
         onTouchMove={touchMove}
-        className={cn(
-          "relative rounded-2xl rounded-ss-xl rounded-se-xl sm:rounded-4xl sm:rounded-ss-3xl sm:rounded-se-3xl w-full note-card",
-          {
-            // "pt-2.5": note.color !== null,
-            "shadow-outside-small sm:hover:shadow-inside": !isSelected,
-            "sm:shadow-inside": isHovered || isSelected,
-          },
-        )}
-        // style={{ background: note.color !== null ? note.color : "" }}
+        className={cn("relative rounded-2xl sm:rounded-3xl w-full note-card")}
       >
-        <AnimatePresence mode="wait">
-          {isSelected || isHovered ? (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.8 }}
-              transition={{ duration: 0.15 }}
-              className="hidden sm:flex absolute z-20 top-2.5 -left-2.5"
+        {isSelected || isHovered ? (
+          <div className="hidden sm:flex absolute z-20 top-2.5 -left-2.5">
+            <button
+              data-note-card-button
+              onClick={() => toggleSelectedNote(note.id)}
+              className="bg-custom-blue rounded-3xl shadow-outside-small p-0.5 text-primary"
             >
-              <button
-                data-note-card-button
-                onClick={() => toggleSelectedNote(note.id)}
-                className="bg-custom-blue rounded-3xl shadow-outside-small p-0.5 text-primary"
-              >
-                <Check size={16} />
-              </button>
-            </motion.div>
-          ) : null}
-        </AnimatePresence>
+              <Check size={16} />
+            </button>
+          </div>
+        ) : null}
         {hasAnySelected ? (
           <div
             className={cn(
@@ -135,15 +115,10 @@ export default function SelectNote({
             onClick={() => toggleSelectedNote(note.id)}
           />
         ) : null}
+        {/* <div className="absolute top-0 left-0 bg-amber-500 w-full h-10 -z-20 rounded-ss-2xl rounded-se-2xl sm:rounded-ss-3xl sm:rounded-se-3xl"></div> */}
 
-        <div
-          className={cn("bg-secondary rounded-xl sm:rounded-3xl", {
-            "sm:shadow-inside": isHovered,
-          })}
-        >
-          {children}
-        </div>
-      </motion.div>
+        {children}
+      </div>
     </>
   );
 }

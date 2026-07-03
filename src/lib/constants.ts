@@ -27,7 +27,7 @@ export const LABEL_LIMITS = {
 //   "#ffce1b",
 //   "#ff4544",
 // ];
-export const noteCardColors = [
+export const NOTE_CARD_COLORS = [
   null,
   // "#8FB78F",
   // "#CBE6C7",

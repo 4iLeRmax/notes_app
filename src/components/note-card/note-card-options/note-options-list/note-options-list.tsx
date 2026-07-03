@@ -63,6 +63,7 @@ export default function NoteOptionsList({
           onClick={() => {
             // console.log("todo/text");
             toggleNoteTypes([noteId]);
+            handleClose();
           }}
           icon={
             noteType === "TEXT" ? (
@@ -88,7 +89,10 @@ export default function NoteOptionsList({
         <NoteColors noteId={noteId} />
 
         <NoteOptionsListItem
-          onClick={() => addCopies([noteId])}
+          onClick={() => {
+            addCopies([noteId]);
+            handleClose();
+          }}
           icon={<Files size={20} className="flex xs:hidden" />}
         >
           Create copy
@@ -103,13 +107,19 @@ export default function NoteOptionsList({
         {noteType === "TODO" ? (
           <>
             <NoteOptionsListItem
-              onClick={() => unmarkedAllItems(noteId)}
+              onClick={() => {
+                unmarkedAllItems(noteId);
+                handleClose();
+              }}
               icon={<SquareX size={20} className="flex xs:hidden" />}
             >
               Unmarked all items
             </NoteOptionsListItem>
             <NoteOptionsListItem
-              onClick={() => deleteMarkedItems(noteId)}
+              onClick={() => {
+                deleteMarkedItems(noteId);
+                handleClose();
+              }}
               icon={<ListX size={20} className="flex xs:hidden" />}
             >
               Delete marked items
@@ -120,6 +130,7 @@ export default function NoteOptionsList({
           onClick={() => {
             vibrate([20, 30, 20]);
             removeNotes([noteId]);
+            handleClose();
             // closeNote();
           }}
           icon={<Trash size={20} className="flex xs:hidden" />}

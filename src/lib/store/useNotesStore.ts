@@ -723,6 +723,8 @@ export const useNotesStore = create<NotesState>((set, get) => ({
     if (!prevNote) return;
     const prevColor = prevNote.color;
 
+    if (prevColor === newColor) return;
+
     const { data: safeColor, success: validColor } =
       NoteColorScheme.safeParse(newColor);
     if (!validColor) return;
@@ -918,7 +920,7 @@ export const useNotesStore = create<NotesState>((set, get) => ({
       labels: [optimisticLabel, ...state.labels].sort(
         (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
       ),
-      // isPending: true,
+      isPending: true,
     }));
 
     try {
@@ -926,13 +928,14 @@ export const useNotesStore = create<NotesState>((set, get) => ({
     } catch {
       set((state) => ({
         labels: state.labels.filter((label) => label.id !== optimisticLabel.id),
+        isPending: false,
       }));
       toast.error(
         TOAST_ERRORS.addLabel.title,
         TOAST_ERRORS.addLabel.description,
       );
     } finally {
-      // set({ isPending: false });
+      set({ isPending: false });
     }
   },
   removeLabel: async (labelId) => {

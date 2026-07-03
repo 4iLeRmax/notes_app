@@ -25,9 +25,9 @@ export default function NoteOptions({ noteId, fixed }: NoteOptionsProps) {
     setShowLabel(false);
   };
 
-  useEffect(() => {
-    if (isPending) handleClose();
-  }, [isPending]);
+  // useEffect(() => {
+  //   if (isPending) handleClose();
+  // }, [isPending]);
 
   const toggleOpen = () => {
     vibrate(10);
