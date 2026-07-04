@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "motion/react";
 import React, { useEffect, useRef, useState } from "react";
 import NoteColorsModal from "./note-colors-modal";
 import cn from "@/lib/cn";
+import NoteColorsBtn from "./note-colors-btn";
 
 interface NoteColorsProps {
   noteId: string;
@@ -33,31 +34,11 @@ export default function NoteColors({ noteId }: NoteColorsProps) {
 
   return (
     <>
-      <button
-        ref={buttonRef}
-        onClick={handleToggle}
-        className={cn(
-          " w-full flex items-center justify-between gap-2",
-          "px-4 py-2 ",
-          {
-            "hover:bg-custom-blue text-txt-primary hover:text-primary":
-              !showColors,
-            "text-primary bg-custom-blue": showColors,
-          },
-        )}
-      >
-        <div className="flex items-center gap-2">
-          <Palette size={20} className="flex xs:hidden" />
-          <span>Add color</span>
-        </div>
-        <motion.div
-          animate={{
-            rotate: showColors ? 180 : 0,
-          }}
-        >
-          <ChevronRight size={20} />
-        </motion.div>
-      </button>
+      <NoteColorsBtn
+        buttonRef={buttonRef}
+        isOpen={showColors}
+        handleToggle={handleToggle}
+      />
       <AnimatePresence>
         {showColors ? (
           <NoteColorsModal modalXPosition={modalXPosition} note={currentNote} />

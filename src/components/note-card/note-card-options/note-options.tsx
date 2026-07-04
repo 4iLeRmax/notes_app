@@ -18,16 +18,10 @@ export default function NoteOptions({ noteId, fixed }: NoteOptionsProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [showLabel, setShowLabel] = useState(false);
 
-  const isPending = useNotesStore((s) => s.isPending);
-
   const handleClose = () => {
     setIsOpen(false);
     setShowLabel(false);
   };
-
-  // useEffect(() => {
-  //   if (isPending) handleClose();
-  // }, [isPending]);
 
   const toggleOpen = () => {
     vibrate(10);
