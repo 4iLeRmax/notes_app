@@ -1,6 +1,5 @@
 "use client";
 
-import Note from "./note";
 import ViewModeLayout from "../notes-view-mode/wrappers/view-mode-layout";
 import ViewModeNoteCard from "../notes-view-mode/wrappers/view-mode-note-card";
 import { AnimatePresence } from "motion/react";
