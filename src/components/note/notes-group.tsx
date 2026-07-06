@@ -8,6 +8,7 @@ import BaseModal from "../UI/base-modal";
 import NoteView from "../note-view/note-view";
 import { useState } from "react";
 import NoteCard from "../note-card/note-card";
+import useNoteModal from "@/hooks/useNoteModal";
 
 interface NotesGroupProps {
   label: string;
@@ -16,11 +17,13 @@ interface NotesGroupProps {
 
 export default function NotesGroup({ notes, label }: NotesGroupProps) {
   const [activeNoteId, setActiveNoteId] = useState("");
-
   const currentNote = notes.find((n) => n.id === activeNoteId);
 
+  useNoteModal(activeNoteId, (activeNoteId: string) =>
+    setActiveNoteId(activeNoteId),
+  );
+
   if (notes.length === 0) return null;
-  // if (!currentNote) return null;
 
   return (
     <>
@@ -32,7 +35,6 @@ export default function NotesGroup({ notes, label }: NotesGroupProps) {
           {notes.map((note) => (
             <ViewModeNoteCard key={note.id}>
               <div className="break-inside-avoid w-full">
-                {/* <Note note={note} /> */}
                 <NoteCard
                   note={note}
                   handleOpen={() => setActiveNoteId(note.id)}

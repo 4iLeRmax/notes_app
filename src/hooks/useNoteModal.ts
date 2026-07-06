@@ -1,7 +1,10 @@
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 
-export default function useNoteModal() {
+export default function useNoteModal(
+  activeNoteId: string,
+  setActiveNoteId: (activeNoteId: string) => void,
+) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -22,7 +25,14 @@ export default function useNoteModal() {
     router.push(query ? `${pathname}?${query}` : pathname, { scroll: false });
   }, [router, pathname, searchParams]);
 
-  const activeNoteId = searchParams.get("noteId");
+  useEffect(() => {
+    const noteId = searchParams.get("noteId");
+    if (noteId) setActiveNoteId(noteId);
+    else setActiveNoteId("");
+  }, [searchParams]);
 
-  return { activeNoteId, openNote, closeNote };
+  useEffect(() => {
+    if (activeNoteId !== "") openNote(activeNoteId);
+    else closeNote();
+  }, [activeNoteId]);
 }

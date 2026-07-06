@@ -43,7 +43,7 @@ function SelectNotesOptions({ noteIds }: NoteMoreMenu) {
             className={cn(
               " p-2 outline-none rounded-full transition-colors bg-secondary",
               {
-                "shadow-outside-small text-txt-primary hover:text-custom-blue":
+                "shadow-outside text-txt-primary hover:text-custom-blue":
                   !isOpen,
                 "shadow-inside text-custom-blue": isOpen,
               },

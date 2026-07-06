@@ -24,6 +24,10 @@ function Search() {
     };
   }, [isOpen, searchValue]);
 
+  useEffect(() => {
+    if (searchValue !== "") setIsOpen(true);
+  }, []);
+
   const toggleOpen = () => {
     if (isOpen) clearSearch();
     setIsOpen((p) => !p);
