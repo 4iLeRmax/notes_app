@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import CreateNoteListItem from "./create-note-list-item";
 import CreateNoteItemBtn from "./create-note-item-btn";
 import { AnimatePresence, motion, Reorder } from "motion/react";
@@ -20,7 +20,7 @@ export default function CreateNoteList({
   const [pendingFocusId, setPendingFocusId] = React.useState<string | null>(
     null,
   );
-  const clearPendingFocusId = () => setPendingFocusId(null); // NEW
+  const clearPendingFocusId = useCallback(() => setPendingFocusId(null), []);
 
   const handleChangeItem = (targetValue: string, itemId: string) => {
     setNote((n) => ({
@@ -80,20 +80,53 @@ export default function CreateNoteList({
     }));
   };
 
-  const [liveOrder, setLiveOrder] = React.useState(content);
+  // const [liveOrder, setLiveOrder] = useState(content);
+
+  // useEffect(() => {
+  //   setLiveOrder(content);
+  // }, [content]);
+
+  // const handleReorder = (newOrder: CreateLocalNote["content"]) => {
+  //   setLiveOrder(newOrder);
+  // };
+
+  // const handleDragEnd = () => {
+  //   setNote((n) => ({
+  //     ...n,
+  //     content: liveOrder.map((item, i) => ({ ...item, position: i })),
+  //   }));
+  // };
+
+  const [order, setOrder] = useState(content.map((item) => item.id));
 
   useEffect(() => {
-    setLiveOrder(content);
+    const newOrder = content.map((el) => el.id);
+
+    setOrder((prevOrder) => {
+      const sameSet =
+        prevOrder.length === newOrder.length &&
+        prevOrder.every((id) => newOrder.includes(id));
+
+      if (sameSet) return prevOrder;
+      return newOrder;
+    });
   }, [content]);
 
+  const orderedItems = order
+    .map((id) => content.find((item) => item.id === id))
+    .filter((item) => !!item);
+
   const handleReorder = (newOrder: CreateLocalNote["content"]) => {
-    setLiveOrder(newOrder);
+    setOrder(newOrder.map((item) => item.id));
   };
 
   const handleDragEnd = () => {
     setNote((n) => ({
       ...n,
-      content: liveOrder.map((item, i) => ({ ...item, position: i })),
+      content: order
+        .map((id) => n.content.find((item) => item.id === id))
+        .filter((item) => !!item)
+        .map((item, i) => ({ ...item, position: i })),
     }));
   };
 
@@ -116,12 +149,12 @@ export default function CreateNoteList({
           >
             <Reorder.Group
               axis="y"
-              values={liveOrder}
+              values={orderedItems}
               onReorder={handleReorder}
               as="div"
             >
               <AnimatePresence mode="popLayout">
-                {liveOrder.map((item) => (
+                {orderedItems.map((item) => (
                   <Reorder.Item
                     key={item.id}
                     value={item}
@@ -141,8 +174,8 @@ export default function CreateNoteList({
                       handleChangeItem={handleChangeItem}
                       toggleItemStatus={toggleItemStatus}
                       listRef={listRef}
-                      pendingFocusId={pendingFocusId} // NEW
-                      clearPendingFocusId={clearPendingFocusId} // NEW
+                      pendingFocusId={pendingFocusId}
+                      clearPendingFocusId={clearPendingFocusId}
                     />
                   </Reorder.Item>
                 ))}

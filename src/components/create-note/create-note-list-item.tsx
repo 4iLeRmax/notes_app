@@ -5,12 +5,10 @@ import {
   SquareCheck,
   X,
 } from "lucide-react";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { CreateLocalNote } from "./create-note";
-import { motion, AnimatePresence } from "motion/react";
 import CreateNoteListItemStatusBtn from "./create-note-list-item-status-btn";
 import CreateNoteListItemDeleteBtn from "./create-note-list-item-delete-btn";
-import { flushSync } from "react-dom";
 
 interface CreateNoteListItemProps {
   item: CreateLocalNote["content"][number];
@@ -32,13 +30,12 @@ export default function CreateNoteListItem({
   handleChangeItem,
   listRef,
 
-  pendingFocusId, // NEW
-  clearPendingFocusId, // NEW
+  pendingFocusId,
+  clearPendingFocusId,
 }: CreateNoteListItemProps) {
-  const textareaRef = useRef<HTMLTextAreaElement>(null); // NEW
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    // NEW
     if (pendingFocusId === item.id) {
       textareaRef.current?.focus();
       clearPendingFocusId();
@@ -119,7 +116,7 @@ export default function CreateNoteListItem({
           />
           <textarea
             id={item.id}
-            ref={textareaRef} // NEW
+            ref={textareaRef}
             value={item.content}
             onChange={(e) => handleChangeItem(e.target.value, item.id)}
             placeholder="Type something..."

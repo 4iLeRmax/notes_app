@@ -58,7 +58,10 @@ export default function NoteOptionsList({
 
   return (
     <>
-      <div className="flex flex-col items-start gap-2 xs:gap-0 py-4 xs:py-0">
+      <div
+        className="flex flex-col items-start gap-2 xs:gap-0 py-4 xs:py-0"
+        translate="no"
+      >
         <NoteOptionsListItem
           onClick={() => {
             // console.log("todo/text");

@@ -93,13 +93,17 @@ interface NotesState {
   toggleNoteLabel: (noteId: string, labelId: string) => Promise<void>;
 }
 
+const reorderSeq = new Map<string, number>();
+
 export const useNotesStore = create<NotesState>((set, get) => ({
   notes: [],
   labels: [],
   isPending: false,
-  focusedItemId: null,
+
   isHydratedNote: false,
   isHydratedLabel: false,
+
+  focusedItemId: null,
 
   setNotes: (notes) => set({ notes, isHydratedNote: true }),
   setFocusedItemId: (id) => set({ focusedItemId: id }),
@@ -199,62 +203,6 @@ export const useNotesStore = create<NotesState>((set, get) => ({
   },
 
   // Note Item
-  // addNoteItem: async (noteId) => {
-  //   const prevNote = get().notes.find((note) => note.id === noteId);
-  //   if (!prevNote) return;
-  //   if (prevNote.content.length >= NOTE_LIMITS[prevNote.type].maxItems) return;
-
-  //   const sortedContent = [...prevNote.content].sort(
-  //     (a, b) => a.position - b.position,
-  //   );
-
-  //   const noteItemId = crypto.randomUUID();
-  //   const itemPosition =
-  //     sortedContent.length > 0
-  //       ? sortedContent[sortedContent.length - 1].position + 1
-  //       : 0;
-
-  //   const optimisticNoteItem: NoteItem = {
-  //     id: noteItemId,
-  //     noteId,
-  //     content: "",
-  //     isDone: false,
-  //     position: itemPosition,
-  //     createdAt: new Date(),
-  //     updatedAt: new Date(),
-  //   };
-
-  //   set((state) => ({
-  //     notes: state.notes.map((note) =>
-  //       note.id === noteId
-  //         ? { ...note, content: [...note.content, optimisticNoteItem] }
-  //         : note,
-  //     ),
-  //     isPending: true,
-  //   }));
-
-  //   try {
-  //     await createNoteItem(noteId, optimisticNoteItem, undefined);
-  //   } catch {
-  //     set((state) => ({
-  //       notes: state.notes.map((note) =>
-  //         note.id === noteId
-  //           ? {
-  //               ...note,
-  //               content: note.content.filter(
-  //                 (item) => item.id !== optimisticNoteItem.id,
-  //               ),
-  //             }
-  //           : note,
-  //       ),
-  //       isPending: false,
-  //     }));
-  //   } finally {
-  //     set({ isPending: false });
-  //   }
-
-  //   return optimisticNoteItem;
-  // },
   addNoteItem: async (noteId, createAtPosition) => {
     const prevNote = get().notes.find((note) => note.id === noteId);
     if (!prevNote) return;
@@ -573,6 +521,9 @@ export const useNotesStore = create<NotesState>((set, get) => ({
       return;
     }
 
+    const seq = (reorderSeq.get(noteId) ?? 0) + 1;
+    reorderSeq.set(noteId, seq);
+
     set((state) => ({
       notes: [
         ...state.notes.map((note) =>
@@ -590,18 +541,23 @@ export const useNotesStore = create<NotesState>((set, get) => ({
     try {
       await updateNoteItemsPositions(noteId, lightWeightItems);
     } catch {
-      set((state) => ({
-        notes: [
-          ...state.notes.map((note) =>
-            note.id === noteId ? { ...note, content: prevNote.content } : note,
-          ),
-        ],
-        isPending: false,
-      }));
+      if (reorderSeq.get(noteId) === seq) {
+        set((state) => ({
+          notes: [
+            ...state.notes.map((note) =>
+              note.id === noteId
+                ? { ...note, content: prevNote.content }
+                : note,
+            ),
+          ],
+          isPending: false,
+        }));
+      }
     } finally {
       set({ isPending: false });
     }
   },
+
   // Note Options
   toggleNoteTypes: async (noteIds) => {
     const prevNotes = get().notes;

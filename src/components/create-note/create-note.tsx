@@ -16,7 +16,6 @@ import { TCreateNote } from "@/lib/zod-schemes/note-schemes/create-note.scheme";
 import { authClient } from "@/lib/auth-client";
 import useViewModeStore, { ViewMode } from "@/lib/store/useViewModeStore";
 import cn from "@/lib/cn";
-import { CreateNoteSkeleton } from "../UI/skeletons";
 
 export type CreateLocalNote = Omit<TCreateNote, "content"> & {
   content: ({
