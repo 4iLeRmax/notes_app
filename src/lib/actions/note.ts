@@ -7,15 +7,7 @@ import {
   NoteTitleScheme,
   NoteTypeScheme,
 } from "../zod-schemes/basic-schemes";
-import { revalidatePath } from "next/cache";
 import { cache } from "react";
-import encrypt from "../encryption/encrypt";
-import {
-  decryptNote,
-  encryptContent,
-  encryptCreateContent,
-} from "../encryption/encryption-helpers";
-import decrypt from "../encryption/decrypt";
 import z from "zod";
 import {
   CreateNoteScheme,
@@ -28,6 +20,12 @@ import {
   TEXTNoteItemScheme,
 } from "../zod-schemes/note-schemes/note-item-scheme";
 import { NOTE_LIMITS } from "../constants";
+import {
+  decryptDek,
+  decryptField,
+  encryptField,
+} from "../encryption/encryption";
+import { decryptNote, encryptContent } from "../encryption/encryption-helpers";
 
 export const getAllNotes = cache(async () => {
   console.log("getAllNotes");
@@ -35,6 +33,10 @@ export const getAllNotes = cache(async () => {
   if (!session) throw new Error(NoteActionErrors.UNAUTHORIZED);
 
   try {
+    const encryptedDek = session.user.encryptedDek;
+    const kekVersion = session.user.kekVersion;
+    const dek = decryptDek(encryptedDek, kekVersion);
+
     const notes = await prisma.note.findMany({
       where: {
         userId: session.session.userId,
@@ -52,13 +54,13 @@ export const getAllNotes = cache(async () => {
       },
     });
 
-    const decryptedNotes = notes.map((note) => decryptNote(note));
+    const decryptedNotes = notes.map((note) => decryptNote(note, dek));
 
     return decryptedNotes;
   } catch (err) {
     throw new Error(NoteActionErrors.FETCH_NOTES_FAILED);
   }
-}); //+
+});
 
 export const getNoteById = cache(async (noteId: string) => {
   console.log("getNoteById");
@@ -71,6 +73,10 @@ export const getNoteById = cache(async (noteId: string) => {
   const { data: safeNoteId } = safeNoteIdData;
 
   try {
+    const encryptedDek = session.user.encryptedDek;
+    const kekVersion = session.user.kekVersion;
+    const dek = decryptDek(encryptedDek, kekVersion);
+
     const note = await prisma.note.findUnique({
       where: {
         id: safeNoteId,
@@ -88,13 +94,13 @@ export const getNoteById = cache(async (noteId: string) => {
 
     if (!note) throw new Error(NoteActionErrors.NOTE_NOT_FOUND);
 
-    const decryptedNote = decryptNote(note);
+    const decryptedNote = decryptNote(note, dek);
 
     return decryptedNote;
   } catch {
     throw new Error(NoteActionErrors.FETCH_NOTES_FAILED);
   }
-}); //+
+});
 
 export const getAllNotesByLabelId = cache(async (labelId: string) => {
   console.log("getAllNotesByLabelId");
@@ -107,6 +113,10 @@ export const getAllNotesByLabelId = cache(async (labelId: string) => {
   const { data: safeLabelId } = safeLabelIdData;
 
   try {
+    const encryptedDek = session.user.encryptedDek;
+    const kekVersion = session.user.kekVersion;
+    const dek = decryptDek(encryptedDek, kekVersion);
+
     const notes = await prisma.note.findMany({
       where: {
         labels: { some: { id: safeLabelId } },
@@ -115,11 +125,11 @@ export const getAllNotesByLabelId = cache(async (labelId: string) => {
       include: { content: true, labels: true },
     });
 
-    return notes.map((note) => decryptNote(note));
+    return notes.map((note) => decryptNote(note, dek));
   } catch {
     throw new Error(NoteActionErrors.FETCH_NOTES_FAILED);
   }
-}); //+
+});
 
 export const createNote = async (note: TCreateNote, noteId: string) => {
   console.log("createNote");
@@ -136,12 +146,16 @@ export const createNote = async (note: TCreateNote, noteId: string) => {
   const { data: safeNoteId } = safeNoteIdData;
 
   try {
+    const encryptedDek = session.user.encryptedDek;
+    const kekVersion = session.user.kekVersion;
+    const dek = decryptDek(encryptedDek, kekVersion);
+
     const { title, content, type, isPinned } = safeData.data;
 
     const cleanContent =
       type === "TODO" ? content.filter((item) => item.content !== "") : content;
 
-    const encryptedContent = encryptCreateContent(cleanContent);
+    const encryptedContent = encryptContent(cleanContent, dek);
 
     const notesCount = await prisma.note.count({
       where: { userId: session.session.userId },
@@ -154,7 +168,7 @@ export const createNote = async (note: TCreateNote, noteId: string) => {
     const note = await prisma.note.create({
       data: {
         id: safeNoteId,
-        title: encrypt(title),
+        title: encryptField(title, dek),
         type,
         isPinned,
         userId: session.session.userId,
@@ -173,12 +187,12 @@ export const createNote = async (note: TCreateNote, noteId: string) => {
       },
     });
 
-    return decryptNote(note);
+    return decryptNote(note, dek);
   } catch (error) {
     throw new Error(NoteActionErrors.CREATE_NOTE_FAILED);
   }
   // revalidatePath("/notes");
-}; //+
+};
 
 export const deleteNotes = async (noteIds: string[]) => {
   console.log("deleteNotes");
@@ -205,7 +219,7 @@ export const deleteNotes = async (noteIds: string[]) => {
 
   // revalidatePath("/notes");
   // safeNoteIds.forEach((noteId) => revalidatePath(`/notes/${noteId}`));
-}; //+
+};
 
 export const toggleManyNoteTypes = async (
   noteIds: string[],
@@ -226,30 +240,39 @@ export const toggleManyNoteTypes = async (
   const { data: safeNewType } = safeNoteTypeData;
 
   if (safeNewType === "TODO") {
-    const notes = await prisma.note.findMany({
-      where: { id: { in: safeNoteIds }, userId: session.session.userId },
-      select: {
-        id: true,
-        content: {
-          select: { content: true },
+    try {
+      const encryptedDek = session.user.encryptedDek;
+      const kekVersion = session.user.kekVersion;
+      const dek = decryptDek(encryptedDek, kekVersion);
+
+      const notes = await prisma.note.findMany({
+        where: { id: { in: safeNoteIds }, userId: session.session.userId },
+        select: {
+          id: true,
+          content: {
+            select: { content: true },
+          },
         },
-      },
-    });
+      });
 
-    const nonConvertible = notes.filter((note) => {
-      const totalChars = note.content.reduce(
-        (sum, item) => sum + decrypt(item.content).length,
-        0,
-      );
-      const anyItemTooLong = note.content.some(
-        (item) =>
-          decrypt(item.content).length > NOTE_LIMITS.TODO.maxCharsPerItem,
-      );
+      const nonConvertible = notes.filter((note) => {
+        const totalChars = note.content.reduce(
+          (sum, item) => sum + decryptField(item.content, dek).length,
+          0,
+        );
+        const anyItemTooLong = note.content.some(
+          (item) =>
+            decryptField(item.content, dek).length >
+            NOTE_LIMITS.TODO.maxCharsPerItem,
+        );
 
-      return totalChars > NOTE_LIMITS.TODO.totalChars || anyItemTooLong;
-    });
-    if (nonConvertible.length > 0)
-      throw new Error(NoteActionErrors.NOTES_EXCEED_TODO_LIMITS);
+        return totalChars > NOTE_LIMITS.TODO.totalChars || anyItemTooLong;
+      });
+      if (nonConvertible.length > 0)
+        throw new Error(NoteActionErrors.NOTES_EXCEED_TODO_LIMITS);
+    } catch {
+      throw new Error(NoteActionErrors.TOGGLE_MANY_TYPES_FAILED);
+    }
   }
 
   try {
@@ -266,7 +289,7 @@ export const toggleManyNoteTypes = async (
   }
 
   // revalidatePath("/notes");
-}; //+
+};
 
 export const togglePinStatus = async (
   noteId: string,
@@ -301,7 +324,7 @@ export const togglePinStatus = async (
   }
 
   // revalidatePath("/notes");
-}; //+
+};
 
 export const updateNoteTitle = async (noteId: string, newTitle: string) => {
   console.log("updateNoteTitle");
@@ -319,9 +342,13 @@ export const updateNoteTitle = async (noteId: string, newTitle: string) => {
   const { data: safeNoteId } = safeNoteIdData;
 
   try {
+    const encryptedDek = session.user.encryptedDek;
+    const kekVersion = session.user.kekVersion;
+    const dek = decryptDek(encryptedDek, kekVersion);
+
     await prisma.note.update({
       where: { id: safeNoteId },
-      data: { title: encrypt(safeTitle) },
+      data: { title: encryptField(safeTitle, dek) },
     });
   } catch {
     throw new Error(NoteActionErrors.UPDATE_TITLE_FAILED);
@@ -329,7 +356,7 @@ export const updateNoteTitle = async (noteId: string, newTitle: string) => {
 
   // revalidatePath("/notes");
   // revalidatePath(`/notes/${safeNoteId}`);
-}; //+
+};
 
 export const updateNoteText = async (noteId: string, content: NoteItem[]) => {
   console.log("updateNoteText");
@@ -361,12 +388,16 @@ export const updateNoteText = async (noteId: string, content: NoteItem[]) => {
     throw new Error(NoteActionErrors.NOTE_TOTAL_CHARS_LIMIT);
 
   try {
+    const encryptedDek = session.user.encryptedDek;
+    const kekVersion = session.user.kekVersion;
+    const dek = decryptDek(encryptedDek, kekVersion);
+
     await prisma.$transaction([
       prisma.noteItem.deleteMany({ where: { noteId: safeNoteId } }),
       prisma.noteItem.createMany({
         data: safeContent.map((item) => ({
           ...item,
-          content: encrypt(item.content),
+          content: encryptField(item.content, dek),
         })),
       }),
     ]);
@@ -376,7 +407,7 @@ export const updateNoteText = async (noteId: string, content: NoteItem[]) => {
 
   // revalidatePath("/notes");
   // revalidatePath(`/notes/${safeNoteId}`);
-}; //+
+};
 
 export const createCopies = async (copies: Note[]) => {
   console.log("createCopies");
@@ -396,12 +427,16 @@ export const createCopies = async (copies: Note[]) => {
     throw new Error(NoteActionErrors.NOTE_LIMIT_EXCEEDED);
 
   try {
+    const encryptedDek = session.user.encryptedDek;
+    const kekVersion = session.user.kekVersion;
+    const dek = decryptDek(encryptedDek, kekVersion);
+
     await prisma.$transaction(
       safeCopies.map((note) =>
         prisma.note.create({
           data: {
             id: note.id,
-            title: encrypt(note.title),
+            title: encryptField(note.title, dek),
             userId: session.session.userId,
             isPinned: note.isPinned,
             color: note.color,
@@ -409,7 +444,7 @@ export const createCopies = async (copies: Note[]) => {
             content: {
               createMany: {
                 data: note.content.map((item) => ({
-                  content: encrypt(item.content),
+                  content: encryptField(item.content, dek),
                   isDone: item.isDone,
                   position: item.position,
                 })),
@@ -427,7 +462,7 @@ export const createCopies = async (copies: Note[]) => {
   }
 
   // revalidatePath("/notes");
-}; //+
+};
 
 export const updateColor = async (noteId: string, newColor: string | null) => {
   console.log("updateColor");

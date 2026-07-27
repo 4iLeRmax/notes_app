@@ -148,7 +148,7 @@ export const useNotesStore = create<NotesState>((set, get) => ({
     }));
 
     try {
-      const createdNote = await createNote(data, noteId);
+      const createdNote = await createNote(safeData, noteId);
 
       set((state) => ({
         notes: state.notes.map((note) =>

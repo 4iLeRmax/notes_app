@@ -1,51 +1,54 @@
-import { TCreateNote } from "../zod-schemes/note-schemes/create-note.scheme";
-import decrypt from "./decrypt";
-import encrypt from "./encrypt";
+import { decryptField, encryptField } from "./encryption";
 
-type TCreateContent = TCreateNote["content"];
-
-export const encryptNote = (note: Note) => {
+//NOTE
+export const encryptNote = (note: Note, dek: Buffer) => {
   return {
     ...note,
-    title: encrypt(note.title),
-    content: encryptContent(note.content),
-    labels: encryptLabels(note.labels),
+    title: encryptField(note.title, dek),
+    content: encryptContent(note.content, dek),
+    labels: encryptLabels(note.labels, dek),
   };
 };
-export const decryptNote = (encryptedNote: Note) => {
+export const decryptNote = (encryptedNote: Note, dek: Buffer) => {
   return {
     ...encryptedNote,
-    title: decrypt(encryptedNote.title),
-    content: decryptContent(encryptedNote.content),
-    labels: decryptLabels(encryptedNote.labels),
+    title: decryptField(encryptedNote.title, dek),
+    content: decryptContent(encryptedNote.content, dek),
+    labels: decryptLabels(encryptedNote.labels, dek),
   };
 };
 
-export const encryptContent = (content: NoteItem[]) => {
-  return content.map((item) => ({ ...item, content: encrypt(item.content) }));
-};
-export const decryptContent = (encryptedContent: NoteItem[]) => {
-  return encryptedContent.map((item) => ({
+// CONTENT
+export function encryptContent<T extends { content: NoteItem["content"] }>(
+  content: T[],
+  dek: Buffer,
+): T[] {
+  return content.map((item) => ({
     ...item,
-    content: decrypt(item.content),
+    content: encryptField(item.content, dek),
   }));
-};
-export const encryptCreateContent = (content: TCreateContent) => {
-  return content.map((item) => ({ ...item, content: encrypt(item.content) }));
-};
-export const decryptCreateContent = (encryptedContent: TCreateContent) => {
-  return encryptedContent.map((item) => ({
-    ...item,
-    content: decrypt(item.content),
-  }));
-};
+}
 
-export const encryptLabels = (labels: Label[]) => {
-  return labels.map((item) => ({ ...item, name: encrypt(item.name) }));
+export function decryptContent<T extends { content: NoteItem["content"] }>(
+  encryptedContent: T[],
+  dek: Buffer,
+): T[] {
+  return encryptedContent.map((item) => ({
+    ...item,
+    content: decryptField(item.content, dek),
+  }));
+}
+
+//LABELS
+export const encryptLabels = (labels: Label[], dek: Buffer) => {
+  return labels.map((item) => ({
+    ...item,
+    name: encryptField(item.name, dek),
+  }));
 };
-export const decryptLabels = (encryptedLabels: Label[]) => {
+export const decryptLabels = (encryptedLabels: Label[], dek: Buffer) => {
   return encryptedLabels.map((item) => ({
     ...item,
-    name: decrypt(item.name),
+    name: decryptField(item.name, dek),
   }));
 };

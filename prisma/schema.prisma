@@ -71,6 +71,9 @@ model User {
   notes         Note[]
   labels        Label[]
 
+  encryptedDek String
+  kekVersion   Int    @default(1)
+
   @@unique([email])
   @@map("user")
 }

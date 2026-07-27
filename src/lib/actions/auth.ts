@@ -21,7 +21,7 @@ import {
   ResetPasswordScheme,
   TResetPassword,
 } from "../zod-schemes/auth-schemes/reset-password-scheme";
-import { APIError, success } from "better-auth";
+import { APIError } from "better-auth";
 import sha256 from "../SHA256";
 import { EmailScheme } from "../zod-schemes/basic-schemes";
 
@@ -133,25 +133,6 @@ export const SignOutAction = async () => {
     console.log("Error during sign out:", err);
   }
   redirect("/sign-in");
-};
-
-export const signinActionWithGoogle = async () => {
-  const data = await auth.api.signInSocial({
-    body: {
-      provider: "google",
-      callbackURL: "/notes",
-    },
-    headers: await headers(),
-  });
-};
-
-export const signinActionWithFacebook = async () => {
-  const data = await auth.api.signInSocial({
-    body: {
-      provider: "facebook",
-      callbackURL: "/notes",
-    },
-  });
 };
 
 export const findAccountAction = async (formData: TFindAccount) => {

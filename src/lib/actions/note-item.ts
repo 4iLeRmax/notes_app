@@ -1,14 +1,17 @@
 "use server";
 
 import prisma from "../prisma";
-import encrypt from "../encryption/encrypt";
 import { getSession } from "./auth";
 import { NoteActionErrors, NoteItemActionErrors } from "./errors";
 import { TODONoteItemScheme } from "../zod-schemes/note-schemes/note-item-scheme";
 import { NOTE_LIMITS } from "../constants";
-import decrypt from "../encryption/decrypt";
 import { NoteItemPositionScheme } from "../zod-schemes/basic-schemes";
 import z from "zod";
+import {
+  decryptDek,
+  decryptField,
+  encryptField,
+} from "../encryption/encryption";
 
 export const createNoteItem = async (newNoteItem: NoteItem) => {
   console.log("createNoteItem");
@@ -30,6 +33,10 @@ export const createNoteItem = async (newNoteItem: NoteItem) => {
     throw new Error(NoteItemActionErrors.NOTE_ITEM_LIMIT);
 
   try {
+    const encryptedDek = session.user.encryptedDek;
+    const kekVersion = session.user.kekVersion;
+    const dek = decryptDek(encryptedDek, kekVersion);
+
     await prisma.noteItem.updateMany({
       where: {
         noteId: safeNewNoteItem.noteId,
@@ -42,7 +49,7 @@ export const createNoteItem = async (newNoteItem: NoteItem) => {
     await prisma.noteItem.create({
       data: {
         ...safeNewNoteItem,
-        content: encrypt(safeNewNoteItem.content),
+        content: encryptField(safeNewNoteItem.content, dek),
       },
     });
   } catch (error) {
@@ -105,6 +112,10 @@ export const updateNoteItem = async (
   const session = await getSession();
   if (!session) throw new Error(NoteItemActionErrors.UNAUTHORIZED);
 
+  const encryptedDek = session.user.encryptedDek;
+  const kekVersion = session.user.kekVersion;
+  const dek = decryptDek(encryptedDek, kekVersion);
+
   const safeNoteIdData = z.uuid().safeParse(noteId);
   if (!safeNoteIdData.success)
     throw new Error(NoteActionErrors.INVALID_NOTE_ID);
@@ -131,7 +142,7 @@ export const updateNoteItem = async (
   });
 
   const currentTotal = items.reduce(
-    (sum, item) => sum + decrypt(item.content).length,
+    (sum, item) => sum + decryptField(item.content, dek).length,
     0,
   );
   const existingItem = items.find((item) => item.id === safeNoteItemId);
@@ -139,7 +150,7 @@ export const updateNoteItem = async (
 
   const projectedTotal =
     currentTotal -
-    (decrypt(existingItem.content).length ?? 0) +
+    (decryptField(existingItem.content, dek).length ?? 0) +
     safeText.length;
 
   // total chars max
@@ -153,7 +164,7 @@ export const updateNoteItem = async (
         id: safeNoteItemId,
       },
       data: {
-        content: encrypt(safeText),
+        content: encryptField(safeText, dek),
       },
     });
 

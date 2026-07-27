@@ -6,6 +6,7 @@ import { Resend } from "resend";
 import ResetPasswordEmail from "@/components/emails/reset-password-email";
 import sha256 from "./SHA256";
 import VerifyEmailEmail from "@/components/emails/verify-email-email";
+import { encryptDek, generateDek } from "./encryption/encryption";
 
 const resend = new Resend(process.env.RESEND_API_KEY as string);
 
@@ -17,7 +18,21 @@ export const auth = betterAuth({
     deleteUser: {
       enabled: true,
     },
+    additionalFields: {
+      encryptedDek: {
+        type: "string",
+        required: true,
+        input: false,
+      },
+      kekVersion: {
+        type: "number",
+        required: true,
+        defaultValue: 1,
+        input: false,
+      },
+    },
   },
+
   emailAndPassword: {
     enabled: true,
     password: {
@@ -80,6 +95,18 @@ export const auth = betterAuth({
           },
           data: profile,
         };
+      },
+    },
+  },
+
+  databaseHooks: {
+    user: {
+      create: {
+        before: async (user) => {
+          const dek = generateDek();
+          const { encryptedDek, kekVersion } = encryptDek(dek);
+          return { data: { ...user, encryptedDek, kekVersion } };
+        },
       },
     },
   },

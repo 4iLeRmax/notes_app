@@ -8,7 +8,7 @@ import Image from "next/image";
 import Link from "next/link";
 import FormButton from "@/components/UI/formElements/form-button";
 import ControlledCustomInput from "@/components/UI/formElements/controlled-custom-input";
-import { SignUpAction, signinActionWithGoogle } from "@/lib/actions/auth";
+import { SignUpAction } from "@/lib/actions/auth";
 import { authClient } from "@/lib/auth-client";
 import {
   SignUpScheme,
