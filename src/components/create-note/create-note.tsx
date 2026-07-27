@@ -201,7 +201,6 @@ export default function CreateNote() {
                     <CreateNoteTextarea
                       content={note.content}
                       setNote={setNote}
-                      formIsOpen={formIsOpen}
                     />
                     {!formIsOpen ? (
                       <button

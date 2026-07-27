@@ -10,24 +10,23 @@ import { Plus } from "lucide-react";
 interface CreateNoteTextareaProps {
   content: CreateLocalNote["content"];
   setNote: React.Dispatch<React.SetStateAction<CreateLocalNote>>;
-  formIsOpen: boolean;
 }
 
 export default function CreateNoteTextarea({
   content,
   setNote,
-  formIsOpen,
 }: CreateNoteTextareaProps) {
   const contentToText = content.map((el) => el.content).join("\n");
   const textToObj = (text: string) => {
-    const content: CreateLocalNote["content"] = text
-      .split("\n")
-      .map((el, i) => ({
-        id: crypto.randomUUID(),
-        content: el,
-        isDone: false,
-        position: i,
-      }));
+    const content: CreateLocalNote["content"] =
+      text === ""
+        ? []
+        : text.split("\n").map((el, i) => ({
+            id: crypto.randomUUID(),
+            content: el,
+            isDone: false,
+            position: i,
+          }));
 
     setNote((n) => ({ ...n, content }));
   };
