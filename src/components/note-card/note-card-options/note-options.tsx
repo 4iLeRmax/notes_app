@@ -8,6 +8,7 @@ import NoteLabelsEdit from "./note-labels-edit/note-labels-edit";
 import { useNotesStore } from "@/lib/store/useNotesStore";
 import { vibrate } from "@/lib/haptics";
 import cn from "@/lib/cn";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 interface NoteOptionsProps {
   noteId: string;
@@ -17,6 +18,20 @@ interface NoteOptionsProps {
 export default function NoteOptions({ noteId, fixed }: NoteOptionsProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [showLabel, setShowLabel] = useState(false);
+
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const clearNoteIdParams = () => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("noteId");
+
+    router.push(
+      params.toString() ? `${pathname}?${params.toString()}` : pathname,
+      { scroll: false },
+    );
+  };
 
   const handleClose = () => {
     setIsOpen(false);
@@ -64,6 +79,7 @@ export default function NoteOptions({ noteId, fixed }: NoteOptionsProps) {
               noteId={noteId}
               toggleShowLabel={toggleShowLabel}
               handleClose={handleClose}
+              clearNoteIdParams={clearNoteIdParams}
             />
           )}
         </div>

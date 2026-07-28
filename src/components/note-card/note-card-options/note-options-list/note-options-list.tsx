@@ -24,12 +24,14 @@ interface NoteOptionsListProps {
   noteId: string;
   toggleShowLabel: () => void;
   handleClose: () => void;
+  clearNoteIdParams: () => void;
 }
 
 export default function NoteOptionsList({
   noteId,
   toggleShowLabel,
   handleClose,
+  clearNoteIdParams,
 }: NoteOptionsListProps) {
   const currentNote = useNotesStore((s) =>
     s.notes.find((n) => n.id === noteId),
@@ -54,6 +56,13 @@ export default function NoteOptionsList({
 
     handleClose();
     toast.success("Successfully copied to clipboard");
+  };
+
+  const handleDelete = () => {
+    vibrate([20, 30, 20]);
+    removeNotes([noteId]);
+    clearNoteIdParams();
+    handleClose();
   };
 
   return (
@@ -130,12 +139,7 @@ export default function NoteOptionsList({
           </>
         ) : null}
         <NoteOptionsListItem
-          onClick={() => {
-            vibrate([20, 30, 20]);
-            removeNotes([noteId]);
-            handleClose();
-            // closeNote();
-          }}
+          onClick={handleDelete}
           icon={<Trash size={20} className="flex xs:hidden" />}
         >
           Delete
