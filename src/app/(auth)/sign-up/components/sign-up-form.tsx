@@ -8,7 +8,7 @@ import Image from "next/image";
 import Link from "next/link";
 import FormButton from "@/components/UI/formElements/form-button";
 import ControlledCustomInput from "@/components/UI/formElements/controlled-custom-input";
-import { SignUpAction } from "@/lib/actions/auth";
+import { emailAlreadyTaken, SignUpAction } from "@/lib/actions/auth";
 import { authClient } from "@/lib/auth-client";
 import {
   SignUpScheme,
@@ -36,12 +36,34 @@ export default function SignUpForm() {
   });
 
   const onSubmit: SubmitHandler<TSignUp> = async (data) => {
-    setSuccessfullySignedUp(false);
-    const res = await SignUpAction(data);
-    if (res?.error) {
-      setError("root", { message: res.error });
+    const { firstName, lastName, email, password } = data;
+    const name = `${firstName} ${lastName}`;
+
+    const userExists = await emailAlreadyTaken(email);
+    if (userExists) {
+      setError("root", {
+        message: "An account with this email already exists",
+        type: "EMAIL_ALREADY_EXISTS",
+      });
+      return;
     }
-    if (res?.success) setSuccessfullySignedUp(true);
+
+    await authClient.signUp.email({
+      email,
+      name,
+      password,
+      fetchOptions: {
+        onSuccess: () => {
+          setSuccessfullySignedUp(true);
+        },
+        onError: (context) => {
+          setError("root", {
+            message: "An unexpected error occurred. Please try again.",
+            type: "UNKNOWN_ERROR",
+          });
+        },
+      },
+    });
   };
 
   const handleSignInWithGoogle = async () => {

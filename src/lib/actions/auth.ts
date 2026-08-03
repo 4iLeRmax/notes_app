@@ -30,19 +30,7 @@ export const getSession = cache(async (caller?: string) => {
   return await auth.api.getSession({ headers: await headers() });
 });
 
-export const isAuthorized = cache(async (whoCallIt?: string) => {
-  console.log(`isAuthorized - ${whoCallIt}`);
-  const sessionCookie = (await cookies()).get("better-auth.session_token");
-  if (sessionCookie && sessionCookie.value) {
-    return await prisma.session.findUnique({
-      where: {
-        token: sessionCookie.value.split(".")[0],
-      },
-    });
-  }
-});
-
-const emailAlreadyTaken = async (emailToCheck: string) => {
+export const emailAlreadyTaken = async (emailToCheck: string) => {
   return !!(await prisma.user.count({
     where: {
       email: emailToCheck,
@@ -50,90 +38,90 @@ const emailAlreadyTaken = async (emailToCheck: string) => {
   }));
 };
 
-export const SignUpAction = async (formData: TSignUp) => {
-  const safeData = SignUpScheme.safeParse(formData);
+// export const SignUpAction = async (formData: TSignUp) => {
+//   const safeData = SignUpScheme.safeParse(formData);
 
-  if (!safeData.success) return;
-  const { email, firstName, lastName, password } = safeData.data;
-  const userExist = await emailAlreadyTaken(email);
+//   if (!safeData.success) return;
+//   const { email, firstName, lastName, password } = safeData.data;
+//   const userExist = await emailAlreadyTaken(email);
 
-  if (userExist) return { error: "An account with this email already exists" };
+//   if (userExist) return { error: "An account with this email already exists" };
 
-  const name = `${firstName} ${lastName}`;
+//   const name = `${firstName} ${lastName}`;
 
-  try {
-    await auth.api.signUpEmail({
-      body: {
-        email,
-        name,
-        password,
-      },
-    });
-  } catch (error) {
-    console.log(error);
-  }
+//   try {
+//     await auth.api.signUpEmail({
+//       body: {
+//         email,
+//         name,
+//         password,
+//       },
+//     });
+//   } catch (error) {
+//     console.log({ error });
+//   }
 
-  return { success: true };
-};
+//   return { success: true };
+// };
 
-export const SigninAction = async (formData: TSignIn) => {
-  const safeData = SignInScheme.safeParse(formData);
+// export const SigninAction = async (formData: TSignIn) => {
+//   const safeData = SignInScheme.safeParse(formData);
 
-  if (!safeData.success) return;
+//   if (!safeData.success) return;
 
-  const { email, password } = safeData.data;
-  const userExist = await emailAlreadyTaken(email);
+//   const { email, password } = safeData.data;
+//   const userExist = await emailAlreadyTaken(email);
 
-  if (!userExist)
-    return {
-      error: {
-        message: "An account with this email doesn't exist",
-      },
-    };
+//   if (!userExist)
+//     return {
+//       error: {
+//         message: "An account with this email doesn't exist",
+//       },
+//     };
 
-  try {
-    await auth.api.signInEmail({
-      body: {
-        email,
-        password,
-      },
-    });
-  } catch (error) {
-    if (error instanceof APIError) {
-      if (error.body?.code === "INVALID_EMAIL_OR_PASSWORD") {
-        return {
-          error: {
-            code: error.body.code,
-            message: error.body.message || "Invalid email or password",
-          },
-        };
-      }
-      if (error.body?.code === "EMAIL_NOT_VERIFIED") {
-        return {
-          error: {
-            code: error.body.code,
-            message: error.body.message || "Email not verified",
-          },
-        };
-      }
-    }
-  }
+//   try {
+//     await auth.api.signInEmail({
+//       body: {
+//         email,
+//         password,
+//       },
+//     });
+//   } catch (error) {
+//     if (error instanceof APIError) {
+//       if (error.body?.code === "INVALID_EMAIL_OR_PASSWORD") {
+//         return {
+//           error: {
+//             code: error.body.code,
+//             message: error.body.message || "Invalid email or password",
+//           },
+//         };
+//       }
+//       if (error.body?.code === "EMAIL_NOT_VERIFIED") {
+//         return {
+//           error: {
+//             code: error.body.code,
+//             message: error.body.message || "Email not verified",
+//           },
+//         };
+//       }
+//     }
+//   }
 
-  return { success: true };
+//   return { success: true };
 
-  // redirect("/notes");
-};
+//   // redirect("/notes");
+// };
 
-export const SignOutAction = async () => {
-  try {
-    await auth.api.signOut({
-      headers: await headers(),
-    });
-  } catch (err) {
-    console.log("Error during sign out:", err);
-  }
-  redirect("/sign-in");
-};
+// export const SignOutAction = async () => {
+//   try {
+//     await auth.api.signOut({
+//       headers: await headers(),
+//     });
+//   } catch (err) {
+//     console.log("Error during sign out:", err);
+//   }
+//   redirect("/sign-in");
+// };
 
 export const findAccountAction = async (formData: TFindAccount) => {
   const safeData = FindAccountScheme.safeParse(formData);

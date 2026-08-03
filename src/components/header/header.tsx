@@ -6,7 +6,7 @@ import ConditionalSearch from "./search/conditional-search";
 import SelectNotesSection from "./select-notes/select-notes-section";
 import cn from "@/lib/cn";
 import useSelectedNotesStore from "@/lib/store/useSelectedNotesStore";
-import SyncDataBtn from "./sync-data/sync-data-btn";
+import SyncData from "./sync-data/sync-data";
 import { motion, AnimatePresence } from "motion/react";
 
 function Header() {
@@ -36,7 +36,7 @@ function Header() {
               data-header="true"
               className="flex items-start justify-end gap-4"
             >
-              <SyncDataBtn iconSize={25} />
+              <SyncData iconSize={25} />
               <ConditionalSearch />
               <User />
             </motion.div>

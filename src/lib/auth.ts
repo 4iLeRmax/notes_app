@@ -21,12 +21,12 @@ export const auth = betterAuth({
     additionalFields: {
       encryptedDek: {
         type: "string",
-        required: true,
+        required: false,
         input: false,
       },
       kekVersion: {
         type: "number",
-        required: true,
+        required: false,
         defaultValue: 1,
         input: false,
       },

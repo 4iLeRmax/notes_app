@@ -27,8 +27,8 @@ import {
 } from "../encryption/encryption";
 import { decryptNote, encryptContent } from "../encryption/encryption-helpers";
 
-export const getAllNotes = cache(async () => {
-  console.log("getAllNotes");
+export const getNotes = cache(async () => {
+  console.log("getNotes");
   const session = await getSession();
   if (!session) throw new Error(NoteActionErrors.UNAUTHORIZED);
 
@@ -102,8 +102,8 @@ export const getNoteById = cache(async (noteId: string) => {
   }
 });
 
-export const getAllNotesByLabelId = cache(async (labelId: string) => {
-  console.log("getAllNotesByLabelId");
+export const getNotesByLabelId = cache(async (labelId: string) => {
+  console.log("getNotesByLabelId");
   const session = await getSession();
   if (!session) throw new Error(NoteActionErrors.UNAUTHORIZED);
 

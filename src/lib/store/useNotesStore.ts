@@ -54,6 +54,7 @@ interface NotesState {
 
   isHydratedNote: boolean;
   isHydratedLabel: boolean;
+  reset: () => void;
 
   setNotes: (notes: Note[]) => void;
   addNote: (data: TCreateNote, userId: string) => Promise<void>;
@@ -100,12 +101,23 @@ export const useNotesStore = create<NotesState>((set, get) => ({
   labels: [],
   isPending: false,
 
+  focusedItemId: null,
+
   isHydratedNote: false,
   isHydratedLabel: false,
 
-  focusedItemId: null,
+  reset: () =>
+    set({
+      notes: [],
+      labels: [],
+      isHydratedNote: false,
+      isHydratedLabel: false,
+      focusedItemId: null,
+    }),
 
   setNotes: (notes) => set({ notes, isHydratedNote: true }),
+  setLabels: (labels) => set({ labels, isHydratedLabel: true }),
+
   setFocusedItemId: (id) => set({ focusedItemId: id }),
 
   addNote: async (data, userId) => {
@@ -832,7 +844,6 @@ export const useNotesStore = create<NotesState>((set, get) => ({
   },
 
   //Labels
-  setLabels: (labels) => set({ labels, isHydratedLabel: true }),
   addLabel: async (labelName, userId) => {
     const labels = get().labels;
     const labelsCount = labels.length;

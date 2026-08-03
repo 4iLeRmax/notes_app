@@ -1,22 +1,24 @@
 "use client";
 
-import { SignOutAction } from "@/lib/actions/auth";
+import { authClient } from "@/lib/auth-client";
 import cn from "@/lib/cn";
 import { useNotesStore } from "@/lib/store/useNotesStore";
 import { LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export default function LogoutButton() {
-  const setNotes = useNotesStore((s) => s.setNotes);
-  const setLabels = useNotesStore((s) => s.setLabels);
-
+  const resetStore = useNotesStore((s) => s.reset);
   const router = useRouter();
 
   const logout = async () => {
-    setNotes([]);
-    setLabels([]);
-
-    await SignOutAction();
+    await authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          resetStore();
+          router.replace("/sign-in");
+        },
+      },
+    });
   };
 
   return (

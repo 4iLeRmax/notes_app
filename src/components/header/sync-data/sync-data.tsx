@@ -1,6 +1,6 @@
 "use client";
 
-import { getAllNotes } from "@/lib/actions/note";
+import { getNotes } from "@/lib/actions/note";
 import cn from "@/lib/cn";
 import { useNotesStore } from "@/lib/store/useNotesStore";
 import { toast } from "@/components/UI/toast";
@@ -8,19 +8,23 @@ import { useQuery } from "@tanstack/react-query";
 import { CloudCheck, Loader2, RotateCw } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { useEffect, useRef, useState } from "react";
+import { getLabels } from "@/lib/actions/label";
+import { authClient } from "@/lib/auth-client";
 
 interface SyncDataBtnProps {
   iconSize: number;
   mobileVersion?: boolean;
 }
 
-export default function SyncDataBtn({
+export default function SyncData({
   iconSize = 20,
   mobileVersion,
 }: SyncDataBtnProps) {
+  const session = authClient.useSession();
+
   const { isFetching, refetch } = useQuery({
     queryKey: ["notes"],
-    queryFn: async () => await getAllNotes(),
+    queryFn: async () => await getNotes(),
     enabled: false,
     staleTime: 0,
     gcTime: 0,

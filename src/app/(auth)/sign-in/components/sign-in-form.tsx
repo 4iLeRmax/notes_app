@@ -3,17 +3,23 @@
 import ControlledCustomInput from "@/components/UI/formElements/controlled-custom-input";
 import FormButton from "@/components/UI/formElements/form-button";
 import EmailNotVerified from "@/components/UI/status-bar/email-not-verified";
-import { SigninAction } from "@/lib/actions/auth";
+import { emailAlreadyTaken, SigninAction } from "@/lib/actions/auth";
 import { authClient } from "@/lib/auth-client";
+import cn from "@/lib/cn";
 import {
   SignInScheme,
   TSignIn,
 } from "@/lib/zod-schemes/auth-schemes/sign-in-scheme";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Info } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { email } from "zod";
+
+const TEST_EMAIL = "test@gmail.com";
+const TEST_PASSWORD = "Qwerty123456";
 
 export default function SignInFrom() {
   const {
@@ -21,29 +27,54 @@ export default function SignInFrom() {
     handleSubmit,
     setError,
     getValues,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(SignInScheme),
     defaultValues: {
-      email: "",
-      password: "",
+      email: TEST_EMAIL,
+      password: TEST_PASSWORD,
     },
   });
 
-  const router = useRouter();
-
   const onSubmit: SubmitHandler<TSignIn> = async (data) => {
-    const res = await SigninAction(data);
+    const { email, password } = data;
+    const userExists = await emailAlreadyTaken(email);
 
-    if (res?.error) {
-      setError("root", { message: res.error.message });
+    if (!userExists) {
+      setError("root", {
+        message: "No account found with this email",
+        type: "EMAIL_NOT_FOUND",
+      });
+      return;
     }
-    if (res?.error?.code === "EMAIL_NOT_VERIFIED") {
-      setError("root", { message: res.error.message, type: res.error.code });
-    }
-    if (res?.success) {
-      router.replace("/notes");
-    }
+
+    await authClient.signIn.email({
+      email,
+      password,
+      callbackURL: "/notes",
+      fetchOptions: {
+        onError(context) {
+          console.log(context.error);
+          if (context.error.code === "INVALID_EMAIL_OR_PASSWORD") {
+            setError("root", {
+              message: context.error.message,
+              type: context.error.code,
+            });
+          } else if (context.error.code === "EMAIL_NOT_VERIFIED") {
+            setError("root", {
+              message: context.error.message,
+              type: context.error.code,
+            });
+          } else {
+            setError("root", {
+              message: "An unexpected error occurred. Please try again.",
+              type: "UNKNOWN_ERROR",
+            });
+          }
+        },
+      },
+    });
   };
 
   const handleSignInWithGoogle = async () => {
@@ -59,6 +90,10 @@ export default function SignInFrom() {
       callbackURL: "/notes",
     });
   };
+
+  const emailValue = watch("email");
+  const passwordValue = watch("password");
+
   if (errors.root?.type === "EMAIL_NOT_VERIFIED")
     return <EmailNotVerified email={getValues("email")} />;
 
@@ -70,6 +105,12 @@ export default function SignInFrom() {
         </h1>
 
         <div className="mt-6">
+          {emailValue === TEST_EMAIL && passwordValue === TEST_PASSWORD && (
+            <div className="bg-custom-blue text-primary px-4 py-2 rounded-lg mb-4 flex items-center gap-2">
+              <Info size={20} />
+              <h2>Test credentials !!!</h2>
+            </div>
+          )}
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col items-center gap-4">
               <ControlledCustomInput
