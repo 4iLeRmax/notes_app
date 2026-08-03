@@ -1,7 +1,6 @@
-import { error } from "console";
 import { AlertCircle, CheckCircle, Info, XCircle } from "lucide-react";
 import { ExternalToast, toast as sonnerToast } from "sonner";
-import { vibrate } from "./haptics";
+import { vibrate } from "@/lib/haptics";
 
 type ToastCustomOptions<T> = {
   success: T;

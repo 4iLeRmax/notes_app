@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { TCreateNote } from "@/lib/zod-schemes/note-schemes/create-note.scheme";
 import { CreateLocalNote } from "./create-note";
 import { Plus } from "lucide-react";
+import { NOTE_LIMITS } from "@/lib/constants";
 
 interface CreateNoteTextareaProps {
   content: CreateLocalNote["content"];
@@ -21,12 +22,16 @@ export default function CreateNoteTextarea({
     const content: CreateLocalNote["content"] =
       text === ""
         ? []
-        : text.split("\n").map((el, i) => ({
-            id: crypto.randomUUID(),
-            content: el,
-            isDone: false,
-            position: i,
-          }));
+        : text
+            .slice(0, NOTE_LIMITS.TEXT.totalChars)
+            .split("\n")
+            .slice(0, NOTE_LIMITS.TEXT.maxItems)
+            .map((el, i) => ({
+              id: crypto.randomUUID(),
+              content: el.slice(0, NOTE_LIMITS.TEXT.maxCharsPerItem),
+              isDone: false,
+              position: i,
+            }));
 
     setNote((n) => ({ ...n, content }));
   };

@@ -3,7 +3,7 @@
 import { getAllNotes } from "@/lib/actions/note";
 import cn from "@/lib/cn";
 import { useNotesStore } from "@/lib/store/useNotesStore";
-import { toast } from "@/lib/toast";
+import { toast } from "@/components/UI/toast";
 import { useQuery } from "@tanstack/react-query";
 import { CloudCheck, Loader2, RotateCw } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";

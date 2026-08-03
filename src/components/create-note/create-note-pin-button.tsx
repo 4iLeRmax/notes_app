@@ -14,6 +14,7 @@ export default function CreateNotePinButton({
   return (
     <>
       <button
+        aria-label="Pin note"
         onClick={togglePin}
         className={cn("p-2 rounded-full bg-primary transition-colors", {
           "shadow-outside-small text-txt-secondary hover:text-custom-blue":
@@ -26,3 +27,4 @@ export default function CreateNotePinButton({
     </>
   );
 }
+  

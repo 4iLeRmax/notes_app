@@ -13,6 +13,7 @@ export default function FormButton({ children, isLoading }: ButtonProps) {
   return (
     <>
       <button
+        type="submit"
         className="h-12 bg-custom-blue shadow-button text-primary w-full rounded-3xl flex justify-center items-center"
         disabled={isLoading}
       >

@@ -16,7 +16,7 @@ import {
 import React from "react";
 import NoteOptionsListItem from "./note-options-list-item";
 import { useNotesStore } from "@/lib/store/useNotesStore";
-import { toast } from "@/lib/toast";
+import { toast } from "@/components/UI/toast";
 import { vibrate } from "@/lib/haptics";
 import NoteColors from "./note-colors/note-colors";
 

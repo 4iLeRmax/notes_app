@@ -20,22 +20,8 @@ export const LABEL_LIMITS = {
   MAX_LABELS_PER_NOTE: 10,
 } as const;
 
-// export const noteCardColors = [
-//   null,
-//   "#5a7fff",
-//   "#4fd566",
-//   "#ffce1b",
-//   "#ff4544",
-// ];
 export const NOTE_CARD_COLORS = [
   null,
-  // "#8FB78F",
-  // "#CBE6C7",
-  // "#B4CCCF",
-  // "#28536B",
-  // "#F3A5BC",
-  // "#FFC49B",
-
   "#dbc1e8",
   "#a2c0e2",
   "#f6e289",

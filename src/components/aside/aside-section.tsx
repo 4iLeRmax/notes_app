@@ -9,7 +9,7 @@ import cn from "@/lib/cn";
 import AsideLink from "./aside-link";
 import EditLabels from "./edit-labels/edit-labels";
 import ThemeSwitcher from "../header/theme-switcher";
-import { motion, AnimatePresence } from "motion/react";
+import { motion } from "motion/react";
 
 export default function AsideSection() {
   const [menuIsOpen, setMenuIsOpen] = useState(false);

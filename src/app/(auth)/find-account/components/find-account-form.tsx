@@ -3,7 +3,7 @@
 import ControlledCustomInput from "@/components/UI/formElements/controlled-custom-input";
 import FormButton from "@/components/UI/formElements/form-button";
 import { findAccountAction } from "@/lib/actions/auth";
-import { toast } from "@/lib/toast";
+import { toast } from "@/components/UI/toast";
 import {
   FindAccountScheme,
   TFindAccount,

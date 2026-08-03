@@ -41,7 +41,7 @@ import {
   toggleLabelToNote,
   updateLabel,
 } from "../actions/label";
-import { toast } from "../toast";
+import { toast } from "../../components/UI/toast";
 import { NoteItemScheme } from "../zod-schemes/note-schemes/note-item-scheme";
 import z from "zod";
 

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Activity, useState, useTransition } from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 
 import CreateNoteTextarea from "./create-note-textarea";
@@ -16,6 +16,8 @@ import { TCreateNote } from "@/lib/zod-schemes/note-schemes/create-note.scheme";
 import { authClient } from "@/lib/auth-client";
 import useViewModeStore, { ViewMode } from "@/lib/store/useViewModeStore";
 import cn from "@/lib/cn";
+import { NOTE_LIMITS } from "@/lib/constants";
+import CreateNoteTitle from "./create-note-title";
 
 export type CreateLocalNote = Omit<TCreateNote, "content"> & {
   content: ({
@@ -55,7 +57,7 @@ export default function CreateNote() {
 
   const submit = () => {
     if (!sessionData) return;
-    if (!note.title && !note.content.some((el) => el.content.length > 0))
+    if (!note.title.trim() && !note.content.some((el) => !!el.content.trim()))
       return;
     addNote(
       {
@@ -109,6 +111,7 @@ export default function CreateNote() {
       <motion.div
         ref={containerRef}
         tabIndex={-1}
+        data-testid="create-note-container"
         initial={false}
         animate={{
           padding: formIsOpen ? "32px 0" : "12.5px 0",
@@ -139,7 +142,6 @@ export default function CreateNote() {
                 <ToggleNoteTypeButton
                   noteType={note.type}
                   toggleNoteType={toggleNoteType}
-                  formIsOpen={formIsOpen}
                 />
 
                 <CreateNotePinButton
@@ -169,16 +171,7 @@ export default function CreateNote() {
                     exit={{ opacity: 0, height: 0, marginBottom: 0 }}
                     className="px-4 md:px-8"
                   >
-                    <FormInput
-                      type="text"
-                      name="title"
-                      value={note.title}
-                      onChange={(e) =>
-                        setNote((n) => ({ ...n, title: e.target.value }))
-                      }
-                      placeholder="Title..."
-                      className="text-txt-primary bg-primary"
-                    />
+                    <CreateNoteTitle noteTitle={note.title} setNote={setNote} />
                   </motion.div>
                 ) : null}
               </AnimatePresence>
@@ -204,6 +197,7 @@ export default function CreateNote() {
                     />
                     {!formIsOpen ? (
                       <button
+                        aria-label="Open note form"
                         onMouseDown={() => containerRef.current?.focus()}
                         className={cn(
                           "p-2 rounded-full bg-primary shrink-0",
@@ -237,7 +231,7 @@ export default function CreateNote() {
                   className="px-4 md:px-8"
                 >
                   <FormButton isLoading={isPending}>
-                    {formIsOpen ? <Plus size={20} className="" /> : null}
+                    <Plus size={20} />
                     <span>Create</span>
                   </FormButton>
                 </motion.div>
