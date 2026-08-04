@@ -6,7 +6,6 @@ import { UserIconSkeleton } from "@/components/UI/skeletons";
 
 export default function User() {
   const session = authClient.useSession();
-  console.log({ UserBarSession: session });
 
   if (session.isPending || !session.data) return <UserIconSkeleton />;
 

@@ -1,7 +1,7 @@
 import AsideSection from "@/components/aside/aside-section";
 import Header from "@/components/header/header";
-import LabelHydrate from "@/components/hydrators/labels-hydrator/label-hydrate";
-import NoteHydrate from "@/components/hydrators/notes-hydrator/note-hydrate";
+import LabelHydrate from "@/components/hydrators/label-hydrate";
+import NoteHydrate from "@/components/hydrators/note-hydrate";
 import MobileHeader from "@/components/mobile-header/mobile-header";
 import React from "react";
 

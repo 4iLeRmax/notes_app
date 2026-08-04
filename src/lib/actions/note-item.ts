@@ -12,6 +12,7 @@ import {
   decryptField,
   encryptField,
 } from "../encryption/encryption";
+import { getUserDek } from "../encryption/get-user-dek";
 
 export const createNoteItem = async (newNoteItem: NoteItem) => {
   console.log("createNoteItem");
@@ -35,7 +36,7 @@ export const createNoteItem = async (newNoteItem: NoteItem) => {
   try {
     const encryptedDek = session.user.encryptedDek;
     const kekVersion = session.user.kekVersion;
-    const dek = decryptDek(encryptedDek, kekVersion);
+    const dek = getUserDek({ encryptedDek, kekVersion });
 
     await prisma.noteItem.updateMany({
       where: {
@@ -114,7 +115,7 @@ export const updateNoteItem = async (
 
   const encryptedDek = session.user.encryptedDek;
   const kekVersion = session.user.kekVersion;
-  const dek = decryptDek(encryptedDek, kekVersion);
+  const dek = getUserDek({ encryptedDek, kekVersion });
 
   const safeNoteIdData = z.uuid().safeParse(noteId);
   if (!safeNoteIdData.success)

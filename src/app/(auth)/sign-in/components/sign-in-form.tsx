@@ -3,9 +3,8 @@
 import ControlledCustomInput from "@/components/UI/formElements/controlled-custom-input";
 import FormButton from "@/components/UI/formElements/form-button";
 import EmailNotVerified from "@/components/UI/status-bar/email-not-verified";
-import { emailAlreadyTaken, SigninAction } from "@/lib/actions/auth";
+import { emailAlreadyTaken } from "@/lib/actions/auth";
 import { authClient } from "@/lib/auth-client";
-import cn from "@/lib/cn";
 import {
   SignInScheme,
   TSignIn,

@@ -14,6 +14,7 @@ import {
   decryptField,
   encryptField,
 } from "../encryption/encryption";
+import { getUserDek } from "../encryption/get-user-dek";
 
 export const getLabels = cache(async () => {
   console.log("getLabels");
@@ -23,7 +24,7 @@ export const getLabels = cache(async () => {
   try {
     const encryptedDek = session.user.encryptedDek;
     const kekVersion = session.user.kekVersion;
-    const dek = decryptDek(encryptedDek, kekVersion);
+    const dek = getUserDek({ encryptedDek, kekVersion });
 
     const labels = await prisma.label.findMany({
       where: {
@@ -54,7 +55,7 @@ export const getLabelById = cache(async (labelId: string) => {
   try {
     const encryptedDek = session.user.encryptedDek;
     const kekVersion = session.user.kekVersion;
-    const dek = decryptDek(encryptedDek, kekVersion);
+    const dek = getUserDek({ encryptedDek, kekVersion });
 
     const label = await prisma.label.findUnique({
       where: {
@@ -79,7 +80,7 @@ export const createLabel = async (label: Label) => {
 
   const encryptedDek = session.user.encryptedDek;
   const kekVersion = session.user.kekVersion;
-  const dek = decryptDek(encryptedDek, kekVersion);
+  const dek = getUserDek({ encryptedDek, kekVersion });
 
   const { data: safeLabel, success: validLabel } = LabelScheme.safeParse(label);
   if (!validLabel) throw new Error(LabelActionErrors.INVALID_LABEL_DATA);
@@ -134,7 +135,7 @@ export const updateLabel = async (labelId: string, newLabelName: string) => {
   try {
     const encryptedDek = session.user.encryptedDek;
     const kekVersion = session.user.kekVersion;
-    const dek = decryptDek(encryptedDek, kekVersion);
+    const dek = getUserDek({ encryptedDek, kekVersion });
 
     await prisma.label.update({
       where: {

@@ -26,6 +26,7 @@ import {
   encryptField,
 } from "../encryption/encryption";
 import { decryptNote, encryptContent } from "../encryption/encryption-helpers";
+import { getUserDek } from "../encryption/get-user-dek";
 
 export const getNotes = cache(async () => {
   console.log("getNotes");
@@ -35,7 +36,7 @@ export const getNotes = cache(async () => {
   try {
     const encryptedDek = session.user.encryptedDek;
     const kekVersion = session.user.kekVersion;
-    const dek = decryptDek(encryptedDek, kekVersion);
+    const dek = getUserDek({ encryptedDek, kekVersion });
 
     const notes = await prisma.note.findMany({
       where: {
@@ -75,7 +76,7 @@ export const getNoteById = cache(async (noteId: string) => {
   try {
     const encryptedDek = session.user.encryptedDek;
     const kekVersion = session.user.kekVersion;
-    const dek = decryptDek(encryptedDek, kekVersion);
+    const dek = getUserDek({ encryptedDek, kekVersion });
 
     const note = await prisma.note.findUnique({
       where: {
@@ -115,7 +116,7 @@ export const getNotesByLabelId = cache(async (labelId: string) => {
   try {
     const encryptedDek = session.user.encryptedDek;
     const kekVersion = session.user.kekVersion;
-    const dek = decryptDek(encryptedDek, kekVersion);
+    const dek = getUserDek({ encryptedDek, kekVersion });
 
     const notes = await prisma.note.findMany({
       where: {
@@ -148,7 +149,7 @@ export const createNote = async (note: TCreateNote, noteId: string) => {
   try {
     const encryptedDek = session.user.encryptedDek;
     const kekVersion = session.user.kekVersion;
-    const dek = decryptDek(encryptedDek, kekVersion);
+    const dek = getUserDek({ encryptedDek, kekVersion });
 
     const { title, content, type, isPinned } = safeData.data;
 
@@ -243,7 +244,7 @@ export const toggleManyNoteTypes = async (
     try {
       const encryptedDek = session.user.encryptedDek;
       const kekVersion = session.user.kekVersion;
-      const dek = decryptDek(encryptedDek, kekVersion);
+      const dek = getUserDek({ encryptedDek, kekVersion });
 
       const notes = await prisma.note.findMany({
         where: { id: { in: safeNoteIds }, userId: session.session.userId },
@@ -344,7 +345,7 @@ export const updateNoteTitle = async (noteId: string, newTitle: string) => {
   try {
     const encryptedDek = session.user.encryptedDek;
     const kekVersion = session.user.kekVersion;
-    const dek = decryptDek(encryptedDek, kekVersion);
+    const dek = getUserDek({ encryptedDek, kekVersion });
 
     await prisma.note.update({
       where: { id: safeNoteId },
@@ -390,7 +391,7 @@ export const updateNoteText = async (noteId: string, content: NoteItem[]) => {
   try {
     const encryptedDek = session.user.encryptedDek;
     const kekVersion = session.user.kekVersion;
-    const dek = decryptDek(encryptedDek, kekVersion);
+    const dek = getUserDek({ encryptedDek, kekVersion });
 
     await prisma.$transaction([
       prisma.noteItem.deleteMany({ where: { noteId: safeNoteId } }),
@@ -429,7 +430,7 @@ export const createCopies = async (copies: Note[]) => {
   try {
     const encryptedDek = session.user.encryptedDek;
     const kekVersion = session.user.kekVersion;
-    const dek = decryptDek(encryptedDek, kekVersion);
+    const dek = getUserDek({ encryptedDek, kekVersion });
 
     await prisma.$transaction(
       safeCopies.map((note) =>

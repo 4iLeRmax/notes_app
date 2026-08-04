@@ -20,8 +20,6 @@ export default function SyncData({
   iconSize = 20,
   mobileVersion,
 }: SyncDataBtnProps) {
-  const session = authClient.useSession();
-
   const { isFetching, refetch } = useQuery({
     queryKey: ["notes"],
     queryFn: async () => await getNotes(),
