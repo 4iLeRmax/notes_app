@@ -22,13 +22,17 @@ export default function SyncData({
 }: SyncDataBtnProps) {
   const { isFetching, refetch } = useQuery({
     queryKey: ["notes"],
-    queryFn: async () => await getNotes(),
+    queryFn: async () => {
+      const [notes, labels] = await Promise.all([getNotes(), getLabels()]);
+      return { notes, labels };
+    },
     enabled: false,
     staleTime: 0,
     gcTime: 0,
   });
 
   const setNotes = useNotesStore((s) => s.setNotes);
+  const setLabels = useNotesStore((s) => s.setLabels);
   const isPending = useNotesStore((s) => s.isPending);
   const [tempIcon, setTempIcon] = useState(false);
 
@@ -44,10 +48,12 @@ export default function SyncData({
   const syncStoreData = async () => {
     const { data, isSuccess } = await refetch();
     if (data) {
-      setNotes(data);
+      const { notes, labels } = data;
+      setNotes(notes);
+      setLabels(labels);
       flashCheck();
     }
-    if (isSuccess) toast.success("Synced", "Your notes are up to date.");
+    if (isSuccess) toast.success("Synced", "Your data are up to date.");
   };
 
   useEffect(() => {
