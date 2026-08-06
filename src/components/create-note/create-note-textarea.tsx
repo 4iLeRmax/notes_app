@@ -17,8 +17,8 @@ export default function CreateNoteTextarea({
   content,
   setNote,
 }: CreateNoteTextareaProps) {
-  const contentToText = content.map((el) => el.content).join("\n");
-  const textToObj = (text: string) => {
+  const joinedText = content.map((el) => el.content).join("\n");
+  const handleTextChange = (text: string) => {
     const content: CreateLocalNote["content"] =
       text === ""
         ? []
@@ -39,8 +39,8 @@ export default function CreateNoteTextarea({
   return (
     <>
       <textarea
-        value={contentToText}
-        onChange={(e) => textToObj(e.target.value)}
+        value={joinedText}
+        onChange={(e) => handleTextChange(e.target.value)}
         placeholder="Type something..."
         className={cn(
           "outline-none resize-none overflow-hidden field-sizing-content bg-primary min-h-12 max-h-60",

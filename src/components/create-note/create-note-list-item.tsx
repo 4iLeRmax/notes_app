@@ -62,6 +62,10 @@ export default function CreateNoteListItem({
       if (prevTextarea && isAtStart) {
         e.preventDefault();
         prevTextarea.focus();
+        prevTextarea.setSelectionRange(
+          prevTextarea.value.length,
+          prevTextarea.value.length,
+        );
       }
     }
     if (e.key === "ArrowRight" || e.key === "ArrowDown") {
@@ -72,6 +76,7 @@ export default function CreateNoteListItem({
       if (nextTextarea && isAtEnd) {
         e.preventDefault();
         nextTextarea.focus();
+        nextTextarea.setSelectionRange(0, 0);
       }
     }
 
@@ -88,7 +93,13 @@ export default function CreateNoteListItem({
           listRef.current.children[0].children[item.position - 1];
         if (prevElement) {
           const prevTextarea = prevElement.querySelector("textarea");
-          if (prevTextarea) prevTextarea.focus();
+          if (prevTextarea) {
+            prevTextarea.focus();
+            prevTextarea.setSelectionRange(
+              prevTextarea.value.length,
+              prevTextarea.value.length,
+            );
+          }
         }
         removeItem(item.id);
       }
@@ -104,6 +115,7 @@ export default function CreateNoteListItem({
         >
           <button
             type="button"
+            aria-label="Drag to reorder"
             // onPointerDown={(e) => controls.start(e)}
             className="touch-none"
           >

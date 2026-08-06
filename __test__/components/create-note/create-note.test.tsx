@@ -2,9 +2,12 @@ import "@testing-library/jest-dom";
 import { render, screen } from "@testing-library/react";
 import user from "@testing-library/user-event";
 
-import CreateNote from "@/components/create-note/create-note";
+import CreateNote, {
+  CreateLocalNote,
+} from "@/components/create-note/create-note";
 import { mockAddNote } from "../../../jest.setup";
 import { TCreateNote } from "@/lib/zod-schemes/note-schemes/create-note.scheme";
+import { NOTE_LIMITS } from "@/lib/constants";
 
 afterEach(() => {
   mockAddNote.mockClear();
@@ -584,5 +587,66 @@ describe("CreateNote", () => {
     );
   });
 
-  //convert from text to todo and opposite and check its limits while doing that
+  it("should convert content from text to todo and opposite within the limits", async () => {
+    user.setup();
+    render(<CreateNote />);
+
+    const testContentArr: CreateLocalNote["content"] = Array.from(
+      { length: 10 },
+      (_, i) => ({
+        id: String(i),
+        position: i,
+        content: `Item ${i + 1}`,
+        isDone: false,
+      }),
+    );
+    const testContentText = testContentArr
+      .map((item) => item.content)
+      .join("\n");
+
+    const textareaElement = screen.getByPlaceholderText(/type something.../i);
+    await user.click(textareaElement);
+    await user.paste(testContentText);
+
+    expect(textareaElement).toHaveDisplayValue(testContentText);
+
+    const toggleNoteTypeButton = screen.getByRole("button", {
+      name: /toggle note type/i,
+    });
+    await user.click(toggleNoteTypeButton);
+
+    const listItems = screen.getAllByPlaceholderText(/type something.../i);
+    expect(listItems).toHaveLength(testContentArr.length);
+
+    for (let i = 0; i < testContentArr.length; i++) {
+      expect(listItems[i]).toHaveDisplayValue(testContentArr[i].content);
+    }
+
+    await user.click(toggleNoteTypeButton);
+    expect(textareaElement).toHaveDisplayValue(testContentText);
+  });
+
+  it("should NOT convert content from text to todo when maxCharsPerItem limit too big for todo item", async () => {
+    user.setup();
+    render(<CreateNote />);
+
+    const textareaElement = screen.getByPlaceholderText(/type something.../i);
+
+    await user.click(textareaElement);
+    await user.paste("1".repeat(NOTE_LIMITS.TODO.maxCharsPerItem + 1));
+
+    expect(textareaElement).toHaveDisplayValue(
+      "1".repeat(NOTE_LIMITS.TODO.maxCharsPerItem + 1),
+    );
+
+    const noteTypeButton = screen.getByRole("button", {
+      name: /toggle note type/i,
+    });
+
+    await user.click(noteTypeButton);
+
+    expect(
+      screen.queryByRole("button", { name: /create item/i }),
+    ).not.toBeInTheDocument();
+  });
 });

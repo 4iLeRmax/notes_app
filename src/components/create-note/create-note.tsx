@@ -18,6 +18,7 @@ import useViewModeStore, { ViewMode } from "@/lib/store/useViewModeStore";
 import cn from "@/lib/cn";
 import { NOTE_LIMITS } from "@/lib/constants";
 import CreateNoteTitle from "./create-note-title";
+import { toast } from "../UI/toast";
 
 export type CreateLocalNote = Omit<TCreateNote, "content"> & {
   content: ({
@@ -94,12 +95,17 @@ export default function CreateNote() {
   };
 
   const toggleNoteType = () => {
-    if (note.type === "TEXT" && !formIsOpen) {
+    if (note.type === "TEXT") {
+      if (
+        !note.content.every(
+          (el) => el.content.length <= NOTE_LIMITS.TODO.maxCharsPerItem,
+        )
+      ) {
+        toast.warning("Can't convert into list format", "Content is too long");
+        return;
+      }
       setNote((n) => ({ ...n, type: "TODO" }));
-      setFormIsOpen(true);
-    } else if (note.type === "TEXT" && formIsOpen) {
-      setNote((n) => ({ ...n, type: "TODO" }));
-    } else {
+    } else if (note.type === "TODO") {
       setNote((n) => ({ ...n, type: "TEXT" }));
     }
 

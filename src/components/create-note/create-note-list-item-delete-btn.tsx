@@ -14,6 +14,7 @@ export default function CreateNoteListItemDeleteBtn({
     <>
       <button
         type="button"
+        aria-label="Delete item"
         onClick={onClick}
         className="p-0.5 text-txt-primary hover:text-custom-blue transition-colors"
       >

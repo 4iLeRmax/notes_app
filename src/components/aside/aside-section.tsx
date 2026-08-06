@@ -8,7 +8,7 @@ import AsideToggleButton from "./aside-toggle-button";
 import cn from "@/lib/cn";
 import AsideLink from "./aside-link";
 import EditLabels from "./edit-labels/edit-labels";
-import ThemeSwitcher from "../header/theme-switcher";
+import ThemeSwitcher from "../UI/theme-switcher";
 import { motion } from "motion/react";
 
 export default function AsideSection() {

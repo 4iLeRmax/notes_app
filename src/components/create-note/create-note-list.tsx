@@ -6,6 +6,7 @@ import CreateNoteItemBtn from "./create-note-item-btn";
 import { AnimatePresence, motion, Reorder } from "motion/react";
 import { CreateLocalNote } from "./create-note";
 import cn from "@/lib/cn";
+import { NOTE_LIMITS } from "@/lib/constants";
 
 interface CreateNoteListProps {
   content: CreateLocalNote["content"];
@@ -23,15 +24,33 @@ export default function CreateNoteList({
   const clearPendingFocusId = useCallback(() => setPendingFocusId(null), []);
 
   const handleChangeItem = (targetValue: string, itemId: string) => {
-    setNote((n) => ({
-      ...n,
-      content: n.content.map((item) =>
-        item.id === itemId ? { ...item, content: targetValue } : item,
-      ),
-    }));
+    setNote((n) => {
+      const expectedTotalChars = [...n.content]
+        .map((el) =>
+          el.id === itemId
+            ? targetValue.slice(0, NOTE_LIMITS.TODO.maxCharsPerItem)
+            : el.content,
+        )
+        .reduce((acc, el) => acc + el.length, 0);
+
+      if (expectedTotalChars > NOTE_LIMITS.TODO.totalChars) return n;
+
+      return {
+        ...n,
+        content: n.content.map((item) =>
+          item.id === itemId
+            ? {
+                ...item,
+                content: targetValue.slice(0, NOTE_LIMITS.TODO.maxCharsPerItem),
+              }
+            : item,
+        ),
+      };
+    });
   };
 
   const addNewItem = (createAtPosition?: number) => {
+    if (content.length >= NOTE_LIMITS.TODO.maxItems) return;
     const newItemId = crypto.randomUUID();
 
     setNote((n) => {

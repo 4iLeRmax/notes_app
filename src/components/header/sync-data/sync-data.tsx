@@ -9,7 +9,6 @@ import { CloudCheck, Loader2, RotateCw } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { getLabels } from "@/lib/actions/label";
-import { authClient } from "@/lib/auth-client";
 
 interface SyncDataBtnProps {
   iconSize: number;
@@ -73,6 +72,8 @@ export default function SyncData({
 
   return (
     <button
+      aria-label="Sync data"
+      title="Sync data"
       onClick={syncStoreData}
       className={cn(
         "bg-secondary text-txt-primary p-2 rounded-full hover:text-custom-blue transition-colors",

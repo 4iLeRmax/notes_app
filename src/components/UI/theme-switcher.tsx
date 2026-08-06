@@ -5,7 +5,7 @@ import { ThemeContext } from "@/lib/context/theme-context";
 import { Moon, Sun } from "lucide-react";
 import React, { useContext } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { ThemeIconSkeleton } from "../UI/skeletons";
+import { ThemeIconSkeleton } from "./skeletons";
 
 export default function ThemeSwitcher({
   iconSize = 20,

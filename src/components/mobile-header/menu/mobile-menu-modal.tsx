@@ -52,7 +52,7 @@ import { memo } from "react";
 import { motion } from "motion/react";
 import { DialogOverlay } from "@/components/UI/dialog";
 import SyncDataBtn from "@/components/header/sync-data/sync-data";
-import ThemeSwitcher from "@/components/header/theme-switcher";
+import ThemeSwitcher from "@/components/UI/theme-switcher";
 import ViewModeSwitcher from "@/components/notes-view-mode/view-mode-switcher";
 import MobileMenuToggleBtn from "./mobile-menu-toggle-btn";
 

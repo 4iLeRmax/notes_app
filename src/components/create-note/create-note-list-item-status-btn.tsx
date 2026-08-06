@@ -15,7 +15,13 @@ export default function CreateNoteListItemStatusBtn({
 }) {
   return (
     <>
-      <button type="button" onClick={onClick} className="p-0.5">
+      <button
+        type="button"
+        aria-label="Toggle item status"
+        aria-pressed={isActive}
+        onClick={onClick}
+        className="p-0.5"
+      >
         {isActive ? (
           <CheckSquare size={iconSize} className="text-custom-blue" />
         ) : (
