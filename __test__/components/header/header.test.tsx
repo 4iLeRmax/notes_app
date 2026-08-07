@@ -20,4 +20,7 @@ describe("Header", () => {
     const userButton = screen.getByRole("button", { name: /user info/i });
     expect(userButton).toBeInTheDocument();
   });
+  it(
+    "should switch to selected notes menu when one ore more notes are selected",
+  );
 });
