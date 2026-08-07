@@ -1,6 +1,5 @@
 "use client";
 
-import {} from "@/lib/actions/note";
 import { vibrate } from "@/lib/haptics";
 import { useNotesStore } from "@/lib/store/useNotesStore";
 import useSelectedNotesStore from "@/lib/store/useSelectedNotesStore";

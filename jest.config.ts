@@ -13,6 +13,8 @@ const config: Config = {
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/src/$1",
   },
+  transformIgnorePatterns: ["node_modules/(?!(better-auth)/)"],
+
   // Add more setup options before each test is run
   setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
 };

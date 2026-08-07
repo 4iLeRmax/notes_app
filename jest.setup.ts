@@ -1,5 +1,5 @@
 import { mockDeep } from "jest-mock-extended";
-import type { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@/generated/prisma/client";
 
 export const mockAddNote = jest.fn();
 
@@ -10,7 +10,8 @@ jest.mock("@/lib/store/useNotesStore", () => ({
 }));
 
 jest.mock("@/lib/store/useSelectedNotesStore", () => ({
-  useNotesStore: jest.fn((selector: any) => selector({ selectedNoteIds: [] })),
+  __esModule: true,
+  default: jest.fn((selector: any) => selector({ selectedNoteIds: [] })),
 }));
 
 jest.mock("@/lib/store/useViewModeStore", () => ({
@@ -30,7 +31,10 @@ jest.mock("@/lib/auth", () => ({
 jest.mock("@/lib/auth-client", () => ({
   authClient: {
     useSession: () => ({
-      data: { session: { userId: "test-user" } },
+      data: {
+        user: { id: "test-user", name: "Test User", email: "test@example.com" },
+        session: { userId: "test-user" },
+      },
       isPending: false,
     }),
     signOut: jest.fn(),
@@ -38,5 +42,27 @@ jest.mock("@/lib/auth-client", () => ({
 }));
 
 jest.mock("@/lib/prisma", () => ({
-  prisma: mockDeep<PrismaClient>(),
+  __esModule: true,
+  default: mockDeep<PrismaClient>(),
+}));
+
+jest.mock("next/navigation", () => ({
+  usePathname: () => "/notes",
+  useRouter: () => ({
+    push: jest.fn(),
+    replace: jest.fn(),
+    back: jest.fn(),
+    forward: jest.fn(),
+    refresh: jest.fn(),
+    prefetch: jest.fn(),
+  }),
+  useSearchParams: () => new URLSearchParams(),
+}));
+
+jest.mock("@/lib/actions/note", () => ({
+  getNotes: jest.fn().mockResolvedValue([]),
+}));
+
+jest.mock("@/lib/actions/label", () => ({
+  getLabels: jest.fn().mockResolvedValue([]),
 }));
