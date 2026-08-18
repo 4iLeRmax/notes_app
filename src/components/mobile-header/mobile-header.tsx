@@ -2,13 +2,15 @@
 
 import React, { Activity, Suspense, useEffect, useState } from "react";
 import User from "../header/user/user";
-import ConditionalSearch from "../header/search/conditional-search";
+import ConditionalSearch from "../wrappers/notes-search-boundary";
 import MobileMenu from "./menu/mobile-menu";
 import useSelectedNotesStore from "@/lib/store/useSelectedNotesStore";
 import SelectNotesSection from "../header/select-notes/select-notes-section";
 import { UserIconSkeleton } from "../UI/skeletons";
 import { usePathname } from "next/navigation";
 import { vibrate } from "@/lib/haptics";
+import NotesSearchBoundary from "../wrappers/notes-search-boundary";
+import Search from "../header/search/search";
 
 export default function MobileHeader() {
   const [menuIsOpen, setMenuIsOpen] = useState(false);
@@ -36,7 +38,9 @@ export default function MobileHeader() {
 
         {selectedNoteIds.length === 0 ? (
           <div data-header="true" className="flex items-start gap-4">
-            <ConditionalSearch />
+            <NotesSearchBoundary>
+              <Search />
+            </NotesSearchBoundary>
             <Suspense fallback={<UserIconSkeleton />}>
               <User />
             </Suspense>

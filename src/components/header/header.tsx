@@ -2,13 +2,13 @@
 
 import React from "react";
 import User from "./user/user";
-import ConditionalSearch from "./search/conditional-search";
 import SelectNotesSection from "./select-notes/select-notes-section";
 import cn from "@/lib/cn";
 import useSelectedNotesStore from "@/lib/store/useSelectedNotesStore";
 import SyncData from "./sync-data/sync-data";
 import { motion, AnimatePresence } from "motion/react";
 import Search from "./search/search";
+import NotesSearchBoundary from "../wrappers/notes-search-boundary";
 
 function Header() {
   const hasAnySelected = useSelectedNotesStore(
@@ -39,7 +39,9 @@ function Header() {
               className="flex items-start justify-end gap-4"
             >
               <SyncData iconSize={25} />
-              <Search />
+              <NotesSearchBoundary>
+                <Search />
+              </NotesSearchBoundary>
               <User />
             </motion.div>
           )}

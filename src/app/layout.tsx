@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Bitcount_Grid_Double } from "next/font/google";
 import "./globals.css";
-import RootWrappers from "@/components/wrappers/wrappers";
+import RootWrapper from "@/components/wrappers/root-wrapper/root-wrapper";
 import { Toaster } from "sonner";
 
 const geistSans = Geist({
@@ -42,7 +42,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         suppressHydrationWarning
       >
-        <RootWrappers>
+        <RootWrapper>
           <Toaster
             position="bottom-right"
             toastOptions={{
@@ -60,7 +60,7 @@ export default function RootLayout({
           {children}
 
           <div id="modals"></div>
-        </RootWrappers>
+        </RootWrapper>
       </body>
     </html>
   );

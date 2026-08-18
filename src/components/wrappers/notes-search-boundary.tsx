@@ -3,15 +3,12 @@
 import { usePathname } from "next/navigation";
 import { Suspense } from "react";
 import React from "react";
-import Search from "./search";
 
-function ConditionalSearch() {
+function NotesSearchBoundary({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   return pathname === "/notes" ? (
-    <Suspense fallback={null}>
-      <Search />
-    </Suspense>
+    <Suspense fallback={null}>{children}</Suspense>
   ) : null;
 }
 
-export default React.memo(ConditionalSearch);
+export default React.memo(NotesSearchBoundary);
