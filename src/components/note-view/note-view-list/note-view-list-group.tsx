@@ -19,25 +19,25 @@ export default function NoteViewListGroup({
 }: NoteViewListGroupProps) {
   return (
     <>
-      <motion.div layout className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2">
         {title ? (
           <h1 className="px-2 text-txt-primary select-none">{title}</h1>
         ) : null}
         <div className="flex flex-col items-center gap-2">
-          <AnimatePresence mode="popLayout" initial={false}>
-            {list.map((item, i) => (
-              <NoteViewListItem
-                key={`note-view-${item.id}`}
-                listItem={item}
-                noteId={noteId}
-                prevItemId={list[i - 1]?.id ?? null}
-                nextItemId={list[i + 1]?.id ?? null}
-                handleDragEnd={handleDragEnd}
-              />
-            ))}
-          </AnimatePresence>
+          {/* <AnimatePresence mode="popLayout" initial={false}> */}
+          {list.map((item, i) => (
+            <NoteViewListItem
+              key={`note-view-${item.id}`}
+              listItem={item}
+              noteId={noteId}
+              prevItemId={list[i - 1]?.id ?? null}
+              nextItemId={list[i + 1]?.id ?? null}
+              handleDragEnd={handleDragEnd}
+            />
+          ))}
+          {/* </AnimatePresence> */}
         </div>
-      </motion.div>
+      </div>
     </>
   );
 }

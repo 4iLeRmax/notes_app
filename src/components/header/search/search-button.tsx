@@ -13,7 +13,8 @@ export default function SearchButton({ isActive, toggleOpen }: UserIconProps) {
   return (
     <>
       <button
-        aria-label="Search"
+        aria-label="open search bar"
+        aria-pressed={isActive}
         title="Search"
         className={cn(
           "w-[41px] h-[41px] flex items-center justify-center rounded-full bg-secondary transition-colors text-xl font-bold select-none",

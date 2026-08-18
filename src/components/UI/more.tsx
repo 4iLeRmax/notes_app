@@ -48,12 +48,12 @@ export default function More({
   const modalRef = useRef<HTMLDivElement>(null);
   const mobileModalRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    // window.addEventListener("resize", handleClose);
-    // return () => {
-    //   window.removeEventListener("resize", handleClose);
-    // };
-  }, [handleClose]);
+  // useEffect(() => {
+  //   window.addEventListener("resize", handleClose);
+  //   return () => {
+  //     window.removeEventListener("resize", handleClose);
+  //   };
+  // }, [handleClose]);
 
   useLayoutEffect(() => {
     if (!isOpen || !buttonRef.current) return;

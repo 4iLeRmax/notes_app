@@ -5,6 +5,7 @@ import SearchButton from "./search-button";
 import SearchBar from "./search-bar";
 import { AnimatePresence } from "motion/react";
 import { useSearchQuery } from "@/hooks/useSearchQuey";
+import { usePathname } from "next/navigation";
 
 function Search() {
   const [isOpen, setIsOpen] = useState(false);
@@ -27,6 +28,9 @@ function Search() {
   useEffect(() => {
     if (searchValue !== "") setIsOpen(true);
   }, []);
+
+  const pathname = usePathname();
+  if (pathname !== "/notes") return null;
 
   const toggleOpen = () => {
     if (isOpen) clearSearch();

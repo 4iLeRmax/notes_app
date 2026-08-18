@@ -11,7 +11,7 @@ import { useEffect, useRef, useState } from "react";
 import { getLabels } from "@/lib/actions/label";
 
 interface SyncDataBtnProps {
-  iconSize: number;
+  iconSize?: number;
   mobileVersion?: boolean;
 }
 

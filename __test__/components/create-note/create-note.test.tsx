@@ -27,7 +27,7 @@ describe("CreateNote", () => {
   it("should open when click on it", async () => {
     user.setup();
     render(<CreateNote />);
-    const container = screen.getByTestId("create-note-container");
+    const container = screen.getByTestId("create-note");
 
     await user.click(container);
 

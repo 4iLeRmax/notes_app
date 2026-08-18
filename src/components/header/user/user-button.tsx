@@ -18,8 +18,9 @@ export default function UserButton({
   return (
     <>
       <button
-      aria-label='User info'
-      title='User info'
+        aria-label="User info"
+        aria-pressed={isActive}
+        title="User info"
         className={cn(
           "w-[41px] h-[41px] flex items-center justify-center rounded-full bg-secondary text-txt-primary transition-colors text-xl font-bold select-none",
           {

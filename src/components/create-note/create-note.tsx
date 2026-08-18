@@ -117,7 +117,7 @@ export default function CreateNote() {
       <motion.div
         ref={containerRef}
         tabIndex={-1}
-        data-testid="create-note-container"
+        data-testid="create-note"
         initial={false}
         animate={{
           padding: formIsOpen ? "32px 0" : "12.5px 0",

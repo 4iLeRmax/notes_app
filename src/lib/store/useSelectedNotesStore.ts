@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-interface SelectedNotesStore {
+export interface SelectedNotesStore {
   selectedNoteIds: string[];
   toggleSelectedNote: (noteIdToSelect: string) => void;
   removeAll: () => void;

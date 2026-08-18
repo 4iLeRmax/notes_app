@@ -13,13 +13,21 @@ function SelectNotesSection({}: SelectNotesSectionProps) {
 
   return (
     <>
-      <div data-header="true" className="flex items-start justify-end gap-4">
-        <div className="bg-secondary w-[41px] h-[41px] shrink-0 flex items-center justify-center rounded-3xl text-txt-primary text-xl font-bold select-none shadow-outside">
+      <div
+        data-header="true"
+        className="flex items-start justify-end gap-4"
+        data-testid="select-notes-section"
+      >
+        <div
+          aria-label="number of selected notes"
+          className="bg-secondary w-[41px] h-[41px] shrink-0 flex items-center justify-center rounded-3xl text-txt-primary text-xl font-bold select-none shadow-outside"
+        >
           {selectedNoteIds.length}
         </div>
 
         <SelectNotesOptions noteIds={selectedNoteIds} />
         <button
+          aria-label="Clear all selection"
           onClick={removeAll}
           className="bg-secondary w-[41px] h-[41px] shrink-0 flex items-center justify-center rounded-3xl text-txt-primary hover:text-custom-blue transition-colors text-xl font-bold select-none shadow-outside"
         >

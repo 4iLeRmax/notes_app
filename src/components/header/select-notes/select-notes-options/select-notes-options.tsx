@@ -40,6 +40,7 @@ function SelectNotesOptions({ noteIds }: NoteMoreMenu) {
         fixed
         buttonContent={
           <div
+            aria-label="Open selected notes options"
             className={cn(
               " p-2 outline-none rounded-full transition-colors bg-secondary",
               {

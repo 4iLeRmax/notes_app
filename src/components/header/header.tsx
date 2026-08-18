@@ -8,6 +8,7 @@ import cn from "@/lib/cn";
 import useSelectedNotesStore from "@/lib/store/useSelectedNotesStore";
 import SyncData from "./sync-data/sync-data";
 import { motion, AnimatePresence } from "motion/react";
+import Search from "./search/search";
 
 function Header() {
   const hasAnySelected = useSelectedNotesStore(
@@ -30,6 +31,7 @@ function Header() {
           ) : (
             <motion.div
               key="header-actions"
+              data-testid="header-section"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -37,7 +39,7 @@ function Header() {
               className="flex items-start justify-end gap-4"
             >
               <SyncData iconSize={25} />
-              <ConditionalSearch />
+              <Search />
               <User />
             </motion.div>
           )}
