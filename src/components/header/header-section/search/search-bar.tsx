@@ -1,7 +1,7 @@
 "use client";
 
 import { Search, X } from "lucide-react";
-import FormInput from "../../UI/formElements/form-input";
+import FormInput from "../../../UI/formElements/form-input";
 import { motion } from "motion/react";
 import React, { useEffect, useRef } from "react";
 

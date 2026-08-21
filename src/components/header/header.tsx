@@ -1,14 +1,15 @@
 "use client";
 
 import React from "react";
-import User from "./user/user";
-import SelectNotesSection from "./select-notes/select-notes-section";
+import User from "./header-section/user/user";
+import SelectNotesSection from "./select-notes-section/select-notes-section";
 import cn from "@/lib/cn";
 import useSelectedNotesStore from "@/lib/store/useSelectedNotesStore";
-import SyncData from "./sync-data/sync-data";
+import SyncData from "./header-section/sync-data/sync-data";
 import { motion, AnimatePresence } from "motion/react";
-import Search from "./search/search";
+import Search from "./header-section/search/search";
 import NotesSearchBoundary from "../wrappers/notes-search-boundary";
+import HeaderSection from "./header-section/header-section";
 
 function Header() {
   const hasAnySelected = useSelectedNotesStore(
@@ -31,18 +32,12 @@ function Header() {
           ) : (
             <motion.div
               key="header-actions"
-              data-testid="header-section"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               data-header="true"
-              className="flex items-start justify-end gap-4"
             >
-              <SyncData iconSize={25} />
-              <NotesSearchBoundary>
-                <Search />
-              </NotesSearchBoundary>
-              <User />
+              <HeaderSection />
             </motion.div>
           )}
         </AnimatePresence>
