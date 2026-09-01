@@ -31,6 +31,7 @@ function SelectNotesOptionsList({ noteIds }: NoteOptionsListProps) {
       >
         <form action={(e) => toggleNoteTypes(noteIds)}>
           <button
+            aria-label="Toggle note types"
             onClick={(e: any) => e.stopPropagation()}
             className="rounded-ss-xl rounded-se-xl w-full hover:bg-custom-blue text-txt-primary hover:text-primary px-4 py-2 flex items-center gap-2 justify-start"
           >
@@ -44,11 +45,12 @@ function SelectNotesOptionsList({ noteIds }: NoteOptionsListProps) {
         </form>
         <form action={() => addCopies(noteIds)}>
           <button
+            aria-label="Create copies"
             onClick={(e) => e.stopPropagation()}
             className="w-full hover:bg-custom-blue text-txt-primary hover:text-primary px-4 py-2 flex items-center gap-2 justify-start"
           >
             <Copy size={20} className="flex xs:hidden" />
-            Create copy
+            Create {noteIds.length > 1 ? "copies" : "a copy"}
           </button>
         </form>
         <form
@@ -59,11 +61,12 @@ function SelectNotesOptionsList({ noteIds }: NoteOptionsListProps) {
           }}
         >
           <button
+            aria-label="Delete notes"
             onClick={(e) => e.stopPropagation()}
             className="rounded-es-xl rounded-ee-xl w-full hover:bg-custom-blue text-txt-primary hover:text-primary px-4 py-2 flex items-center gap-2 justify-start"
           >
             <Trash size={20} className="flex xs:hidden" />
-            Delete
+            Delete {noteIds.length > 1 ? "notes" : "note"}
           </button>
         </form>
       </div>

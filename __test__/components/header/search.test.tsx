@@ -1,11 +1,17 @@
-import Search from "@/components/header/search/search";
 import { SEARCH_QUERY_LIMIT } from "@/lib/constants";
 import "@testing-library/jest-dom";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import user from "@testing-library/user-event";
 import { mockReplace, mockUseSearchParams } from "../../../jest.setup";
+import NotesPathBoundary from "@/components/wrappers/notes-path-boundary";
+import { usePathname } from "next/navigation";
+import Search from "@/components/header/header-section/search/search";
+
+const mockedUsePathname = usePathname as jest.Mock;
 
 describe("Search", () => {
+  mockedUsePathname.mockReturnValue("/notes");
+
   it("should render correctly", () => {
     render(<Search />);
 
@@ -239,5 +245,35 @@ describe("Search", () => {
     expect(screen.getByPlaceholderText(/search.../i)).toHaveDisplayValue(
       "milk",
     );
+  });
+
+  it("should render only on /notes pathname", () => {
+    render(
+      <NotesPathBoundary>
+        <Search />
+      </NotesPathBoundary>,
+    );
+
+    expect(
+      screen.getByRole("button", {
+        name: /open search bar/i,
+      }),
+    ).toBeInTheDocument();
+  });
+
+  it("should NOT render on other pathnames", () => {
+    mockedUsePathname.mockReturnValueOnce("/notes/123123123");
+
+    render(
+      <NotesPathBoundary>
+        <Search />
+      </NotesPathBoundary>,
+    );
+
+    expect(
+      screen.queryByRole("button", {
+        name: /open search bar/i,
+      }),
+    ).not.toBeInTheDocument();
   });
 });

@@ -1,13 +1,37 @@
 import { mockDeep } from "jest-mock-extended";
 import { PrismaClient } from "@/generated/prisma/client";
 
+export const mockSessionUser = {
+  id: "user-id",
+  name: "Test User",
+  email: "test@example.com",
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  emailVerified: true,
+};
+
 export const mockPush = jest.fn();
 export const mockReplace = jest.fn();
 export const mockUseSearchParams = jest.fn(() => new URLSearchParams());
 
+export const mockNotes = [
+  {
+    id: "note-1",
+    type: "TEXT",
+    title: "Test note",
+    content: [],
+    isPinned: false,
+  },
+];
 export const mockAddNote = jest.fn();
 export const mockSetNotes = jest.fn();
 export const mockSetLabels = jest.fn();
+export const mockToggleNoteTypes = jest.fn();
+export const mockAddCopies = jest.fn();
+export const mockRemoveNotes = jest.fn().mockResolvedValue(undefined);
+
+export const mockRemoveAll = jest.fn();
+export const mockToggleSelectedNote = jest.fn();
 
 export const mockGetNotes = jest.fn().mockResolvedValue([{ id: "n1" }]);
 export const mockGetLabels = jest.fn().mockResolvedValue([{ id: "l1" }]);
@@ -16,10 +40,12 @@ afterEach(() => {
   mockPush.mockClear();
   mockReplace.mockClear();
   mockUseSearchParams.mockReturnValue(new URLSearchParams());
+
+  mockRemoveAll.mockClear();
 });
 
 jest.mock("next/navigation", () => ({
-  usePathname: () => "/notes",
+  usePathname: jest.fn(),
   useRouter: () => ({
     push: mockPush,
     replace: mockReplace,
@@ -34,17 +60,27 @@ jest.mock("next/navigation", () => ({
 jest.mock("@/lib/store/useNotesStore", () => ({
   useNotesStore: jest.fn((selector: any) =>
     selector({
+      notes: mockNotes,
       addNote: mockAddNote,
       isPending: false,
       setNotes: mockSetNotes,
       setLabels: mockSetLabels,
+      toggleNoteTypes: mockToggleNoteTypes,
+      addCopies: mockAddCopies,
+      removeNotes: mockRemoveNotes,
     }),
   ),
 }));
 
 jest.mock("@/lib/store/useSelectedNotesStore", () => ({
   __esModule: true,
-  default: jest.fn((selector: any) => selector({ selectedNoteIds: [] })),
+  default: jest.fn((selector: any) =>
+    selector({
+      selectedNoteIds: [],
+      removeAll: mockRemoveAll,
+      toggleSelectedNote: mockToggleSelectedNote,
+    }),
+  ),
 }));
 
 jest.mock("@/lib/store/useViewModeStore", () => ({
@@ -63,13 +99,13 @@ jest.mock("@/lib/auth", () => ({
 
 jest.mock("@/lib/auth-client", () => ({
   authClient: {
-    useSession: () => ({
+    useSession: jest.fn(() => ({
       data: {
-        user: { id: "test-user", name: "Test User", email: "test@example.com" },
-        session: { userId: "test-user" },
+        user: mockSessionUser,
+        session: { userId: mockSessionUser.id },
       },
       isPending: false,
-    }),
+    })),
     signOut: jest.fn(),
   },
 }));

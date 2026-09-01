@@ -54,11 +54,18 @@ const NotesGroupSkeleton = () => {
 
 const NotesDisplaySkeleton = () => {
   return (
-    <div className="flex flex-col lg:items-center gap-3 w-full mt-10 h-full">
-      <div className="flex items-center justify-center">
-        <div className="w-25 h-6 rounded-3xl bg-secondary shadow-outside"></div>
+    <div className="flex flex-col items-center gap-4 mt-10">
+      <div className="w-full flex justify-center">
+        <div className="flex w-full lg:w-[calc((250px*3)+(20px*2))] xl:w-[calc((250px*4)+(20px*3))] 3xl:w-[calc((250px*5)+(20px*4))]! justify-end">
+          <div className="w-32 h-8 rounded-3xl bg-secondary shadow-outside"></div>
+        </div>
       </div>
-      <NotesGroupSkeleton />
+      <div className="flex flex-col lg:items-center gap-3 w-full h-full">
+        <div className="flex items-center justify-center">
+          <div className="w-25 h-6 rounded-3xl bg-secondary shadow-outside"></div>
+        </div>
+        <NotesGroupSkeleton />
+      </div>
     </div>
   );
 };

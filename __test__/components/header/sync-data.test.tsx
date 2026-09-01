@@ -1,10 +1,11 @@
-import SyncData from "@/components/header/sync-data/sync-data";
-import TanstackQueryWrapper from "@/components/wrappers/tanstack-query-wrapper";
+import SyncData from "@/components/header/header-section/sync-data/sync-data";
 import "@testing-library/jest-dom";
 import { render, screen, waitFor } from "@testing-library/react";
 import user from "@testing-library/user-event";
-import { mockSetLabels, mockSetNotes } from "../../../jest.setup";
+import { mockGetNotes, mockSetLabels, mockSetNotes } from "../../../jest.setup";
 import { toast } from "@/components/UI/toast";
+import TanstackQueryWrapper from "@/components/wrappers/root-wrapper/tanstack-query-wrapper";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const Wrapper = () => {
   return (
@@ -18,6 +19,17 @@ afterEach(() => {
   mockSetNotes.mockClear();
   mockSetLabels.mockClear();
 });
+
+function renderWithQueryClient(ui: React.ReactElement) {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: { retry: false, gcTime: 0 },
+    },
+  });
+  return render(
+    <QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>,
+  );
+}
 
 describe("SyncData", () => {
   it("should render correctly", () => {
@@ -83,6 +95,23 @@ describe("SyncData", () => {
       expect(toast.success).toHaveBeenCalledWith(
         "Synced",
         "Your data are up to date.",
+      );
+    });
+  });
+
+  it("should display error toast on sync failure", async () => {
+    user.setup();
+    mockGetNotes.mockRejectedValueOnce(new Error("Network error"));
+
+    renderWithQueryClient(<SyncData />);
+
+    const syncButton = screen.getByRole("button", { name: /sync data/i });
+    await user.click(syncButton);
+
+    await waitFor(() => {
+      expect(toast.error).toHaveBeenCalledWith(
+        "Sync Failed",
+        "Unable to sync your data. Please try again.",
       );
     });
   });

@@ -2,8 +2,9 @@ import "@testing-library/jest-dom";
 import { render, screen } from "@testing-library/react";
 import user from "@testing-library/user-event";
 
-import SelectNotesSection from "@/components/header/select-notes/select-notes-section";
+import SelectNotesSection from "@/components/header/select-notes-section/select-notes-section";
 import useSelectedNotesStore from "@/lib/store/useSelectedNotesStore";
+import { mockRemoveAll } from "../../../jest.setup";
 
 afterEach(() => {
   (useSelectedNotesStore as unknown as jest.Mock).mockImplementation(
@@ -27,7 +28,7 @@ describe("SelectNotesSection", () => {
     expect(numberOfSelectedNotes).toHaveTextContent("2");
 
     const selectedNotesOptionButton = screen.getByRole("button", {
-      name: /open selected notes options/i,
+      name: /options button/i,
     });
     expect(selectedNotesOptionButton).toBeInTheDocument();
 
@@ -35,5 +36,25 @@ describe("SelectNotesSection", () => {
       name: /clear all selection/i,
     });
     expect(clearButton).toBeInTheDocument();
+  });
+
+  it("should call removeAll when clear button is clicked", async () => {
+    (useSelectedNotesStore as unknown as jest.Mock).mockImplementation(
+      (selector) =>
+        selector({ selectedNoteIds: ["note-1"], removeAll: mockRemoveAll }),
+    );
+
+    user.setup();
+
+    render(<SelectNotesSection />);
+
+    const clearButton = screen.getByRole("button", {
+      name: /clear all selection/i,
+    });
+    expect(clearButton).toBeInTheDocument();
+
+    await user.click(clearButton);
+
+    expect(mockRemoveAll).toHaveBeenCalledTimes(1);
   });
 });

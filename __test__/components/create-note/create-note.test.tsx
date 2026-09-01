@@ -328,7 +328,7 @@ describe("CreateNote", () => {
 
     expect(mockAddNote).toHaveBeenCalledWith(
       expect.objectContaining(expectedObj),
-      "test-user",
+      "user-id",
     );
   });
 
@@ -358,7 +358,7 @@ describe("CreateNote", () => {
 
     expect(mockAddNote).toHaveBeenCalledWith(
       expect.objectContaining(expectedObj),
-      "test-user",
+      "user-id",
     );
   });
 
@@ -390,7 +390,7 @@ describe("CreateNote", () => {
 
     expect(mockAddNote).toHaveBeenCalledWith(
       expect.objectContaining(expectedObj),
-      "test-user",
+      "user-id",
     );
   });
 
@@ -424,7 +424,7 @@ describe("CreateNote", () => {
 
     expect(mockAddNote).toHaveBeenCalledWith(
       expect.objectContaining(expectedObj),
-      "test-user",
+      "user-id",
     );
   });
 
@@ -462,7 +462,7 @@ describe("CreateNote", () => {
 
     expect(mockAddNote).toHaveBeenCalledWith(
       expect.objectContaining(expectedObj),
-      "test-user",
+      "user-id",
     );
   });
 
@@ -502,7 +502,7 @@ describe("CreateNote", () => {
 
     expect(mockAddNote).toHaveBeenCalledWith(
       expect.objectContaining(expectedObj),
-      "test-user",
+      "user-id",
     );
   });
 
@@ -583,7 +583,7 @@ describe("CreateNote", () => {
 
     expect(mockAddNote).toHaveBeenCalledWith(
       expect.objectContaining(expectedObj),
-      "test-user",
+      "user-id",
     );
   });
 

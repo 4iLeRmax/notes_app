@@ -1,10 +1,9 @@
 import Header from "@/components/header/header";
-import TanstackQueryWrapper from "@/components/wrappers/tanstack-query-wrapper";
+import TanstackQueryWrapper from "@/components/wrappers/root-wrapper/tanstack-query-wrapper";
 import useSelectedNotesStore from "@/lib/store/useSelectedNotesStore";
 import "@testing-library/jest-dom";
 import { render, screen } from "@testing-library/react";
-import user from "@testing-library/user-event";
-import { act } from "react";
+import { usePathname } from "next/navigation";
 
 const Wrapper = () => {
   return (
@@ -14,44 +13,39 @@ const Wrapper = () => {
   );
 };
 
-const mockRemoveAll = jest.fn();
-const mockToggleSelectedNote = jest.fn();
-
-afterEach(() => {
-  mockRemoveAll.mockClear();
-  (useSelectedNotesStore as unknown as jest.Mock).mockImplementation(
-    (selector: any) =>
-      selector({
-        selectedNoteIds: [],
-        removeAll: mockRemoveAll,
-        toggleSelectedNote: mockToggleSelectedNote,
-      }),
-  );
-});
+const mockedUsePathname = usePathname as jest.Mock;
 
 describe("Header", () => {
-  it("should render correctly", () => {
+  it("should render header section when no notes are selected", () => {
+    mockedUsePathname.mockReturnValue("/notes");
+
+    (useSelectedNotesStore as unknown as jest.Mock).mockImplementation(
+      (selector: any) => selector({ selectedNoteIds: [] }),
+    );
+
     render(<Wrapper />);
 
-    const syncDataButton = screen.getByRole("button", { name: /sync data/i });
-    expect(syncDataButton).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /sync data/i }),
+    ).toBeInTheDocument();
 
-    const searchButton = screen.getByRole("button", {
-      name: /open search bar/i,
-    });
-    expect(searchButton).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", {
+        name: /open search bar/i,
+      }),
+    ).toBeInTheDocument();
 
-    const userButton = screen.getByRole("button", { name: /user info/i });
-    expect(userButton).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /user info/i }),
+    ).toBeInTheDocument();
   });
 
-  it("should render selected notes menu when one ore more notes are selected", () => {
+  it("should NOT render header section when one ore more notes are selected", () => {
     (useSelectedNotesStore as unknown as jest.Mock).mockImplementation(
       (selector: any) => selector({ selectedNoteIds: ["note-1"] }),
     );
-    render(<Wrapper />);
 
-    expect(screen.queryByTestId("select-notes-section")).toBeInTheDocument();
+    render(<Wrapper />);
 
     expect(
       screen.queryByRole("button", { name: /sync data/i }),
@@ -68,7 +62,30 @@ describe("Header", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("should NOT render selected notes menu when no notes are selected", () => {
+  it("should render selected notes section when one ore more notes are selected", () => {
+    (useSelectedNotesStore as unknown as jest.Mock).mockImplementation(
+      (selector: any) => selector({ selectedNoteIds: ["note-1"] }),
+    );
+    render(<Wrapper />);
+
+    expect(
+      screen.getByLabelText(/number of selected notes/i),
+    ).toBeInTheDocument();
+
+    expect(
+      screen.getByRole("button", {
+        name: /options button/i,
+      }),
+    ).toBeInTheDocument();
+
+    expect(
+      screen.getByRole("button", {
+        name: /clear all selection/i,
+      }),
+    ).toBeInTheDocument();
+  });
+
+  it("should NOT render selected notes section when no notes are selected", () => {
     (useSelectedNotesStore as unknown as jest.Mock).mockImplementation(
       (selector) => selector({ selectedNoteIds: [] }),
     );
@@ -91,58 +108,4 @@ describe("Header", () => {
       }),
     ).not.toBeInTheDocument();
   });
-
-  // it("should render header then selected notes menu and again render header", async () => {
-  //   (useSelectedNotesStore as unknown as jest.Mock).mockImplementation(
-  //     (selector) => selector({ selectedNoteIds: [] }),
-  //   );
-
-  //   render(<Wrapper />);
-
-  //   expect(screen.getByTestId("header-section")).toBeInTheDocument();
-  //   expect(
-  //     screen.queryByTestId("select-notes-section"),
-  //   ).not.toBeInTheDocument();
-
-  //   act(() => {
-  //     useSelectedNotesStore.getState().toggleSelectedNote("note-1");
-  //   });
-
-  //   expect(screen.getByTestId("select-notes-section")).toBeInTheDocument();
-  //   expect(screen.queryByTestId("header-section")).not.toBeInTheDocument();
-  // });
-
-  // it("should replace selected notes menu with header when clear all selections", async () => {
-  //   user.setup();
-  //   act(() => {
-  //     useSelectedNotesStore.getState().toggleSelectedNote("note-1");
-  //     useSelectedNotesStore.getState().toggleSelectedNote("note-2");
-  //   });
-
-  //   render(<Wrapper />);
-
-  //   const clearButton = screen.getByRole("button", {
-  //     name: /clear all selection/i,
-  //   });
-
-  //   await user.click(clearButton);
-
-  //   expect(mockRemoveAll).toHaveBeenCalledTimes(1);
-
-  //   expect(
-  //     screen.queryByLabelText(/number of selected notes/i),
-  //   ).not.toBeInTheDocument();
-
-  //   expect(
-  //     screen.queryByRole("button", {
-  //       name: /open selected notes options/i,
-  //     }),
-  //   ).not.toBeInTheDocument();
-
-  //   expect(
-  //     screen.queryByRole("button", {
-  //       name: /clear all selection/i,
-  //     }),
-  //   ).not.toBeInTheDocument();
-  // });
 });
