@@ -25,6 +25,7 @@ export default function LogoutButton() {
     <>
       <button
         onClick={logout}
+        aria-label="logout"
         className={cn(
           "flex items-center justify-center px-4 py-2 rounded-2xl gap-2 y shadow-outside-small transition-colors",
           "w-full bg-custom-blue text-primary hover:text-custom-blue hover:bg-primary",

@@ -45,7 +45,7 @@ export default function SyncData({
   };
 
   const syncStoreData = async () => {
-    const { data, isSuccess } = await refetch();
+    const { data, isSuccess, isError } = await refetch();
     if (data) {
       const { notes, labels } = data;
       setNotes(notes);
@@ -53,6 +53,8 @@ export default function SyncData({
       flashCheck();
     }
     if (isSuccess) toast.success("Synced", "Your data are up to date.");
+    if (isError)
+      toast.error("Sync Failed", "Unable to sync your data. Please try again.");
   };
 
   useEffect(() => {

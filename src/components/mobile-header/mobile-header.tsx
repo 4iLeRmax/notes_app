@@ -1,16 +1,14 @@
 "use client";
 
-import React, { Activity, Suspense, useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import User from "../header/header-section/user/user";
-import ConditionalSearch from "../wrappers/notes-search-boundary";
 import MobileMenu from "./menu/mobile-menu";
 import useSelectedNotesStore from "@/lib/store/useSelectedNotesStore";
 import SelectNotesSection from "../header/select-notes-section/select-notes-section";
-import { UserIconSkeleton } from "../UI/skeletons";
 import { usePathname } from "next/navigation";
 import { vibrate } from "@/lib/haptics";
-import NotesSearchBoundary from "../wrappers/notes-search-boundary";
 import Search from "../header/header-section/search/search";
+import NotesPathBoundary from "../wrappers/notes-path-boundary";
 
 export default function MobileHeader() {
   const [menuIsOpen, setMenuIsOpen] = useState(false);
@@ -38,12 +36,10 @@ export default function MobileHeader() {
 
         {selectedNoteIds.length === 0 ? (
           <div data-header="true" className="flex items-start gap-4">
-            <NotesSearchBoundary>
+            <NotesPathBoundary>
               <Search />
-            </NotesSearchBoundary>
-            <Suspense fallback={<UserIconSkeleton />}>
-              <User />
-            </Suspense>
+            </NotesPathBoundary>
+            <User />
           </div>
         ) : (
           <SelectNotesSection />

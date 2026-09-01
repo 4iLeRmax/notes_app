@@ -79,6 +79,7 @@ export default function More({
     <>
       <button
         data-more-btn
+        aria-label="Options button"
         type="button"
         ref={buttonRef}
         onBlur={handleBlur}

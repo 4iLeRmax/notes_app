@@ -24,16 +24,23 @@ export default function UserBar({ user }: UserModalProps) {
                 "w-20 h-20 flex items-center justify-center rounded-full bg-primary text-txt-primary shadow-outside-small text-4xl font-bold shrink-0 select-none",
                 "sm:w-12 sm:h-12 sm:text-2xl",
               )}
+              aria-label="User icon"
             >
               {user.name[0]}
             </div>
             <div className="flex flex-col items-center sm:items-start w-auto sm:w-[calc(100%-8px-41px)]">
-              <h1 className="text-txt-secondary text-2xl sm:text-xl font-bold shrink-0 w-full truncate">
+              <h1
+                className="text-txt-secondary text-2xl sm:text-xl font-bold shrink-0 w-full truncate"
+                aria-label="User name"
+              >
                 {/* ssssssssssssssssssssssssssssssssssssssssssssssssss */}
                 {user.name}
               </h1>
 
-              <p className="text-sm text-txt-primary text-center sm:text-start">
+              <p
+                className="text-sm text-txt-primary text-center sm:text-start"
+                aria-label="User email"
+              >
                 {user.email}
               </p>
             </div>

@@ -1,14 +1,10 @@
 "use client";
 
 import React from "react";
-import User from "./header-section/user/user";
 import SelectNotesSection from "./select-notes-section/select-notes-section";
 import cn from "@/lib/cn";
 import useSelectedNotesStore from "@/lib/store/useSelectedNotesStore";
-import SyncData from "./header-section/sync-data/sync-data";
 import { motion, AnimatePresence } from "motion/react";
-import Search from "./header-section/search/search";
-import NotesSearchBoundary from "../wrappers/notes-search-boundary";
 import HeaderSection from "./header-section/header-section";
 
 function Header() {

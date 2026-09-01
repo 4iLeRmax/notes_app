@@ -18,6 +18,7 @@ export default function AsideToggleButton({
   return (
     <>
       <button
+        aria-label="toggle aside menu"
         onClick={toggle}
         className={cn(
           "w-[41px] h-[41px] flex items-center justify-center bg-primary rounded-full shrink-0 transition-colors",

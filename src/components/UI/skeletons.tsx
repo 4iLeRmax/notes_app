@@ -1,6 +1,9 @@
 const UserIconSkeleton = () => {
   return (
-    <div className="w-[41px] h-[41px] bg-secondary shadow-outside rounded-full animate-pulse"></div>
+    <div
+      className="w-[41px] h-[41px] bg-secondary shadow-outside rounded-full animate-pulse"
+      data-testid="user-skeleton"
+    ></div>
   );
 };
 

@@ -1,9 +1,11 @@
+import React from "react";
+
 import AsideSection from "@/components/aside/aside-section";
 import Header from "@/components/header/header";
-import LabelHydrate from "@/components/hydrators/label-hydrate";
-import NoteHydrate from "@/components/hydrators/note-hydrate";
 import MobileHeader from "@/components/mobile-header/mobile-header";
-import React from "react";
+
+import LabelHydrate from "@/hydrators/label-hydrate";
+import NoteHydrate from "@/hydrators/note-hydrate";
 
 export default function MainLayout({
   children,

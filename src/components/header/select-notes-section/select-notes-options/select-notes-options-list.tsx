@@ -25,40 +25,10 @@ function SelectNotesOptionsList({ noteIds }: NoteOptionsListProps) {
   const noteType = currentNote.type;
   return (
     <>
-      <div className="flex flex-col py-4 xs:py-0">
-        {/* <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            toggleNoteTypes(noteIds);
-          }}
-          className="rounded-ss-xl rounded-se-xl w-full hover:bg-custom-blue text-txt-primary hover:text-primary px-4 py-2 flex justify-start"
-        >
-          TODO/TEXT
-        </button>
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            addCopies(noteIds);
-          }}
-          className="w-full hover:bg-custom-blue text-txt-primary hover:text-primary px-4 py-2 flex justify-start"
-        >
-          Create copy
-        </button>
-
-        <button
-          type="button"
-          onClick={async (e) => {
-            e.stopPropagation();
-            await removeNotes(noteIds);
-            removeAll();
-          }}
-          className="rounded-es-xl rounded-ee-xl w-full hover:bg-custom-blue text-txt-primary hover:text-primary px-4 py-2 flex justify-start"
-        >
-          Delete
-        </button> */}
-
+      <div
+        className="flex flex-col py-4 xs:py-0"
+        data-testid="select-notes-options-list"
+      >
         <form action={(e) => toggleNoteTypes(noteIds)}>
           <button
             onClick={(e: any) => e.stopPropagation()}

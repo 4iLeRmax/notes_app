@@ -2,9 +2,9 @@
 
 import React from "react";
 import SyncData from "./sync-data/sync-data";
-import NotesSearchBoundary from "@/components/wrappers/notes-search-boundary";
 import Search from "./search/search";
 import User from "./user/user";
+import NotesPathBoundary from "@/components/wrappers/notes-path-boundary";
 
 export default function HeaderSection() {
   return (
@@ -14,9 +14,9 @@ export default function HeaderSection() {
         data-testid="header-section"
       >
         <SyncData iconSize={25} />
-        <NotesSearchBoundary>
+        <NotesPathBoundary>
           <Search />
-        </NotesSearchBoundary>
+        </NotesPathBoundary>
         <User />
       </div>
     </>
